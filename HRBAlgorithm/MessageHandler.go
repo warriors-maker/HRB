@@ -57,7 +57,7 @@ func Msghandler (d Message) (bool, int, string){
 	return false, 0,""
 }
 
-func EchoHandler (data Message) (bool, int, []bool){
+func EchoHandler (data Message) (bool, int){
 	identifier := data.GetId()+ strconv.Itoa(data.GetRound()) + data.GetSenderId()
 	if _,seen := EchoReceiveSet[identifier]; !seen {
 		EchoReceiveSet[identifier] = true
@@ -71,10 +71,10 @@ func EchoHandler (data Message) (bool, int, []bool){
 		}
 
 		//Check
-		flags := check(data)
-		return true, EchoRecCountSet[m], flags
+		//flags := check(data)
+		return true, EchoRecCountSet[m]
 	}
-	return false,0, nil
+	return false,0
 }
 
 func AccHandler (data Message) (bool, int, bool){
@@ -94,6 +94,7 @@ func AccHandler (data Message) (bool, int, bool){
 		}
 
 		if len(AccRecCountSet[m]) == faulty + 1 {
+			//Same set
 			ReqSentSet[reqMes] = AccRecCountSet[m]
 			if exist, _ := checkDataExist(data.GetHashData()); !exist {
 				//Send Req to these f + 1
@@ -104,6 +105,8 @@ func AccHandler (data Message) (bool, int, bool){
 			return true, len(AccRecCountSet[m]), true
 		} else if len(AccRecCountSet[m]) > faulty + 1 {
 			//send the request to the current id
+
+			//Todo: Need to set a flag that if we have accepted this round, we donot need to send the req again
 			l := ReqSentSet[reqMes]
 			l = append(l, data.GetSenderId())
 			ReqSentSet[reqMes] = l
@@ -111,8 +114,6 @@ func AccHandler (data Message) (bool, int, bool){
 			return true, len(AccRecCountSet[m]), true
 		}
 
-		//Check
-		//check(data)
 		return true, len(AccRecCountSet[m]), false
 	}
 	return false, 0, false
@@ -133,7 +134,7 @@ func ReqHandler (data Message) (bool, bool){
 }
 
 //Need to check this function later
-func FwdHandler (data Message) (bool, bool, []bool){
+func FwdHandler (data Message) (bool, bool){
 	identifier := data.GetId() + strconv.Itoa(data.GetRound()) + data.GetSenderId();
 	/*
 		have seen echo + 1
@@ -148,12 +149,11 @@ func FwdHandler (data Message) (bool, bool, []bool){
 			FwdReceiveSet[identifier] = true
 			DataSet[data.GetData()] = hashStr
 			//check
-			flags := check(data)
-			return true, true, flags
+			return true, true
 		}
-		return true, false, nil
+		return true, false
 	}
-	return false, false, nil
+	return false, false
 
 }
 
@@ -177,8 +177,6 @@ func check(m Message) []bool {
 			//send Echo to all servers
 			flags[0] = true
 		}
-	} else {
-		fmt.Println(EchoRecCountSet[echo])
 	}
 
 	if EchoRecCountSet[echo] >= total - faulty {
@@ -192,7 +190,7 @@ func check(m Message) []bool {
 	}
 
 	if len(AccRecCountSet[acc]) >= faulty + 1 {
-
+		fmt.Println("Identifier"+identifier)
 		if _,sent := AccSentSet[identifier]; !sent {
 			AccSentSet[identifier] = true
 			//send ACC to all Servers

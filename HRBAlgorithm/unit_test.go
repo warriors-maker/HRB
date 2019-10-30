@@ -162,63 +162,103 @@ import (
 /*
 Simple Testing without Byzantinne
  */
-func TestSimple1(t *testing.T) {
-	AlgorithmSetUp()
 
-	/*
-	Broadcast phase
-	 */
-	val := "abc"
-	m := MSGStrcut{Header:MSG, Id:"0", Data:val, Round:0, SenderId:"0"}
-	hash := ConvertBytesToString(Hash([]byte(val)))
-	/*
-	Accept Phase
-	 */
-
-	//MSG receive:
-	Msghandler(m)
-	fmt.Println("****************************")
-	//Echo Receive:
-	echoM := ECHOStruct{Header:ECHO, Id:"0", HashData:hash, Round:0, SenderId:"1"}
-	f, count, flags := EchoHandler(echoM)
-	if f != true || count != 2 || flags[0] != false {
-		t.Errorf("Wrong awnser in Simple1\n")
-	}
-
-	fmt.Println("****************************")
-	echoM = ECHOStruct{Header:ECHO, Id:"0", HashData:hash, Round:0, SenderId:"2"}
-	f, count, flags = EchoHandler(echoM)
-	if f != true || count != 3 || flags[0] != false || flags[1] != true {
-		t.Errorf("Wrong awnser in Simple1\n")
-	}
-
-	/*
-	Receive ACC
-	 */
-	accM := ACCStruct{Header:ACC, Id:"0", HashData:hash, Round:0, SenderId:"0"}
-	AccHandler(accM)
-	accM = ACCStruct{Header:ACC, Id:"0", HashData:hash, Round:0, SenderId:"1"}
-	AccHandler(accM)
-	accM = ACCStruct{Header:ACC, Id:"0", HashData:hash, Round:0, SenderId:"2"}
-	AccHandler(accM)
-
-	flags = check(accM)
-	if flags[0] != false || flags[1] != false || flags[2] != false || flags[3] != true {
-		t.Errorf("Wrong awnser in Simple1\n")
-	}
-
-}
-
-//func TestSimple2(t *testing.T) {
+/*
+Get the message from the direct sender
+ */
+//func TestSimple1(t *testing.T) {
 //	AlgorithmSetUp()
 //
-//	//Broadcast Phase:
+//	/*
+//	Broadcast phase
+//	 */
 //	val := "abc"
 //	m := MSGStrcut{Header:MSG, Id:"0", Data:val, Round:0, SenderId:"0"}
+//	hash := ConvertBytesToString(Hash([]byte(val)))
+//	/*
+//	Accept Phase
+//	 */
 //
-//	//Echo Receive
+//	//MSG receive:
+//	Msghandler(m)
+//	fmt.Println("****************************")
+//	//Echo Receive:
+//	echoM := ECHOStruct{Header:ECHO, Id:"0", HashData:hash, Round:0, SenderId:"1"}
+//	f, count, flags := EchoHandler(echoM)
+//	if f != true || count != 2 || flags[0] != false {
+//		t.Errorf("Wrong awnser in Simple1\n")
+//	}
+//
+//	fmt.Println("****************************")
+//	echoM = ECHOStruct{Header:ECHO, Id:"0", HashData:hash, Round:0, SenderId:"2"}
+//	f, count, flags = EchoHandler(echoM)
+//	if f != true || count != 3 || flags[0] != false || flags[1] != true {
+//		t.Errorf("Wrong awnser in Simple1\n")
+//	}
+//
+//	/*
+//	Receive ACC
+//	 */
+//	accM := ACCStruct{Header:ACC, Id:"0", HashData:hash, Round:0, SenderId:"0"}
+//	AccHandler(accM)
+//	accM = ACCStruct{Header:ACC, Id:"0", HashData:hash, Round:0, SenderId:"1"}
+//	AccHandler(accM)
+//	accM = ACCStruct{Header:ACC, Id:"0", HashData:hash, Round:0, SenderId:"2"}
+//	AccHandler(accM)
+//
+//	flags = check(accM)
+//	if flags[0] != false || flags[1] != false || flags[2] != false || flags[3] != true {
+//		t.Errorf("Wrong awnser in Simple1\n")
+//	}
+//
 //}
-//
+
+/*
+Get Data through Req
+ */
+func TestSimple2(t *testing.T) {
+	AlgorithmSetUp()
+	/*
+		Broadcast phase
+	*/
+	val := "abc"
+	hash := ConvertBytesToString(Hash([]byte(val)))
+
+	/*
+		Receive ACC
+	*/
+	//Receive Acc from f + 1 servers
+	accM := ACCStruct{Header:ACC, Id:"0", HashData:hash, Round:0, SenderId:"0"}
+	AccHandler(accM)
+	flags := check(accM)
+
+	accM = ACCStruct{Header:ACC, Id:"0", HashData:hash, Round:0, SenderId:"1"}
+	AccHandler(accM)
+	flags = check(accM)
+
+	if flags[0] != false || flags[1] != false || flags[2] != true || flags[3] != false {
+		fmt.Println(flags)
+		t.Errorf("Wrong awnser in Simple2\n")
+	}
+
+	fmt.Println("****************************")
+	//receive Foward
+	fwdM := FWDStruct{Header:FWD, Data:val, Round:0, SenderId:"0"}
+	FwdHandler(fwdM)
+	fwdM = FWDStruct{Header:FWD, Data:val, Round:0, SenderId:"1"}
+	FwdHandler(fwdM)
+
+	//Receive Acc from n - f servers
+	accM = ACCStruct{Header:ACC, Id:"0", HashData:hash, Round:0, SenderId:"2"}
+	AccHandler(accM)
+	flags = check(accM)
+	if flags[0] != false || flags[1] != false || flags[2] != false || flags[3] != true {
+		fmt.Println(flags)
+		t.Errorf("Wrong awnser in Simple2\n")
+	}
+}
+
+
 //func TestSimple3(t *testing.T) {
 //	AlgorithmSetUp()
 //	//Broadcast Phase:

@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="92212f8a-9e41-4b3d-9b89-c1292143224f" name="Default Changelist" comment="" />
+    <list default="true" id="92212f8a-9e41-4b3d-9b89-c1292143224f" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/HRBAlgorithm/MessageHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/HRBAlgorithm/MessageHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HRBAlgorithm/unit_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/HRBAlgorithm/unit_test.go" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,8 +46,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/HRBAlgorithm/MessageHandler.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="174">
-              <caret line="188" column="50" selection-start-line="188" selection-start-column="50" selection-end-line="188" selection-end-column="50" />
+            <state relative-caret-position="-231">
+              <caret line="159" column="10" selection-start-line="159" selection-start-column="5" selection-end-line="159" selection-end-column="10" />
               <folding>
                 <element signature="e#22#50#0" expanded="true" />
               </folding>
@@ -55,8 +58,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/HRBAlgorithm/unit_test.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="24">
-              <caret line="204" column="4" selection-start-line="204" selection-start-column="4" selection-end-line="204" selection-end-column="4" />
+            <state relative-caret-position="204">
+              <caret line="255" selection-start-line="255" selection-end-line="255" />
               <folding>
                 <element signature="e#22#50#0" expanded="true" />
               </folding>
@@ -83,6 +86,9 @@
     </option>
   </component>
   <component name="GOROOT" path="/usr/local/go1.12.5.darwin-amd64" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
@@ -100,17 +106,18 @@
         <option value="$PROJECT_DIR$/main.go" />
         <option value="$PROJECT_DIR$/HRBAlgorithm/algorithm.go" />
         <option value="$PROJECT_DIR$/HRBAlgorithm/SimpleMessageHandler.go" />
-        <option value="$PROJECT_DIR$/HRBAlgorithm/unit_test.go" />
         <option value="$PROJECT_DIR$/HRBAlgorithm/MessageHandler.go" />
+        <option value="$PROJECT_DIR$/HRBAlgorithm/unit_test.go" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="245" />
-    <option name="y" value="35" />
+    <option name="x" value="69" />
+    <option name="y" value="45" />
     <option name="width" value="1400" />
     <option name="height" value="941" />
   </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
@@ -245,9 +252,13 @@
     <history-entry file="TestReqHandler_in_HRB_HRBAlgorithm - 2019.10.29 at 21h 35m 55s.xml">
       <configuration name="TestReqHandler in HRB/HRBAlgorithm" configurationId="GoTestRunConfiguration" />
     </history-entry>
+    <history-entry file="TestReqHandler_in_HRB_HRBAlgorithm - 2019.10.30 at 09h 12m 00s.xml">
+      <configuration name="TestReqHandler in HRB/HRBAlgorithm" configurationId="GoTestRunConfiguration" />
+    </history-entry>
   </component>
   <component name="ToolWindowManager">
-    <frame x="245" y="35" width="1400" height="941" extended-state="0" />
+    <frame x="69" y="45" width="1400" height="941" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2569956" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -329,17 +340,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/HRBAlgorithm/algorithm.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="393">
-          <caret line="89" column="40" selection-start-line="89" selection-start-column="40" selection-end-line="89" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/HRBAlgorithm/SimpleMessageHandler.go">
       <provider selected="true" editor-type-id="text-editor">
         <state>
           <caret column="20" selection-start-column="20" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HRBAlgorithm/algorithm.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="393">
+          <caret line="89" column="40" selection-start-line="89" selection-start-column="40" selection-end-line="89" selection-end-column="40" />
         </state>
       </provider>
     </entry>
@@ -369,8 +380,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/HRBAlgorithm/MessageHandler.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="174">
-          <caret line="188" column="50" selection-start-line="188" selection-start-column="50" selection-end-line="188" selection-end-column="50" />
+        <state relative-caret-position="-231">
+          <caret line="159" column="10" selection-start-line="159" selection-start-column="5" selection-end-line="159" selection-end-column="10" />
           <folding>
             <element signature="e#22#50#0" expanded="true" />
           </folding>
@@ -379,8 +390,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/HRBAlgorithm/unit_test.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="24">
-          <caret line="204" column="4" selection-start-line="204" selection-start-column="4" selection-end-line="204" selection-end-column="4" />
+        <state relative-caret-position="204">
+          <caret line="255" selection-start-line="255" selection-end-line="255" />
           <folding>
             <element signature="e#22#50#0" expanded="true" />
           </folding>
