@@ -105,13 +105,14 @@ func AccHandler (data Message) (bool, int, bool){
 			return true, len(AccRecCountSet[m]), true
 		} else if len(AccRecCountSet[m]) > faulty + 1 {
 			//send the request to the current id
-
-			//Todo: Need to set a flag that if we have accepted this round, we donot need to send the req again
-			l := ReqSentSet[reqMes]
-			l = append(l, data.GetSenderId())
-			ReqSentSet[reqMes] = l
-			//send request
-			return true, len(AccRecCountSet[m]), true
+			if exist, _ := checkDataExist(data.GetHashData()); !exist {
+				//Todo: Need to set a flag that if we have accepted this round, we donot need to send the req again
+				l := ReqSentSet[reqMes]
+				l = append(l, data.GetSenderId())
+				ReqSentSet[reqMes] = l
+				//send request
+				return true, len(AccRecCountSet[m]), true
+			}
 		}
 
 		return true, len(AccRecCountSet[m]), false

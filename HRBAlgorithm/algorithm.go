@@ -13,6 +13,8 @@ var EchoSentSet map[string] bool
 //(MSG, count)
 var EchoRecCountSet map[ECHOStruct] int
 
+var simpleEchoRecCountSet map[ECHOStruct] []string
+
 //(SenderId + h, bool)
 var AccReceiveSet map[string] bool
 var AccSentSet map[string] bool
@@ -45,6 +47,8 @@ func AlgorithmSetUp() {
 	EchoReceiveSet = make(map[string] bool)
 	EchoSentSet = make(map[string] bool)
 	EchoRecCountSet = make (map[ECHOStruct] int)
+	//used in Simple
+	simpleEchoRecCountSet = make (map[ECHOStruct] []string)
 
 	AccReceiveSet = make(map[string] bool)
 	AccSentSet = make(map[string] bool)
