@@ -1,16 +1,18 @@
 package Network
 
 import (
+	"HRB/HRBAlgorithm"
 	"encoding/gob"
 	"fmt"
 	"log"
 	"net"
-	"strconv"
+	"strings"
 	"time"
 )
 
-func TcpReader(ch chan message) {
-	ln, _ := net.Listen("tcp",":"+MyPort)
+func TcpReader(ch chan TcpMessage, listeningIp string) {
+	port := strings.Split(listeningIp, ":")[1]
+	ln, _ := net.Listen("tcp",":"+port)
 
 	for {
 		conn, err := ln.Accept()
@@ -23,13 +25,24 @@ func TcpReader(ch chan message) {
 	}
 }
 
-func handleConnection(conn net.Conn, ch chan message) {
+func handleConnection(conn net.Conn, ch chan TcpMessage) {
 	defer conn.Close()
+	/*
+	Register the concrete Type
+	 */
+	gob.Register(HRBAlgorithm.ACCStruct{})
+	gob.Register(HRBAlgorithm.FWDStruct{})
+	gob.Register(HRBAlgorithm.REQStruct{})
+	gob.Register(HRBAlgorithm.MSGStruct{})
+	gob.Register(HRBAlgorithm.ECHOStruct{})
 	dec := gob.NewDecoder(conn)
-	data := &message{}
+
+	data := &TcpMessage{}
 	for {
 		//Receive data
 		dec.Decode(data)
+
+		fmt.Printf("Receiving %+v\n",data.Message)
 
 		ch <- *data
 

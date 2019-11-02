@@ -6,7 +6,7 @@ import (
 )
 
 func Msghandler (d Message) (bool, int, string){
-	data,ok := d.(MSGStrcut)
+	data,ok := d.(MSGStruct)
 	if ok {
 		fmt.Println(ok)
 	}

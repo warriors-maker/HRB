@@ -20,6 +20,7 @@ type Message interface {
 	GetRound() int
 	GetSenderId() string
 	SetSenderIdNull()
+	SetSenderId(string)
 }
 
 type FWDStruct struct {
@@ -31,7 +32,7 @@ type FWDStruct struct {
 }
 
 
-type MSGStrcut struct {
+type MSGStruct struct {
 	Header TcpHeader
 	Data   string
 	Round int
@@ -71,7 +72,7 @@ func (m FWDStruct) GetHeaderType() TcpHeader{
 	return m.Header
 }
 
-func (m MSGStrcut) GetHeaderType() TcpHeader{
+func (m MSGStruct) GetHeaderType() TcpHeader{
 	return m.Header
 }
 
@@ -96,7 +97,7 @@ func (m FWDStruct) GetData() string{
 	return m.Data
 }
 
-func (m MSGStrcut) GetData() string {
+func (m MSGStruct) GetData() string {
 	return m.Data
 }
 
@@ -120,7 +121,7 @@ func (m FWDStruct) GetHashData() string{
 	return ""
 }
 
-func (m MSGStrcut) GetHashData() string{
+func (m MSGStruct) GetHashData() string{
 	return ""
 }
 
@@ -145,7 +146,7 @@ func (m FWDStruct) GetId() string{
 	return m.Id
 }
 
-func (m MSGStrcut) GetId() string{
+func (m MSGStruct) GetId() string{
 	return m.Id
 }
 
@@ -170,7 +171,7 @@ func (m FWDStruct) GetRound() int{
 	return m.Round
 }
 
-func (m MSGStrcut) GetRound() int{
+func (m MSGStruct) GetRound() int{
 	return m.Round
 }
 
@@ -192,7 +193,7 @@ func (m FWDStruct) GetSenderId() string{
 	return m.SenderId
 }
 
-func (m MSGStrcut) GetSenderId() string{
+func (m MSGStruct) GetSenderId() string{
 	return m.SenderId
 }
 
@@ -210,21 +211,44 @@ func (m REQStruct) GetSenderId() string{
 
 
 func (m FWDStruct) SetSenderIdNull() {
-	m.SetSenderIdNull()
+	m.SenderId = ""
 }
 
-func (m MSGStrcut) SetSenderIdNull() {
-	m.SetSenderIdNull()
+func (m MSGStruct) SetSenderIdNull() {
+	m.SenderId = ""
 }
 
 func (m ECHOStruct) SetSenderIdNull() {
-	m.SetSenderIdNull()
+	m.SenderId = ""
 }
 
 func (m ACCStruct) SetSenderIdNull() {
-	m.SetSenderIdNull()
+	m.SenderId = ""
 }
 
 func (m REQStruct) SetSenderIdNull() {
-	m.SetSenderIdNull()
+	m.SenderId = ""
+}
+
+
+
+
+func (m FWDStruct) SetSenderId(id string) {
+	m.SenderId = id
+}
+
+func (m MSGStruct) SetSenderId(id string) {
+	m.SenderId = id
+}
+
+func (m ECHOStruct) SetSenderId(id string) {
+	m.SenderId = id
+}
+
+func (m ACCStruct) SetSenderId(id string) {
+	m.SenderId = id
+}
+
+func (m REQStruct) SetSenderId(id string) {
+	m.SenderId = id
 }

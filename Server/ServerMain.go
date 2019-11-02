@@ -2,35 +2,97 @@ package Server
 
 import (
 	"HRB/HRBAlgorithm"
+	"HRB/Network"
 	"fmt"
 )
+type messageChan chan Network.TcpMessage
 
+var serverList []string
+var MyId string //basically the IP of individual server
+var isFault bool //check whether I should be the faulty based on configuration
 
-func startUp() {
-	//Set up all the variables needed for the HashReliable Broadcast algorithm
-	HRBAlgorithm.AlgorithmSetUp()
-	// Read from the file
-	netWorkSize := 0
-	//list of Faulty nodes the server finds
-	//BlackList := make([]string, netWorkSize)
-	
+var sendChans []messageChan
+var readChans chan Network.TcpMessage
+
+var isLocalMode bool //indicate whether this is a local mode
+var source bool //A flag to indicate whether I am the sender
+
+/*
+Only used in Local Mode
+ */
+var localId int
+
+func LocalModeStartup(id int) {
+	isLocalMode = true
+	localId = id
+
+	peerStartup(isLocalMode)
+	if serverList[0] == MyId {
+		source = true
+	} else {
+		source = false
+	}
+	setUpRead()
+	setUpWrite()
 }
 
-//Receive a data from the channel that connects to the thread of TcpReader
-func filterRecData (ch chan HRBAlgorithm.Message) {
-	data := <- ch
+func NetworkModeStartup() {
+	isLocalMode = false
+	peerStartup(isLocalMode)
 
-	switch v := data.GetHeaderType(); v {
-	case HRBAlgorithm.MSG:
-		receiveMsg(data)
-	case HRBAlgorithm.ECHO:
-		receiveEcho(data)
-	case HRBAlgorithm.ACC:
-		receiveAcc(data)
-	case HRBAlgorithm.REQ:
-		receiveReq(data)
-	case HRBAlgorithm.FWD:
-		receiveFwd(data)
+	setUpRead()
+	setUpWrite()
+}
+
+//Start up the peer
+func peerStartup(local bool) {
+	trustedPath := "./Configuration/trusted"
+	faultedPath := "./Configuration/faulty"
+	if local {
+		serverList, MyId, isFault = readServerListLocal(trustedPath, faultedPath, localId)
+	} else {
+		serverList, MyId, isFault = readServerListNetwork(trustedPath, faultedPath)
+	}
+}
+
+
+/*
+Reading from the network
+ */
+
+func setUpRead() {
+	readChans = make (chan Network.TcpMessage)
+	//Start listening data
+	go Network.TcpReader(readChans, MyId)
+	//Channel that filters the data based on the message type
+	go filterRecData(readChans)
+
+}
+
+func filterRecData (ch chan Network.TcpMessage) {
+	for {
+		message := <- ch
+		data := message.Message
+
+		switch v := data.(type) {
+		case HRBAlgorithm.MSGStruct:
+			fmt.Println("Msg")
+			//receiveMsg(data)
+		case HRBAlgorithm.ECHOStruct:
+			fmt.Println("Echo")
+			//receiveEcho(data)
+		case HRBAlgorithm.ACCStruct:
+			fmt.Println("Acc")
+			//receiveAcc(data)
+		case HRBAlgorithm.REQStruct:
+			fmt.Println("Req")
+			//receiveReq(data)
+		case HRBAlgorithm.FWDStruct:
+			fmt.Print("FWD")
+		default:
+			fmt.Printf("Sending : %+v\n", v)
+			fmt.Println("I do ot understand what you send")
+		}
 	}
 }
 
@@ -54,8 +116,64 @@ func receiveFwd (data HRBAlgorithm.Message) {
 	HRBAlgorithm.FwdHandler(data)
 }
 
-func cleanUp()  {
-	
+/*
+Writing to the Network
+*/
+//Setting up writting Channels for individual sever
+
+func setUpWrite() {
+	sendChans = make ([]messageChan, len(serverList))
+
+	for i := range sendChans {
+		sendChans[i] = make(chan Network.TcpMessage)
+		//First Param: the server you are writting to
+		//Sending channel
+		go deliver(serverList[i], sendChans[i])
+	}
+
+}
+
+func deliver(ipPort string, ch chan Network.TcpMessage) {
+	Network.TcpWriter(ipPort, ch)
+}
+
+func simpleTest() {
+	//test
+	if source {
+		var m HRBAlgorithm.Message
+
+		m = HRBAlgorithm.FWDStruct{Id:MyId, SenderId:MyId}
+		message := Network.TcpMessage{Message: m, ID:MyId}
+		for _,ch := range sendChans {
+			ch <- message
+		}
+
+		m = HRBAlgorithm.ACCStruct{Id:MyId, SenderId:MyId}
+		message = Network.TcpMessage{Message: m, ID:MyId}
+		for _,ch := range sendChans {
+			ch <- message
+		}
+
+		m = HRBAlgorithm.REQStruct{Id:MyId, SenderId:MyId}
+		message = Network.TcpMessage{Message: m, ID:MyId}
+
+		for _,ch := range sendChans {
+			ch <- message
+		}
+
+		m = HRBAlgorithm.ECHOStruct{Id:MyId, SenderId:MyId}
+		message = Network.TcpMessage{Message: m, ID:MyId}
+
+		for _,ch := range sendChans {
+			ch <- message
+		}
+
+		m = HRBAlgorithm.MSGStruct{Id:MyId, SenderId:MyId}
+		message = Network.TcpMessage{Message: m, ID:MyId}
+		for _,ch := range sendChans {
+			ch <- message
+		}
+	}
 }
 
 

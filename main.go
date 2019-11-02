@@ -1,7 +1,12 @@
 package main
 
 import (
+	"HRB/Server"
+	"fmt"
 	"math/rand"
+	"os"
+	"strconv"
+	"sync"
 )
 
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
@@ -15,12 +20,17 @@ func RandStringRunes(n int) string {
 }
 
 func main() {
-	//val1 := "abc"
-	//val2 := "abcd"
-	//
-	//hashVal1 := HRBAlgorithm.ConvertBytesToString(HRBAlgorithm.Hash([]byte(val1)))
-	//hashVal2 := HRBAlgorithm.ConvertBytesToString(HRBAlgorithm.Hash([]byte(val2)))
-	//fmt.Println(hashVal1 == hashVal2)
-	//fmt.Println(hashVal1)
-	//fmt.Println(hashVal2)
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	argsWithoutProg := os.Args[1:]
+	if len(argsWithoutProg) == 0 {
+		Server.NetworkModeStartup()
+	} else {
+		fmt.Println("Local Mode")
+		idx, _ := strconv.Atoi(argsWithoutProg[0])
+		Server.LocalModeStartup(idx)
+	}
+	//The server should never sleep
+	wg.Wait()
 }

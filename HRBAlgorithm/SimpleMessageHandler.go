@@ -7,7 +7,7 @@ import (
 
 //Same as the more complicated one
 func SimpleMsgHandler(d Message) {
-	data,ok := d.(MSGStrcut)
+	data,ok := d.(MSGStruct)
 	if ok {
 		fmt.Println(ok)
 	}
