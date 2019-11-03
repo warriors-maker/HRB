@@ -11,7 +11,7 @@ var serverList []string
 var MyId string //basically the IP of individual server
 var isFault bool //check whether I should be the faulty based on configuration
 
-var sendChans []messageChan
+var sendChans map[string] messageChan
 var readChans chan Network.TcpMessage
 
 var isLocalMode bool //indicate whether this is a local mode
@@ -122,13 +122,11 @@ Writing to the Network
 //Setting up writting Channels for individual sever
 
 func setUpWrite() {
-	sendChans = make ([]messageChan, len(serverList))
+	sendChans = make (map[string]messageChan)
 
-	for i := range sendChans {
-		sendChans[i] = make(chan Network.TcpMessage)
-		//First Param: the server you are writting to
-		//Sending channel
-		go deliver(serverList[i], sendChans[i])
+	for _, serverId := range serverList {
+		sendChans[serverId] = make(chan Network.TcpMessage)
+		go deliver(serverId, sendChans[serverId])
 	}
 
 }
