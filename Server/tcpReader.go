@@ -1,13 +1,11 @@
-package Network
+package Server
 
 import (
-	"HRB/HRBAlgorithm"
 	"encoding/gob"
 	"fmt"
 	"log"
 	"net"
 	"strings"
-	"time"
 )
 
 func TcpReader(ch chan TcpMessage, listeningIp string) {
@@ -30,24 +28,21 @@ func handleConnection(conn net.Conn, ch chan TcpMessage) {
 	/*
 	Register the concrete Type
 	 */
-	gob.Register(HRBAlgorithm.ACCStruct{})
-	gob.Register(HRBAlgorithm.FWDStruct{})
-	gob.Register(HRBAlgorithm.REQStruct{})
-	gob.Register(HRBAlgorithm.MSGStruct{})
-	gob.Register(HRBAlgorithm.ECHOStruct{})
 	dec := gob.NewDecoder(conn)
 
 	data := &TcpMessage{}
 	for {
 		//Receive data
-		dec.Decode(data)
+		if err := dec.Decode(data); err != nil {
+			conn.Close()
+		}
 
 		fmt.Printf("Receiving %+v\n",data.Message)
 
 		ch <- *data
 
 		//Send data
-		time.Sleep(3*time.Second)
+		//time.Sleep(3*time.Second)
 
 		//ack := message{}
 		//ack.Flag = 5

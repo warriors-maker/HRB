@@ -2,25 +2,44 @@ package Server
 
 import (
 	"HRB/HRBAlgorithm"
-	"HRB/Network"
 	"fmt"
 )
-type messageChan chan Network.TcpMessage
+
 
 var serverList []string
 var MyId string //basically the IP of individual server
 var isFault bool //check whether I should be the faulty based on configuration
 
-var sendChans map[string] messageChan
-var readChans chan Network.TcpMessage
+var faultyCount int
+var trustedCount int
+
+type messageChan chan TcpMessage
+
+var SendChans map[string] messageChan
+var ReadChans chan TcpMessage
 
 var isLocalMode bool //indicate whether this is a local mode
 var source bool //A flag to indicate whether I am the sender
 
 /*
-Only used in Local Mode
+Only used in Local Mode for debugging purpose
  */
 var localId int
+
+
+//Start up the peer
+func peerStartup(local bool) {
+	trustedPath := "./Configuration/trusted"
+	faultedPath := "./Configuration/faulty"
+	if local {
+		serverList, MyId, isFault = readServerListLocal(trustedPath, faultedPath, localId)
+	} else {
+		serverList, MyId, isFault = readServerListNetwork(trustedPath, faultedPath)
+	}
+	if isFault {
+		fmt.Println(MyId + " is faulty")
+	}
+}
 
 func LocalModeStartup(id int) {
 	isLocalMode = true
@@ -34,42 +53,59 @@ func LocalModeStartup(id int) {
 	}
 	setUpRead()
 	setUpWrite()
+	HRBAlgorithm.AlgorithmSetUp(MyId, serverList, trustedCount, faultyCount)
+	simpleTest()
 }
 
 func NetworkModeStartup() {
 	isLocalMode = false
 	peerStartup(isLocalMode)
-
 	setUpRead()
 	setUpWrite()
+	HRBAlgorithm.AlgorithmSetUp(MyId, serverList, trustedCount, faultyCount)
 }
 
-//Start up the peer
-func peerStartup(local bool) {
-	trustedPath := "./Configuration/trusted"
-	faultedPath := "./Configuration/faulty"
-	if local {
-		serverList, MyId, isFault = readServerListLocal(trustedPath, faultedPath, localId)
-	} else {
-		serverList, MyId, isFault = readServerListNetwork(trustedPath, faultedPath)
-	}
-}
 
 
 /*
 Reading from the network
- */
+*/
 
 func setUpRead() {
-	readChans = make (chan Network.TcpMessage)
+	ReadChans = make (chan TcpMessage)
 	//Start listening data
-	go Network.TcpReader(readChans, MyId)
+	go TcpReader(ReadChans, MyId)
 	//Channel that filters the data based on the message type
-	go filterRecData(readChans)
-
+	go simpleFilterRecData(ReadChans)
+	//go filterRecData(readChans)
 }
 
-func filterRecData (ch chan Network.TcpMessage) {
+func simpleFilterRecData(ch chan TcpMessage) {
+	for {
+		message := <- ch
+		data := message.Message
+
+		switch v := data.(type) {
+		case HRBAlgorithm.MSGStruct:
+			fmt.Println("Msg")
+			HRBAlgorithm.SimpleMsgHandler(data)
+		case HRBAlgorithm.ECHOStruct:
+			fmt.Println("Echo")
+			HRBAlgorithm.SimpleEchoHandler(data)
+		case HRBAlgorithm.REQStruct:
+			fmt.Println("Req")
+			HRBAlgorithm.SimpleReqHandler(data)
+		case HRBAlgorithm.FWDStruct:
+			fmt.Println("FWD")
+			HRBAlgorithm.SimpleFwdHandler(data)
+		default:
+			fmt.Printf("Sending : %+v\n", v)
+			fmt.Println("I do ot understand what you send")
+		}
+	}
+}
+
+func filterRecData (ch chan TcpMessage) {
 	for {
 		message := <- ch
 		data := message.Message
@@ -122,55 +158,80 @@ Writing to the Network
 //Setting up writting Channels for individual sever
 
 func setUpWrite() {
-	sendChans = make (map[string]messageChan)
+	SendChans = make (map[string] messageChan)
 
 	for _, serverId := range serverList {
-		sendChans[serverId] = make(chan Network.TcpMessage)
-		go deliver(serverId, sendChans[serverId])
+		SendChans[serverId] = make(chan TcpMessage)
+		go deliver(serverId, SendChans[serverId])
+	}
+	go reqSendListener()
+}
+
+func reqSendListener() {
+	//fmt.Println("Inside reqSendListener")
+	for {
+		req := <- HRBAlgorithm.SendReqChan
+		//fmt.Printf("Sending Msg: %+v\n",req.M)
+		if req.SendTo == "all" {
+			for _, sendChan := range SendChans {
+				tcpMessage := TcpMessage{Message:req.M}
+				sendChan <- tcpMessage
+			}
+		} else {
+			sendChan := SendChans[req.SendTo]
+			tcpMessage := TcpMessage{Message:req.M}
+			sendChan <- tcpMessage
+		}
 	}
 
 }
 
-func deliver(ipPort string, ch chan Network.TcpMessage) {
-	Network.TcpWriter(ipPort, ch)
+func deliver(ipPort string, ch chan TcpMessage) {
+	TcpWriter(ipPort, ch)
 }
+
 
 func simpleTest() {
 	//test
 	if source {
-		var m HRBAlgorithm.Message
-
-		m = HRBAlgorithm.FWDStruct{Id:MyId, SenderId:MyId}
-		message := Network.TcpMessage{Message: m, ID:MyId}
-		for _,ch := range sendChans {
-			ch <- message
+		//fmt.Println("I am the source")
+		m := HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, Data:"abc", Header:0, Round:0}
+		for _, server := range serverList {
+			tcpMessage := TcpMessage{Message:m}
+			SendChans[server] <- tcpMessage
 		}
 
-		m = HRBAlgorithm.ACCStruct{Id:MyId, SenderId:MyId}
-		message = Network.TcpMessage{Message: m, ID:MyId}
-		for _,ch := range sendChans {
-			ch <- message
-		}
+		//m = HRBAlgorithm.FWDStruct{Id:MyId, SenderId:MyId}
+		//message := TcpMessage{Message: m, ID:MyId}
+		//for _,ch := range SendChans {
+		//	ch <- message
+		//}
 
-		m = HRBAlgorithm.REQStruct{Id:MyId, SenderId:MyId}
-		message = Network.TcpMessage{Message: m, ID:MyId}
-
-		for _,ch := range sendChans {
-			ch <- message
-		}
-
-		m = HRBAlgorithm.ECHOStruct{Id:MyId, SenderId:MyId}
-		message = Network.TcpMessage{Message: m, ID:MyId}
-
-		for _,ch := range sendChans {
-			ch <- message
-		}
-
-		m = HRBAlgorithm.MSGStruct{Id:MyId, SenderId:MyId}
-		message = Network.TcpMessage{Message: m, ID:MyId}
-		for _,ch := range sendChans {
-			ch <- message
-		}
+		//m = HRBAlgorithm.ACCStruct{Id:MyId, SenderId:MyId}
+		//message = TcpMessage{Message: m, ID:MyId}
+		//for _,ch := range SendChans {
+		//	ch <- message
+		//}
+		//
+		//m = HRBAlgorithm.REQStruct{Id:MyId, SenderId:MyId}
+		//message = TcpMessage{Message: m, ID:MyId}
+		//
+		//for _,ch := range SendChans {
+		//	ch <- message
+		//}
+		//
+		//m = HRBAlgorithm.ECHOStruct{Id:MyId, SenderId:MyId}
+		//message = TcpMessage{Message: m, ID:MyId}
+		//
+		//for _,ch := range SendChans {
+		//	ch <- message
+		//}
+		//
+		//m = HRBAlgorithm.MSGStruct{Id:MyId, SenderId:MyId}
+		//message = TcpMessage{Message: m, ID:MyId}
+		//for _,ch := range SendChans {
+		//	ch <- message
+		//}
 	}
 }
 

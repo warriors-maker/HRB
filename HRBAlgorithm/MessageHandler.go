@@ -1,9 +1,11 @@
 package HRBAlgorithm
 
 import (
+	"HRB/Util"
 	"fmt"
 	"strconv"
 )
+
 
 func Msghandler (d Message) (bool, int, string){
 	data,ok := d.(MSGStruct)
@@ -26,13 +28,13 @@ func Msghandler (d Message) (bool, int, string){
 		*/
 
 		//data type check
-		oknum,num := ParseInt(data.GetData())
+		oknum,num := Util.ParseInt(data.GetData())
 		if oknum {
 			hash = Hash([]byte(strconv.Itoa(num)))
 			hashstr = ConvertBytesToString(hash)
 		}
 
-		okstr ,str := ParseString(data.GetData())
+		okstr ,str := Util.ParseString(data.GetData())
 		if okstr {
 			hash = Hash([]byte(str))
 			hashstr = ConvertBytesToString(hash)
@@ -122,6 +124,7 @@ func AccHandler (data Message) (bool, int, bool){
 
 func ReqHandler (data Message) (bool, bool){
 	identifier := data.GetId()+ strconv.Itoa(data.GetRound()) + data.GetSenderId()
+	fmt.Printf("Req: %+v\n",data)
 	if _, ok := ReqReceiveSet[identifier]; !ok {
 		ReqReceiveSet[identifier] = true
 		if exist, _ := checkDataExist(data.GetHashData()); exist {
@@ -142,9 +145,8 @@ func FwdHandler (data Message) (bool, bool){
 	*/
 	//data type check
 	hashStr := ConvertBytesToString(Hash([]byte(data.GetData())))
-
+	fmt.Printf("Fwd: %+v\n",data)
 	m := REQStruct{Header:REQ, Id:data.GetId(), HashData:hashStr, Round: data.GetRound()}
-
 	if hasSent(ReqSentSet[m], data.GetSenderId()) {
 		if _,seen := FwdReceiveSet[identifier]; !seen {
 			FwdReceiveSet[identifier] = true

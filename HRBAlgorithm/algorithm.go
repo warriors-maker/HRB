@@ -1,6 +1,8 @@
 package HRBAlgorithm
 
-import "fmt"
+import (
+	"encoding/gob"
+)
 
 //(SenderID + h, bool)
 var MessageReceiveSet map[string] bool
@@ -37,10 +39,15 @@ var sendChan chan Message
 var faulty int
 var trusted int
 var total int
+var MyID string
 
 var acceptData []interface{}
 
-func AlgorithmSetUp() {
+var SendReqChan chan ReqChanStruct
+
+
+
+func AlgorithmSetUp(myID string, serverList []string, trustedCount, faultyCount int) {
 	MessageReceiveSet = make(map[string] bool)
 	//MessageSentSet = make(map[string] bool)
 
@@ -64,10 +71,20 @@ func AlgorithmSetUp() {
 
 	sendChan = make(chan Message)
 
+	SendReqChan = make (chan ReqChanStruct)
+
 	//change later based on config
-	trusted = 3
-	faulty = 1
+	trusted = trustedCount
+	faulty = faultyCount
 	total = trusted + faulty
+	MyID = myID
+
+	//Register the concrete type for interface
+	gob.Register(ACCStruct{})
+	gob.Register(FWDStruct{})
+	gob.Register(REQStruct{})
+	gob.Register(MSGStruct{})
+	gob.Register(ECHOStruct{})
 }
 
 func checkRecMsg(id string) bool{
@@ -91,10 +108,17 @@ func hasSent(l []string, val string) bool{
 func checkDataExist(expectedHash string) (bool, string) {
 	for k,v := range DataSet {
 		if v == expectedHash {
-			fmt.Println("Check exist" + expectedHash)
+			//fmt.Println("Check exist" + expectedHash)
 			return true, k
 		}
 	}
 	return false,""
 }
+
+
+
+
+
+
+
 

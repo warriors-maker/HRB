@@ -2,6 +2,8 @@ package Server
 
 import (
 	"bufio"
+	"fmt"
+
 	//"fmt"
 	"log"
 	"net"
@@ -36,15 +38,19 @@ func loadConfigServerFile(filePath string) []string{
 func readTrustedFaulted(trustedPath, faultyPath string) ([]string, []string){
 	trusted := loadConfigServerFile(trustedPath)
 	faulty := loadConfigServerFile(faultyPath)
+	fmt.Println(trusted, faulty)
 	return trusted, faulty
 
 }
 
 func readServerListLocal(trustedPath, faultyPath string, index int) ([]string, string, bool){
-	trusted, faulty :=   readTrustedFaulted(trustedPath, faultyPath)
+	trusted, faulty := readTrustedFaulted(trustedPath, faultyPath)
+	trustedCount = len(trusted)
+	faultyCount = len(faulty)
+
 	serverList := append(trusted, faulty...)
 	myId := serverList[index];
-	isFault := checkIsFaulty(MyId, faulty)
+	isFault := checkIsFaulty(myId, faulty)
 	return serverList, myId, isFault
 }
 
@@ -53,7 +59,7 @@ func readServerListNetwork(trustedPath, faultyPath string) ([]string, string, bo
 	trusted, faulty :=   readTrustedFaulted(trustedPath, faultyPath)
 	serverList := append(trusted, faulty...)
 	myId := getLocalIP()
-	isFault := checkIsFaulty(MyId, faulty)
+	isFault := checkIsFaulty(myId, faulty)
 	return serverList, myId, isFault
 }
 

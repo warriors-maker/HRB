@@ -64,6 +64,12 @@ type REQStruct struct {
 	SenderId string
 }
 
+
+type ReqChanStruct struct {
+	M Message
+	SendTo string
+}
+
 /*
 Implement the interface
  */

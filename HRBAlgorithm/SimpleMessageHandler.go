@@ -5,12 +5,10 @@ import (
 	"strconv"
 )
 
+
 //Same as the more complicated one
 func SimpleMsgHandler(d Message) {
-	data,ok := d.(MSGStruct)
-	if ok {
-		fmt.Println(ok)
-	}
+	data,_ := d.(MSGStruct)
 
 	identifier := data.GetId() + strconv.Itoa(data.GetRound())
 	if _, seen := MessageReceiveSet[identifier]; !seen {
@@ -22,21 +20,23 @@ func SimpleMsgHandler(d Message) {
 		DataSet[data.GetData()] = hashStr
 
 		//Main logic
-		m := ECHOStruct{Header:ECHO, Id:data.GetId(), HashData:hashStr, Round: data.GetRound()}
-		fmt.Printf("%+v\n",m)
+		m := ECHOStruct{Header:ECHO, Id:data.GetId(), HashData:hashStr, Round: data.GetRound(), SenderId:MyID}
+		//fmt.Printf("HeyMsg: %+v\n",m)
 
-		if l, ok := simpleEchoRecCountSet[m]; ok {
-			l = append(l, d.GetSenderId())
-			simpleEchoRecCountSet[m] = l
-		} else {
-			simpleEchoRecCountSet[m] = []string{d.GetSenderId()}
-		}
+		//if l, ok := simpleEchoRecCountSet[m]; ok {
+		//	l = append(l, d.GetSenderId())
+		//	simpleEchoRecCountSet[m] = l
+		//} else {
+		//	simpleEchoRecCountSet[m] = []string{d.GetSenderId()}
+		//}
 
 		//ToDo: Send Echo to all servers
 		if _, sent := EchoSentSet[identifier]; !sent {
 			EchoSentSet[identifier] = true
+			sendReq := ReqChanStruct{M: m, SendTo:"all"}
+			SendReqChan <- sendReq
 		}
-
+		SimpleCheck(d)
 	}
 
 }
@@ -45,8 +45,23 @@ func SimpleReqHandler(d Message) {
 	ReqHandler(d)
 }
 
-func SimpleFwdHandler(d Message) {
-	FwdHandler(d)
+func SimpleFwdHandler(data Message) {
+	identifier := data.GetId() + strconv.Itoa(data.GetRound()) + data.GetSenderId();
+	/*
+		have seen echo + 1
+	*/
+	//data type check
+	hashStr := ConvertBytesToString(Hash([]byte(data.GetData())))
+	//fmt.Printf("Fwd: %+v\n",data)
+	m := REQStruct{Header:REQ, Id:data.GetId(), HashData:hashStr, Round: data.GetRound(), SenderId:MyID}
+	if hasSent(ReqSentSet[m], data.GetSenderId()) {
+		if _,seen := FwdReceiveSet[identifier]; !seen {
+			FwdReceiveSet[identifier] = true
+			DataSet[data.GetData()] = hashStr
+			//check
+			SimpleCheck(data)
+		}
+	}
 }
 
 func SimpleEchoHandler(d Message) {
@@ -56,7 +71,7 @@ func SimpleEchoHandler(d Message) {
 
 		//update count
 		m := ECHOStruct{Header:ECHO, Id:d.GetId(), HashData:d.GetHashData(), Round: d.GetRound()}
-		fmt.Printf("%+v\n",m)
+		//fmt.Printf("Echo: %+v\n",m)
 		if l, ok := simpleEchoRecCountSet[m]; ok {
 			l := append(l, m.GetSenderId())
 			simpleEchoRecCountSet[m] = l
@@ -65,16 +80,17 @@ func SimpleEchoHandler(d Message) {
 			simpleEchoRecCountSet[m] = l
 		}
 
-		reqMes := REQStruct{Header:REQ, Id:d.GetId(), HashData:d.GetHashData(), Round: d.GetRound()}
+		reqMes := REQStruct{Header:REQ, Id:d.GetId(), HashData:d.GetHashData(), Round: d.GetRound(), SenderId:MyID}
 		if len(simpleEchoRecCountSet[m]) == faulty + 1 {
 			ReqSentSet[reqMes] = simpleEchoRecCountSet[m]
 			if exist, _ := checkDataExist(d.GetHashData()); !exist {
 				//Todo: Send Req to these f + 1
 				for _,id := range simpleEchoRecCountSet[m] {
-					fmt.Println(id)
+					reqMessage := ReqChanStruct{M: reqMes, SendTo: id}
+					SendReqChan <- reqMessage
 				}
 			}
-
+			SimpleCheck(d)
 		} else if len(simpleEchoRecCountSet[m]) > faulty + 1 {
 			if exist, _ := checkDataExist(d.GetHashData()); !exist {
 				//send the request to the current id
@@ -83,26 +99,23 @@ func SimpleEchoHandler(d Message) {
 				l = append(l, d.GetSenderId())
 				ReqSentSet[reqMes] = l
 				//send request
+				reqMessage := ReqChanStruct{M: reqMes, SendTo: d.GetSenderId()}
+				SendReqChan <- reqMessage
 			}
+			SimpleCheck(d)
 		}
-
-		//Check
-		//flags := check(data)
-
 	}
 
 }
 
 func SimpleCheck(m Message) {
-	fmt.Println("Inside check")
 	echo := ECHOStruct{Header:ECHO, Round:m.GetRound(), HashData:m.GetHashData(), Id:m.GetId()}
-
-	fmt.Printf("%+v\n",echo)
+	//fmt.Printf("%+v\n",echo)
 
 	identifier := m.GetId() + strconv.Itoa(m.GetRound())
 	flags := []bool{false, false}
 
-	if EchoRecCountSet[echo] >= faulty + 1 {
+	if len(simpleEchoRecCountSet[echo]) >= faulty + 1 {
 		fmt.Println("Receive more than faulty + 1 echo message")
 		if _, sent := EchoSentSet[identifier]; !sent {
 			fmt.Println("Sent Echo to other servers")
@@ -112,7 +125,7 @@ func SimpleCheck(m Message) {
 		}
 	}
 
-	if EchoRecCountSet[echo] >= total - faulty {
+	if len(simpleEchoRecCountSet[echo]) >= total - faulty {
 		fmt.Println("Receive more than total - faulty echo message")
 		if _, sent := AccSentSet[identifier]; !sent {
 			AccSentSet[identifier] = true
@@ -121,5 +134,5 @@ func SimpleCheck(m Message) {
 		}
 	}
 
-
+	fmt.Printf("Count: %d\n",len(simpleEchoRecCountSet[echo]))
 }

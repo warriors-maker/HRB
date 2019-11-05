@@ -1,7 +1,6 @@
-package Network
+package Server
 
 import (
-	"ByzantineConsensusAlgorithm/Utility"
 	"encoding/gob"
 	"fmt"
 	"net"
@@ -10,6 +9,7 @@ import (
 
 //ipPort: the targer ipAddress to write to
 func TcpWriter(ipPort string, ch chan TcpMessage) {
+	counter := 0
 	fmt.Println("Channel for sending data to " + ipPort)
 
 	conn, err:= net.Dial("tcp",ipPort)
@@ -21,13 +21,23 @@ func TcpWriter(ipPort string, ch chan TcpMessage) {
 	}
 
 	encoder := gob.NewEncoder(conn)
-	//dec := gob.NewDecoder(conn)
 	for {
 		data := <-ch
-		fmt.Printf("Sending : %+v\n", data.Message)
+		if isFault {
+			if counter % 2 == 0 {
 
-		err := encoder.Encode(&data)
-		Utility.CheckErr(err)
+			} else {
+				fmt.Printf("Sending : %+v\n", data.Message)
+				time.Sleep(7*time.Second)
+				encoder.Encode(&data)
+			}
+		} else {
+			fmt.Printf("Sending : %+v\n", data.Message)
+			time.Sleep(7*time.Second)
+			encoder.Encode(&data)
+		}
+
+		counter++
 	}
 }
 

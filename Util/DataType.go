@@ -1,4 +1,6 @@
-package HRBAlgorithm
+package Util
+
+
 
 func ParseInt(i interface{}) (bool, int) {
 	switch v := i.(type) {
