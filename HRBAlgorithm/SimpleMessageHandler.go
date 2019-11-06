@@ -17,7 +17,14 @@ func SimpleMsgHandler(d Message) {
 		hashStr := ConvertBytesToString(Hash([]byte(data.GetData())))
 
 		//include the data with key the original data and val its hashvalue
-		DataSet[data.GetData()] = hashStr
+
+		if recData,exist := DataSet[data.GetData()]; exist {
+			recData.update(d, hashStr)
+		} else {
+			receiveData := receiveData{}
+			receiveData.update(d, hashStr)
+			DataSet[data.GetData()] = &receiveData
+		}
 
 		//Main logic
 		m := ECHOStruct{Header:ECHO, Id:data.GetId(), HashData:hashStr, Round: data.GetRound(), SenderId:MyID}
@@ -59,7 +66,13 @@ func SimpleFwdHandler(data Message) {
 		if _,seen := FwdReceiveSet[identifier]; !seen {
 			fmt.Println("Receive fwd back from the request")
 			FwdReceiveSet[identifier] = true
-			DataSet[data.GetData()] = hashStr
+			if recData,exist := DataSet[data.GetData()]; exist {
+				recData.update(data, hashStr)
+			} else {
+				receiveData := receiveData{}
+				receiveData.update(data, hashStr)
+				DataSet[data.GetData()] = &receiveData
+			}
 			//check
 			SimpleCheck(m)
 		}

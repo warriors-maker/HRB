@@ -2,6 +2,8 @@ package HRBAlgorithm
 
 import (
 	"encoding/gob"
+	"fmt"
+	"sync"
 )
 
 //(SenderID + h, bool)
@@ -32,7 +34,7 @@ var FwdReceiveSet map[string] bool
 //(SendToId, bool)
 //var FwdSentSet map[string] bool
 
-var DataSet map[string] string
+var DataSet map[string] *receiveData
 // Send Phase to the TCPWriter
 var sendChan chan Message
 
@@ -44,6 +46,33 @@ var MyID string
 var acceptData []interface{}
 
 var SendReqChan chan PrepareSend
+
+
+type receiveData struct {
+	mux sync.Mutex
+	isDirect bool
+	hashValue string
+	count int
+}
+
+func (d *receiveData) update(message Message, hashString string) {
+	fmt.Printf("Update data: %+v\n", message)
+	d.mux.Lock()
+	if message.GetHeaderType() == MSG {
+		d.isDirect = true
+		d.hashValue = hashString
+	} else if message.GetHeaderType() == FWD {
+		if ! d.isDirect {
+			d.count = d.count + 1
+			d.hashValue = hashString
+		}
+	}
+	d.mux.Unlock()
+}
+
+func (d *receiveData) fetchInfo() (bool, string, int){
+	return d.isDirect, d.hashValue, d.count
+}
 
 
 
@@ -67,7 +96,7 @@ func AlgorithmSetUp(myID string, serverList []string, trustedCount, faultyCount 
 	FwdReceiveSet = make(map[string] bool)
 	//FwdSentSet = make(map[string] bool)
 
-	DataSet = make (map[string] string)
+	DataSet = make (map[string] *receiveData)
 
 	sendChan = make(chan Message)
 
@@ -107,7 +136,7 @@ func hasSent(l []string, val string) bool{
 
 func checkDataExist(expectedHash string) (bool, string) {
 	for k,v := range DataSet {
-		if v == expectedHash {
+		if v.hashValue == expectedHash {
 			//fmt.Println("Check exist" + expectedHash)
 			return true, k
 		}
