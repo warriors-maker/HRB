@@ -76,80 +76,23 @@ func setUpRead() {
 	//Start listening data
 	go TcpReader(ReadChans, MyId)
 	//Channel that filters the data based on the message type
-	go simpleFilterRecData(ReadChans)
+	go filterSimple(ReadChans)
 	//go filterRecData(readChans)
 }
 
-func simpleFilterRecData(ch chan TcpMessage) {
+func filter (ch chan TcpMessage) {
 	for {
-		message := <- ch
-		data := message.Message
-
-		switch v := data.(type) {
-		case HRBAlgorithm.MSGStruct:
-			fmt.Println("Msg")
-			HRBAlgorithm.SimpleMsgHandler(data)
-		case HRBAlgorithm.ECHOStruct:
-			fmt.Println("Echo")
-			HRBAlgorithm.SimpleEchoHandler(data)
-		case HRBAlgorithm.REQStruct:
-			fmt.Println("Req")
-			HRBAlgorithm.SimpleReqHandler(data)
-		case HRBAlgorithm.FWDStruct:
-			fmt.Println("FWD")
-			HRBAlgorithm.SimpleFwdHandler(data)
-		default:
-			fmt.Printf("Sending : %+v\n", v)
-			fmt.Println("I do ot understand what you send")
-		}
+		message := <-ch
+		HRBAlgorithm.FilterRecData(message.Message)
 	}
+	//Call the filter method
 }
-
-func filterRecData (ch chan TcpMessage) {
+func filterSimple(ch chan TcpMessage) {
 	for {
-		message := <- ch
-		data := message.Message
-
-		switch v := data.(type) {
-		case HRBAlgorithm.MSGStruct:
-			fmt.Println("Msg")
-			//receiveMsg(data)
-		case HRBAlgorithm.ECHOStruct:
-			fmt.Println("Echo")
-			//receiveEcho(data)
-		case HRBAlgorithm.ACCStruct:
-			fmt.Println("Acc")
-			//receiveAcc(data)
-		case HRBAlgorithm.REQStruct:
-			fmt.Println("Req")
-			//receiveReq(data)
-		case HRBAlgorithm.FWDStruct:
-			fmt.Print("FWD")
-		default:
-			fmt.Printf("Sending : %+v\n", v)
-			fmt.Println("I do ot understand what you send")
-		}
+		message := <-ch
+		HRBAlgorithm.SimpleFilterRecData(message.Message)
 	}
-}
-
-func receiveMsg (data HRBAlgorithm.Message) {
-	HRBAlgorithm.Msghandler(data)
-}
-
-func receiveEcho (data HRBAlgorithm.Message) {
-	HRBAlgorithm.EchoHandler(data)
-}
-
-func receiveAcc (data HRBAlgorithm.Message) {
-	HRBAlgorithm.AccHandler(data)
-}
-
-func receiveReq(data HRBAlgorithm.Message) {
-	HRBAlgorithm.ReqHandler(data)
-}
-
-func receiveFwd (data HRBAlgorithm.Message) {
-	HRBAlgorithm.FwdHandler(data)
+	//Call the filter method
 }
 
 /*
@@ -189,7 +132,6 @@ func reqSendListener() {
 func deliver(ipPort string, ch chan TcpMessage) {
 	TcpWriter(ipPort, ch)
 }
-
 
 func simpleTest() {
 	//test

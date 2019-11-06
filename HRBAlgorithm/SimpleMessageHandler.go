@@ -54,10 +54,9 @@ func SimpleFwdHandler(data Message) {
 	hashStr := ConvertBytesToString(Hash([]byte(data.GetData())))
 	//fmt.Printf("Fwd: %+v\n",data)
 	m := REQStruct{Header:REQ, Id:data.GetId(), HashData:hashStr, Round: data.GetRound(), SenderId:MyID}
-	fmt.Printf("ReceiveBack FWD %+v\n" , m)
 	if hasSent(ReqSentSet[m], data.GetSenderId()) {
 		if _,seen := FwdReceiveSet[identifier]; !seen {
-			fmt.Println("Receive fwd back from the request")
+			fmt.Printf("ReceiveBack FWD %+v\n" , m)
 			FwdReceiveSet[identifier] = true
 			DataSet[data.GetData()] = hashStr
 			//check
@@ -146,7 +145,7 @@ func SimpleCheck(m Message) {
 			}
 		}
 
-		fmt.Printf("Count: %d\n",len(simpleEchoRecCountSet[echo]))
+		//fmt.Printf("Count: %d\n",len(simpleEchoRecCountSet[echo]))
 	}
 
 }

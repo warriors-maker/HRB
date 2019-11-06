@@ -2,6 +2,7 @@ package HRBAlgorithm
 
 import (
 	"encoding/gob"
+	"fmt"
 )
 
 //(SenderID + h, bool)
@@ -114,6 +115,66 @@ func checkDataExist(expectedHash string) (bool, string) {
 	}
 	return false,""
 }
+
+
+func SimpleFilterRecData(message Message) {
+	switch v := message.(type) {
+	case MSGStruct:
+		SimpleMsgHandler(message)
+	case ECHOStruct:
+		SimpleEchoHandler(message)
+	case REQStruct:
+		SimpleReqHandler(message)
+	case FWDStruct:
+		SimpleFwdHandler(message)
+	default:
+		fmt.Printf("Sending : %+v\n", v)
+		fmt.Println("I do ot understand what you send")
+	}
+}
+
+func FilterRecData (message Message) {
+	switch v := message.(type) {
+	case MSGStruct:
+		fmt.Println("Msg")
+		//receiveMsg(data)
+	case ECHOStruct:
+		fmt.Println("Echo")
+		//receiveEcho(data)
+	case ACCStruct:
+		fmt.Println("Acc")
+		//receiveAcc(data)
+	case REQStruct:
+		fmt.Println("Req")
+		//receiveReq(data)
+	case FWDStruct:
+		fmt.Print("FWD")
+	default:
+		fmt.Printf("Sending : %+v\n", v)
+		fmt.Println("I do ot understand what you send")
+	}
+}
+
+func receiveMsg (data Message) {
+	Msghandler(data)
+}
+
+func receiveEcho (data Message) {
+	EchoHandler(data)
+}
+
+func receiveAcc (data Message) {
+	AccHandler(data)
+}
+
+func receiveReq(data Message) {
+	ReqHandler(data)
+}
+
+func receiveFwd (data Message) {
+	FwdHandler(data)
+}
+
 
 
 
