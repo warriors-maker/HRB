@@ -65,7 +65,7 @@ type REQStruct struct {
 }
 
 
-type ReqChanStruct struct {
+type PrepareSend struct {
 	M Message
 	SendTo string
 }

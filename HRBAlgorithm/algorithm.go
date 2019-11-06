@@ -12,9 +12,9 @@ var MessageReceiveSet map[string] bool
 var EchoReceiveSet map[string] bool
 //(sendToID + h, bool)
 var EchoSentSet map[string] bool
-//(MSG, count)
+//Used in Not Simple Version
 var EchoRecCountSet map[ECHOStruct] int
-
+//Used in SimpleVersion because of the place where they get accept
 var simpleEchoRecCountSet map[ECHOStruct] []string
 
 //(SenderId + h, bool)
@@ -43,7 +43,7 @@ var MyID string
 
 var acceptData []interface{}
 
-var SendReqChan chan ReqChanStruct
+var SendReqChan chan PrepareSend
 
 
 
@@ -71,7 +71,7 @@ func AlgorithmSetUp(myID string, serverList []string, trustedCount, faultyCount 
 
 	sendChan = make(chan Message)
 
-	SendReqChan = make (chan ReqChanStruct)
+	SendReqChan = make (chan PrepareSend)
 
 	//change later based on config
 	trusted = trustedCount

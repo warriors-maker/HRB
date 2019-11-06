@@ -196,7 +196,7 @@ func simpleTest() {
 	if source {
 		//fmt.Println("I am the source")
 		m := HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, Data:"abc", Header:0, Round:0}
-		for _, server := range serverList {
+		for _ , server := range serverList {
 			tcpMessage := TcpMessage{Message:m}
 			SendChans[server] <- tcpMessage
 		}

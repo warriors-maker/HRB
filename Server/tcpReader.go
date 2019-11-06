@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
 	"strings"
 )
 
@@ -34,7 +35,9 @@ func handleConnection(conn net.Conn, ch chan TcpMessage) {
 	for {
 		//Receive data
 		if err := dec.Decode(data); err != nil {
-			conn.Close()
+			if errconn := conn.Close(); errconn != nil {
+				os.Exit(1)
+			}
 		}
 
 		fmt.Printf("Receiving %+v\n",data.Message)

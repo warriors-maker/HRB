@@ -8,10 +8,8 @@ import (
 
 
 func Msghandler (d Message) (bool, int, string){
-	data,ok := d.(MSGStruct)
-	if ok {
-		fmt.Println(ok)
-	}
+	data,_ := d.(MSGStruct)
+
 
 	identifier := data.GetId() + strconv.Itoa(data.GetRound())
 	if _, seen := MessageReceiveSet[identifier]; !seen {
@@ -127,9 +125,11 @@ func ReqHandler (data Message) (bool, bool){
 	fmt.Printf("Req: %+v\n",data)
 	if _, ok := ReqReceiveSet[identifier]; !ok {
 		ReqReceiveSet[identifier] = true
-		if exist, _ := checkDataExist(data.GetHashData()); exist {
+		if exist, d := checkDataExist(data.GetHashData()); exist {
 			//send val to the requested id
-			//fmt.Println(val, data.GetHashData())
+			fwdSendMsg := FWDStruct{Header:FWD, Id: data.GetId(), Round:data.GetRound(), SenderId:MyID, Data: d}
+			req := PrepareSend{M: fwdSendMsg, SendTo: data.GetSenderId()}
+			SendReqChan <- req
 			return true, true
 		}
 		return true, false
@@ -162,48 +162,50 @@ func FwdHandler (data Message) (bool, bool){
 
 func check(m Message) []bool {
 	fmt.Println("Inside check")
-	echo := ECHOStruct{Header:ECHO, Round:m.GetRound(), HashData:m.GetHashData(), Id:m.GetId()}
-	acc := ACCStruct{Header:ACC, Round:m.GetRound(), HashData:m.GetHashData(), Id:m.GetId()}
-
-	fmt.Printf("%+v\n",echo)
-	fmt.Printf("%+v\n",acc)
-
-	identifier := m.GetId() + strconv.Itoa(m.GetRound())
-
 	flags := []bool{false, false, false, false}
+	if exist, value := checkDataExist(m.GetHashData()); exist {
+		echo := ECHOStruct{Header:ECHO, Round:m.GetRound(), HashData:m.GetHashData(), Id:m.GetId()}
+		acc := ACCStruct{Header:ACC, Round:m.GetRound(), HashData:m.GetHashData(), Id:m.GetId()}
 
-	if EchoRecCountSet[echo] >= faulty + 1 {
-		fmt.Println("Receive more than faulty + 1 echo message")
-		if _, sent := EchoSentSet[identifier]; !sent {
-			fmt.Println("Sent Echo to other servers")
-			EchoSentSet[identifier] = true
-			//send Echo to all servers
-			flags[0] = true
+		fmt.Printf("%+v\n",echo)
+		fmt.Printf("%+v\n",acc)
+
+		identifier := m.GetId() + strconv.Itoa(m.GetRound())
+
+		if EchoRecCountSet[echo] >= faulty + 1 {
+			fmt.Println("Receive more than faulty + 1 echo message")
+			if _, sent := EchoSentSet[identifier]; !sent {
+				fmt.Println("Sent Echo to other servers")
+				EchoSentSet[identifier] = true
+				//send Echo to all servers
+				flags[0] = true
+			}
 		}
-	}
 
-	if EchoRecCountSet[echo] >= total - faulty {
-		fmt.Println("Receive more than total - faulty echo message")
-		if _, sent := AccSentSet[identifier]; !sent {
-			AccSentSet[identifier] = true
-			//send ACC to all servers
-			fmt.Println("Sent Acc to other servers")
-			flags[1] = true
+		if EchoRecCountSet[echo] >= total - faulty {
+			fmt.Println("Receive more than total - faulty echo message")
+			if _, sent := AccSentSet[identifier]; !sent {
+				AccSentSet[identifier] = true
+				//send ACC to all servers
+				fmt.Println("Sent Acc to other servers")
+				flags[1] = true
+			}
 		}
-	}
 
-	if len(AccRecCountSet[acc]) >= faulty + 1 {
-		fmt.Println("Identifier"+identifier)
-		if _,sent := AccSentSet[identifier]; !sent {
-			AccSentSet[identifier] = true
-			//send ACC to all Servers
-			flags[2] = true
+		if len(AccRecCountSet[acc]) >= faulty + 1 {
+			fmt.Println("Identifier"+identifier)
+			if _,sent := AccSentSet[identifier]; !sent {
+				AccSentSet[identifier] = true
+				//send ACC to all Servers
+				flags[2] = true
+			}
 		}
-	}
 
-	if len(AccRecCountSet[acc]) >= total - faulty {
-		//accept
+		if len(AccRecCountSet[acc]) >= total - faulty {
+			//accept
+			fmt.Println("Reliable Accept " + value)
 			flags[3] = true
+		}
 	}
 	return flags
 }
