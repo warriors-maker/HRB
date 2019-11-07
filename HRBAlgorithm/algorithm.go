@@ -54,6 +54,7 @@ func AlgorithmSetUp(myID string, serverList []string, trustedCount, faultyCount 
 
 	EchoReceiveSet = make(map[string] bool)
 	EchoSentSet = make(map[string] bool)
+	//Used in Acc version
 	EchoRecCountSet = make (map[ECHOStruct] int)
 	//used in Simple
 	simpleEchoRecCountSet = make (map[ECHOStruct] []string)

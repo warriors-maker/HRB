@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="92212f8a-9e41-4b3d-9b89-c1292143224f" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HRBAlgorithm/MessageHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/HRBAlgorithm/MessageHandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/HRBAlgorithm/algorithm.go" beforeDir="false" afterPath="$PROJECT_DIR$/HRBAlgorithm/algorithm.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/ServerMain.go" beforeDir="false" afterPath="$PROJECT_DIR$/Server/ServerMain.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -16,17 +17,35 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/HRBAlgorithm/algorithm.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="362">
-              <caret line="118" column="25" lean-forward="true" selection-start-line="118" selection-start-column="25" selection-end-line="118" selection-end-column="43" />
+            <state relative-caret-position="217">
+              <caret line="109" column="5" selection-start-line="109" selection-start-column="5" selection-end-line="109" selection-end-column="5" />
+              <folding>
+                <element signature="e#22#48#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/HRBAlgorithm/MessageHandler.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="181">
+              <caret line="193" column="53" lean-forward="true" selection-start-line="193" selection-start-column="53" selection-end-line="193" selection-end-column="53" />
+              <folding>
+                <element signature="e#22#62#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Server/ServerMain.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="259">
-              <caret line="112" column="39" lean-forward="true" selection-start-line="112" selection-start-column="39" selection-end-line="112" selection-end-column="39" />
+            <state relative-caret-position="-367">
+              <caret line="118" column="40" lean-forward="true" selection-start-line="118" selection-start-column="40" selection-end-line="118" selection-end-column="40" />
+              <folding>
+                <element signature="e#16#53#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -34,8 +53,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/HRBAlgorithm/SimpleMessageHandler.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1186">
-              <caret line="53" column="4" selection-start-line="53" selection-start-column="4" selection-end-line="53" selection-end-column="4" />
+            <state relative-caret-position="-1312">
+              <caret line="25" selection-start-line="25" selection-end-line="31" />
               <folding>
                 <element signature="e#22#50#0" expanded="true" />
               </folding>
@@ -46,8 +65,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Configuration/faulty">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="15">
-              <caret line="1" column="14" selection-start-line="1" selection-start-column="14" selection-end-line="1" selection-end-column="14" />
+            <state>
+              <caret column="14" selection-start-column="14" selection-end-column="14" />
             </state>
           </provider>
         </entry>
@@ -55,8 +74,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Configuration/trusted">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="4" column="14" selection-start-line="4" selection-start-column="14" selection-end-line="4" selection-end-column="14" />
+            <state relative-caret-position="30">
+              <caret line="2" column="14" selection-start-line="2" selection-start-column="14" selection-end-line="2" selection-end-column="14" />
             </state>
           </provider>
         </entry>
@@ -65,16 +84,7 @@
         <entry file="file://$PROJECT_DIR$/HRBAlgorithm/HRBMessage.go">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="90">
-              <caret line="6" column="22" selection-start-line="6" selection-start-column="22" selection-end-line="6" selection-end-column="22" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/HRBAlgorithm/MessageHandler.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="120">
-              <caret line="12" selection-start-line="12" selection-end-line="12" />
+              <caret line="6" column="6" lean-forward="true" selection-start-line="6" selection-end-line="7" />
             </state>
           </provider>
         </entry>
@@ -132,20 +142,20 @@
         <option value="$PROJECT_DIR$/HRBAlgorithm/ReqChanStruct.go" />
         <option value="$PROJECT_DIR$/Server/util.go" />
         <option value="$PROJECT_DIR$/SimpleHRB.go" />
-        <option value="$PROJECT_DIR$/Configuration/trusted" />
-        <option value="$PROJECT_DIR$/Configuration/faulty" />
         <option value="$PROJECT_DIR$/Server/tcpReader.go" />
         <option value="$PROJECT_DIR$/HRBAlgorithm/HRBMessage.go" />
-        <option value="$PROJECT_DIR$/HRBAlgorithm/MessageHandler.go" />
-        <option value="$PROJECT_DIR$/HRBAlgorithm/SimpleMessageHandler.go" />
         <option value="$PROJECT_DIR$/Server/tcpWriter.go" />
-        <option value="$PROJECT_DIR$/HRBAlgorithm/algorithm.go" />
         <option value="$PROJECT_DIR$/Server/ServerMain.go" />
+        <option value="$PROJECT_DIR$/Configuration/faulty" />
+        <option value="$PROJECT_DIR$/Configuration/trusted" />
+        <option value="$PROJECT_DIR$/HRBAlgorithm/SimpleMessageHandler.go" />
+        <option value="$PROJECT_DIR$/HRBAlgorithm/algorithm.go" />
+        <option value="$PROJECT_DIR$/HRBAlgorithm/MessageHandler.go" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="89" />
+    <option name="x" value="302" />
     <option name="y" value="23" />
     <option name="width" value="1400" />
     <option name="height" value="941" />
@@ -299,10 +309,10 @@
     </history-entry>
   </component>
   <component name="ToolWindowManager">
-    <frame x="89" y="23" width="1400" height="941" extended-state="0" />
+    <frame x="302" y="23" width="1400" height="941" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.26435935" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.26435935" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -315,7 +325,7 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="8" />
       <window_info anchor="bottom" id="Version Control" order="9" weight="0.32979977" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="10" visible="true" weight="0.28739694" />
+      <window_info anchor="bottom" id="Terminal" order="10" visible="true" weight="0.17196701" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -377,20 +387,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Configuration/faulty">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" column="14" selection-start-line="1" selection-start-column="14" selection-end-line="1" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Configuration/trusted">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="14" selection-start-line="4" selection-start-column="14" selection-end-line="4" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Server/tcpMessage.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
@@ -415,30 +411,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/HRBAlgorithm/MessageHandler.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="12" selection-start-line="12" selection-end-line="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/HRBAlgorithm/HRBMessage.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="22" selection-start-line="6" selection-start-column="22" selection-end-line="6" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/HRBAlgorithm/SimpleMessageHandler.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1186">
-          <caret line="53" column="4" selection-start-line="53" selection-start-column="4" selection-end-line="53" selection-end-column="4" />
-          <folding>
-            <element signature="e#22#50#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Server/tcpWriter.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="380">
@@ -449,17 +421,64 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/HRBAlgorithm/algorithm.go">
+    <entry file="file://$PROJECT_DIR$/Server/ServerMain.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="362">
-          <caret line="118" column="25" lean-forward="true" selection-start-line="118" selection-start-column="25" selection-end-line="118" selection-end-column="43" />
+        <state relative-caret-position="-367">
+          <caret line="118" column="40" lean-forward="true" selection-start-line="118" selection-start-column="40" selection-end-line="118" selection-end-column="40" />
+          <folding>
+            <element signature="e#16#53#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Server/ServerMain.go">
+    <entry file="file://$PROJECT_DIR$/HRBAlgorithm/SimpleMessageHandler.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="259">
-          <caret line="112" column="39" lean-forward="true" selection-start-line="112" selection-start-column="39" selection-end-line="112" selection-end-column="39" />
+        <state relative-caret-position="-1312">
+          <caret line="25" selection-start-line="25" selection-end-line="31" />
+          <folding>
+            <element signature="e#22#50#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Configuration/faulty">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="14" selection-start-column="14" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Configuration/trusted">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" column="14" selection-start-line="2" selection-start-column="14" selection-end-line="2" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HRBAlgorithm/algorithm.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="217">
+          <caret line="109" column="5" selection-start-line="109" selection-start-column="5" selection-end-line="109" selection-end-column="5" />
+          <folding>
+            <element signature="e#22#48#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HRBAlgorithm/HRBMessage.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="6" lean-forward="true" selection-start-line="6" selection-end-line="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HRBAlgorithm/MessageHandler.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="181">
+          <caret line="193" column="53" lean-forward="true" selection-start-line="193" selection-start-column="53" selection-end-line="193" selection-end-column="53" />
+          <folding>
+            <element signature="e#22#62#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
