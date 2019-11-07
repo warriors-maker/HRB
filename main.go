@@ -24,13 +24,29 @@ func main() {
 	wg.Add(1)
 
 	argsWithoutProg := os.Args[1:]
-	if len(argsWithoutProg) == 0 {
-		Server.NetworkModeStartup()
+
+	mode := argsWithoutProg[0]
+	fmt.Println(mode)
+	if mode == "network" {
+		if len (argsWithoutProg) == 1 {
+
+		} else {
+			//SourceFault
+		}
+	} else if mode == "local" {
+		if len (argsWithoutProg) == 2 {
+			sourceFault := false
+			idx, _ := strconv.Atoi(argsWithoutProg[1])
+			Server.LocalModeStartup(idx, sourceFault)
+		} else {
+			//Source Fault
+			sourceFault := true
+			idx, _ := strconv.Atoi(argsWithoutProg[1])
+			Server.LocalModeStartup(idx, sourceFault)
+		}
 	} else {
-		fmt.Println("Local Mode")
-		idx, _ := strconv.Atoi(argsWithoutProg[0])
-		Server.LocalModeStartup(idx)
+		fmt.Println("Invalid mode")
 	}
-	//The server should never sleep
+
 	wg.Wait()
 }

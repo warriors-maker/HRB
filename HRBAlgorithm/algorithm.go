@@ -138,18 +138,19 @@ func FilterRecData (message Message) {
 	switch v := message.(type) {
 	case MSGStruct:
 		fmt.Println("Msg")
-		//receiveMsg(data)
+		receiveMsg(message)
 	case ECHOStruct:
 		fmt.Println("Echo")
-		//receiveEcho(data)
+		receiveEcho(message)
 	case ACCStruct:
 		fmt.Println("Acc")
-		//receiveAcc(data)
+		receiveAcc(message)
 	case REQStruct:
 		fmt.Println("Req")
-		//receiveReq(data)
+		receiveReq(message)
 	case FWDStruct:
 		fmt.Print("FWD")
+		receiveFwd(message)
 	default:
 		fmt.Printf("Sending : %+v\n", v)
 		fmt.Println("I do ot understand what you send")
@@ -175,6 +176,8 @@ func receiveReq(data Message) {
 func receiveFwd (data Message) {
 	FwdHandler(data)
 }
+
+
 
 
 

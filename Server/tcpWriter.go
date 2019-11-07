@@ -32,11 +32,14 @@ func TcpWriter(ipPort string, ch chan TcpMessage) {
 				encoder.Encode(&data)
 			}
 		} else {
-			fmt.Printf("Sending : %+v to %v\n", data.Message, ipPort)
-			//time.Sleep(7*time.Second)
-			encoder.Encode(&data)
+			if sourceFault && source {
+				if counter == 0 {
+					encoder.Encode(&data)
+				}
+			} else {
+				encoder.Encode(&data)
+			}
 		}
-
 		counter++
 	}
 }

@@ -26,6 +26,8 @@ Only used in Local Mode for debugging purpose
  */
 var localId int
 
+var sourceFault bool
+
 
 //Start up the peer
 func peerStartup(local bool) {
@@ -39,11 +41,15 @@ func peerStartup(local bool) {
 	if isFault {
 		fmt.Println(MyId + " is faulty")
 	}
+	fmt.Println("MyId " + MyId)
+
 }
 
-func LocalModeStartup(id int) {
+func LocalModeStartup(id int, isSourceFault bool) {
 	isLocalMode = true
 	localId = id
+
+	sourceFault = isSourceFault
 
 	peerStartup(isLocalMode)
 	if serverList[0] == MyId {
@@ -53,8 +59,18 @@ func LocalModeStartup(id int) {
 	}
 	setUpRead()
 	setUpWrite()
+
+	//HRBAlgorithm.AlgorithmSetUp(MyId, serverList, trustedCount, faultyCount)
+	if isSourceFault {
+		trustedCount = trustedCount - 1;
+		faultyCount = faultyCount + 1;
+	}
 	HRBAlgorithm.AlgorithmSetUp(MyId, serverList, trustedCount, faultyCount)
-	simpleTest()
+	if isSourceFault {
+		testSourceFault()
+	} else {
+		test()
+	}
 }
 
 func NetworkModeStartup() {
@@ -76,8 +92,8 @@ func setUpRead() {
 	//Start listening data
 	go TcpReader(ReadChans, MyId)
 	//Channel that filters the data based on the message type
-	go filterSimple(ReadChans)
-	//go filterRecData(readChans)
+	//go filterSimple(ReadChans)
+	go filter(ReadChans)
 }
 
 func filter (ch chan TcpMessage) {
@@ -133,8 +149,25 @@ func deliver(ipPort string, ch chan TcpMessage) {
 	TcpWriter(ipPort, ch)
 }
 
-func simpleTest() {
+func testSourceFault() {
 	//test
+	if source {
+		//fmt.Println("I am the source")
+		m := HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, Data:"abc", Header:0, Round:0}
+		faultym :=  HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, Data:"abcdef", Header:0, Round:0}
+		for id , server := range serverList {
+			if id == 3 {
+				tcpMessage := TcpMessage{Message:faultym}
+				SendChans[server] <- tcpMessage
+			} else {
+				tcpMessage := TcpMessage{Message:m}
+				SendChans[server] <- tcpMessage
+			}
+		}
+	}
+}
+
+func test () {
 	if source {
 		//fmt.Println("I am the source")
 		m := HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, Data:"abc", Header:0, Round:0}
@@ -142,39 +175,8 @@ func simpleTest() {
 			tcpMessage := TcpMessage{Message:m}
 			SendChans[server] <- tcpMessage
 		}
-
-		//m = HRBAlgorithm.FWDStruct{Id:MyId, SenderId:MyId}
-		//message := TcpMessage{Message: m, ID:MyId}
-		//for _,ch := range SendChans {
-		//	ch <- message
-		//}
-
-		//m = HRBAlgorithm.ACCStruct{Id:MyId, SenderId:MyId}
-		//message = TcpMessage{Message: m, ID:MyId}
-		//for _,ch := range SendChans {
-		//	ch <- message
-		//}
-		//
-		//m = HRBAlgorithm.REQStruct{Id:MyId, SenderId:MyId}
-		//message = TcpMessage{Message: m, ID:MyId}
-		//
-		//for _,ch := range SendChans {
-		//	ch <- message
-		//}
-		//
-		//m = HRBAlgorithm.ECHOStruct{Id:MyId, SenderId:MyId}
-		//message = TcpMessage{Message: m, ID:MyId}
-		//
-		//for _,ch := range SendChans {
-		//	ch <- message
-		//}
-		//
-		//m = HRBAlgorithm.MSGStruct{Id:MyId, SenderId:MyId}
-		//message = TcpMessage{Message: m, ID:MyId}
-		//for _,ch := range SendChans {
-		//	ch <- message
-		//}
 	}
 }
+
 
 

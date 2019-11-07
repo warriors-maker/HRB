@@ -54,9 +54,10 @@ func SimpleFwdHandler(data Message) {
 	hashStr := ConvertBytesToString(Hash([]byte(data.GetData())))
 	//fmt.Printf("Fwd: %+v\n",data)
 	m := REQStruct{Header:REQ, Id:data.GetId(), HashData:hashStr, Round: data.GetRound(), SenderId:MyID}
+	fmt.Printf("ReceiveBack FWD %+v\n" , m)
 	if hasSent(ReqSentSet[m], data.GetSenderId()) {
 		if _,seen := FwdReceiveSet[identifier]; !seen {
-			fmt.Printf("ReceiveBack FWD %+v\n" , m)
+			fmt.Println("Receive fwd back from the request")
 			FwdReceiveSet[identifier] = true
 			DataSet[data.GetData()] = hashStr
 			//check
@@ -129,8 +130,8 @@ func SimpleCheck(m Message) {
 				fmt.Println("Sent Echo to all servers")
 				EchoSentSet[identifier] = true
 				//send Echo to all servers
-				echo.SetSenderId(MyID)
-				req := PrepareSend{M:echo, SendTo:"all"}
+				echoSend := ECHOStruct{Header:ECHO, Round:m.GetRound(), HashData:m.GetHashData(), Id:m.GetId(), SenderId:MyID}
+				req := PrepareSend{M:echoSend, SendTo:"all"}
 				SendReqChan <- req
 				flags[0] = true
 			}
@@ -145,7 +146,7 @@ func SimpleCheck(m Message) {
 			}
 		}
 
-		//fmt.Printf("Count: %d\n",len(simpleEchoRecCountSet[echo]))
+		fmt.Printf("Count: %d\n",len(simpleEchoRecCountSet[echo]))
 	}
 
 }
