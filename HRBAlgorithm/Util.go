@@ -34,3 +34,7 @@ func ValidHash(expectedHash, hashData []byte) bool{
 func ConvertBytesToString(b []byte) string {
 	return base64.URLEncoding.EncodeToString(b)
 }
+
+func ConvertStringToBytes(s string) ([]byte, error) {
+	return base64.URLEncoding.DecodeString(s)
+}

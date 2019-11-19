@@ -33,7 +33,15 @@ var FwdReceiveSet map[string] bool
 //(SendToId, bool)
 //var FwdSentSet map[string] bool
 
+//Key: value , Value: Hash(value)
 var DataSet map[string] string
+
+/*
+Used in the Erasure Coding
+ */
+var ecDataSet map[string] [][]byte
+
+
 // Send Phase to the TCPWriter
 var sendChan chan Message
 
@@ -46,9 +54,20 @@ var acceptData []interface{}
 
 var SendReqChan chan PrepareSend
 
+//key: IP_ID, Value: index in the serverList
+var serverMap map[string] int
+var serverList []string
 
 
-func AlgorithmSetUp(myID string, serverList []string, trustedCount, faultyCount int) {
+
+func AlgorithmSetUp(myID string, servers []string, trustedCount, faultyCount int) {
+	serverMap = make(map[string] int)
+	for index, server := range servers {
+		serverMap[server] = index
+	}
+	serverList = servers
+
+	fmt.Println("These are the servers", serverMap)
 	MessageReceiveSet = make(map[string] bool)
 	//MessageSentSet = make(map[string] bool)
 
@@ -71,6 +90,8 @@ func AlgorithmSetUp(myID string, serverList []string, trustedCount, faultyCount 
 
 	DataSet = make (map[string] string)
 
+	ecDataSet = make(map[string] [][]byte)
+
 	sendChan = make(chan Message)
 
 	SendReqChan = make (chan PrepareSend)
@@ -89,14 +110,6 @@ func AlgorithmSetUp(myID string, serverList []string, trustedCount, faultyCount 
 	gob.Register(ECHOStruct{})
 }
 
-func checkRecMsg(id string) bool{
-	for k,_ := range MessageReceiveSet {
-		if k == id {
-			return true
-		}
-	}
-	return false
-}
 
 func hasSent(l []string, val string) bool{
 	for _, v := range l {
@@ -138,52 +151,35 @@ func FilterRecData (message Message) {
 	switch v := message.(type) {
 	case MSGStruct:
 		fmt.Println("Msg")
-		receiveMsg(message)
+		Msghandler(message)
 	case ECHOStruct:
 		fmt.Println("Echo")
-		receiveEcho(message)
+		EchoHandler(message)
 	case ACCStruct:
 		fmt.Println("Acc")
-		receiveAcc(message)
+		AccHandler(message)
 	case REQStruct:
 		fmt.Println("Req")
-		receiveReq(message)
+		ReqHandler(message)
 	case FWDStruct:
 		fmt.Print("FWD")
-		receiveFwd(message)
+		FwdHandler(message)
 	default:
 		fmt.Printf("Sending : %+v\n", v)
 		fmt.Println("I do ot understand what you send")
 	}
 }
 
-func receiveMsg (data Message) {
-	Msghandler(data)
+func FilterSimpleErasureCodeRecData(message Message) {
+	switch v := message.(type) {
+	case MSGStruct:
+		fmt.Println("Msg")
+		SimpleECMessageHandler(message)
+	case ECHOStruct:
+		fmt.Println("Echo")
+		SimpleECEchoHandler(message)
+	default:
+		fmt.Printf("Sending : %+v\n", v)
+		fmt.Println("I do ot understand what you send")
+	}
 }
-
-func receiveEcho (data Message) {
-	EchoHandler(data)
-}
-
-func receiveAcc (data Message) {
-	AccHandler(data)
-}
-
-func receiveReq(data Message) {
-	ReqHandler(data)
-}
-
-func receiveFwd (data Message) {
-	FwdHandler(data)
-}
-
-
-
-
-
-
-
-
-
-
-

@@ -35,6 +35,7 @@ type FWDStruct struct {
 type MSGStruct struct {
 	Header TcpHeader
 	Data   string
+	HashData string
 	Round int
 	Id string
 	SenderId string
@@ -43,6 +44,7 @@ type MSGStruct struct {
 type ECHOStruct struct {
 	Header TcpHeader
 	HashData string
+	Data string
 	Round int
 	Id string
 	SenderId string
@@ -108,7 +110,7 @@ func (m MSGStruct) GetData() string {
 }
 
 func (m ECHOStruct) GetData() string {
-	return ""
+	return m.Data
 }
 
 func (m ACCStruct) GetData() string {
@@ -128,7 +130,7 @@ func (m FWDStruct) GetHashData() string{
 }
 
 func (m MSGStruct) GetHashData() string{
-	return ""
+	return m.HashData
 }
 
 func (m ECHOStruct) GetHashData() string{

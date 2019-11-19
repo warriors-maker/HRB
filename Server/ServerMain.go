@@ -5,6 +5,9 @@ import (
 	"fmt"
 )
 
+/*
+Note id is always the Ip + Port
+ */
 
 var serverList []string
 var MyId string //basically the IP of individual server
@@ -46,6 +49,7 @@ func peerStartup(local bool) {
 }
 
 func LocalModeStartup(id int, isSourceFault bool) {
+	fmt.Println("Local Setup")
 	isLocalMode = true
 	localId = id
 
@@ -57,21 +61,64 @@ func LocalModeStartup(id int, isSourceFault bool) {
 	} else {
 		source = false
 	}
-	setUpRead()
-	setUpWrite()
 
 	//HRBAlgorithm.AlgorithmSetUp(MyId, serverList, trustedCount, faultyCount)
 	if isSourceFault {
 		trustedCount = trustedCount - 1;
 		faultyCount = faultyCount + 1;
 	}
+
+	//General setup
 	HRBAlgorithm.AlgorithmSetUp(MyId, serverList, trustedCount, faultyCount)
-	if isSourceFault {
-		testSourceFault()
-	} else {
-		test()
+
+	/*
+	Setup your algorithm
+	 */
+	hashECSimpleSetup()
+
+	if source {
+		fmt.Println("Send data")
+		HRBAlgorithm.SimpleECBroadCast("abcdef")
 	}
+
+	//if isSourceFault {
+	//	testSourceFault()
+	//} else {
+	//	test()
+	//}
 }
+
+func hashSimpleSetup() {
+	/*
+		Setup the Tcp Reading portion
+	*/
+	ReadChans := setUpRead()
+	go filterSimple(ReadChans)
+	/*
+		Setup Tcp Write
+	*/
+	go setUpWrite()
+}
+
+func hashComplexSetup() {
+	ReadChans := setUpRead()
+	go filter(ReadChans)
+	go setUpWrite()
+}
+
+
+func hashECSimpleSetup() {
+	ReadChans := setUpRead()
+	go filterSimpleEC(ReadChans)
+	go setUpWrite()
+}
+
+
+
+func ECComplexFilter() {
+
+}
+
 
 func NetworkModeStartup() {
 	isLocalMode = false
@@ -83,17 +130,17 @@ func NetworkModeStartup() {
 
 
 
+
+
 /*
 Reading from the network
 */
 
-func setUpRead() {
+func setUpRead() chan TcpMessage{
 	ReadChans = make (chan TcpMessage)
 	//Start listening data
 	go TcpReader(ReadChans, MyId)
-	//Channel that filters the data based on the message type
-	//go filterSimple(ReadChans)
-	go filter(ReadChans)
+	return ReadChans
 }
 
 func filter (ch chan TcpMessage) {
@@ -109,6 +156,13 @@ func filterSimple(ch chan TcpMessage) {
 		HRBAlgorithm.SimpleFilterRecData(message.Message)
 	}
 	//Call the filter method
+}
+
+func filterSimpleEC(ch chan TcpMessage) {
+	for {
+		message := <- ch
+		HRBAlgorithm.FilterSimpleErasureCodeRecData(message.Message)
+	}
 }
 
 /*
@@ -148,6 +202,11 @@ func reqSendListener() {
 func deliver(ipPort string, ch chan TcpMessage) {
 	TcpWriter(ipPort, ch)
 }
+
+
+/*
+Simple Testing
+ */
 
 func testSourceFault() {
 	//test
