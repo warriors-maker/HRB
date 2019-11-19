@@ -74,12 +74,9 @@ func LocalModeStartup(id int, isSourceFault bool) {
 	/*
 	Setup your algorithm
 	 */
-	hashECSimpleSetup()
+	hashECComplexSetup()
 
-	if source {
-		fmt.Println("Send data")
-		HRBAlgorithm.SimpleECBroadCast("abcdef")
-	}
+	testEcSourceFault()
 
 	//if isSourceFault {
 	//	testSourceFault()
@@ -212,10 +209,36 @@ func deliver(ipPort string, ch chan TcpMessage) {
 Simple Testing
  */
 
-func testSourceFault() {
+
+
+func testEcSourceFault() {
 	//test
 	if source {
-		//fmt.Println("I am the source")
+		s := "abcdef"
+		shards := HRBAlgorithm.Encode(s, faultyCount + 1, trustedCount - 1)
+		//Get the string version of the string
+		hash, _ := HRBAlgorithm.ConvertStringToBytes(s)
+		hashStr := HRBAlgorithm.ConvertBytesToString(hash)
+
+		for id , server := range serverList {
+			if id == 2 || id == 3{
+				wrong := HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, HashData: hashStr, Data: "", Header:0, Round:0}
+				tcpMessage := TcpMessage{Message: wrong}
+				SendChans[server] <- tcpMessage
+			} else if id == 4 || id ==5 {
+
+			} else {
+				codeString := HRBAlgorithm.ConvertBytesToString(shards[id])
+				correct := HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, HashData: hashStr, Data: codeString, Header:0, Round:0}
+				tcpMessage := TcpMessage{Message:correct}
+				SendChans[server] <- tcpMessage
+			}
+		}
+	}
+}
+
+func testSourceFault() {
+	if source {
 		m := HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, Data:"abc", Header:0, Round:0}
 		faultym :=  HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, Data:"abcdef", Header:0, Round:0}
 		for id , server := range serverList {
@@ -230,7 +253,7 @@ func testSourceFault() {
 	}
 }
 
-func test () {
+func testSimple() {
 	if source {
 		//fmt.Println("I am the source")
 		m := HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, Data:"abc", Header:0, Round:0}

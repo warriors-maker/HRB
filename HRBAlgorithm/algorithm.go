@@ -58,12 +58,14 @@ var SendReqChan chan PrepareSend
 var serverMap map[string] int
 var serverList []string
 var reqSentHash map[string] string
+var FwdRecCountSet map[string] int
 
 
 
 func AlgorithmSetUp(myID string, servers []string, trustedCount, faultyCount int) {
 	serverMap = make(map[string] int)
 	acceptData = make(map[string]bool)
+	FwdRecCountSet = make (map [string] int)
 	for index, server := range servers {
 		serverMap[server] = index
 	}

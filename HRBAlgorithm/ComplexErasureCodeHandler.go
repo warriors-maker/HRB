@@ -111,6 +111,7 @@ func ComplexECReqHandler(m Message) {
 		ReqReceiveSet[identifier] = true
 		if exist, data := checkDataExist(m.GetHashData()); exist {
 			//Decode the data
+			fmt.Println("Inside req ", data)
 			shards := Encode(data, faulty + 1, total - (faulty + 1))
 
 			code := ConvertBytesToString(shards[serverMap[MyID]])
@@ -126,6 +127,7 @@ func ComplexECReqHandler(m Message) {
 func complexECFwdHandler(m Message) {
 	identifier := m.GetId() + strconv.Itoa(m.GetRound()) + m.GetSenderId();
 
+	fwdIdentifier := m.GetId() + strconv.Itoa(m.GetRound())
 	//fmt.Printf("Fwd: %+v\n",data)
 
 	hashSentIdentifier := m.GetId() + strconv.Itoa(m.GetRound())
@@ -136,6 +138,17 @@ func complexECFwdHandler(m Message) {
 		if _,seen := FwdReceiveSet[identifier]; !seen {
 			FwdReceiveSet[identifier] = true
 			//Include the code
+
+			if count, exist := FwdRecCountSet[fwdIdentifier]; !exist {
+				FwdRecCountSet[fwdIdentifier] = 1
+			} else {
+				FwdRecCountSet[fwdIdentifier] = count + 1
+			}
+
+			if _, e := reqSentHash[hashStr]; e {
+				checkM := MSGStruct{Id:m.GetId(), HashData:hashStr, Round:m.GetRound()}
+				complexECCheck(checkM)
+			}
 
 			var codes [][]byte
 			//include the data with key the original data and val its hashvalue
@@ -152,7 +165,21 @@ func complexECFwdHandler(m Message) {
 			codes[serverMap[m.GetSenderId()]], _= ConvertStringToBytes(m.GetData())
 
 			ecDataSet[hashStr] = codes
-			fmt.Println("EcDataSet, hashStr ", ecDataSet[hashStr], hashStr)
+			fmt.Println("EcDataSet, hashStr, size of Foward ", ecDataSet[hashStr], hashStr, FwdRecCountSet[fwdIdentifier])
+
+			if FwdRecCountSet[fwdIdentifier] >= faulty + 1 {
+				vals := permutation(codes, faulty + 1, total - (faulty + 1))
+				fmt.Println("Receive more than faulty + 1 and the list of permutations is ", vals)
+				for _, v := range vals {
+					expectedHash,_ := ConvertStringToBytes(hashStr)
+					inputHash, _:= ConvertStringToBytes(v)
+					if compareHash(expectedHash, inputHash) {
+						fmt.Println("Include ", v)
+						DataSet[v] = hashStr
+						break
+					}
+				}
+			}
 
 			//check
 			checkM := MSGStruct{Id:m.GetId(), HashData:hashStr, Round:m.GetRound()}
@@ -184,7 +211,6 @@ func complexECAccHandler(m Message) {
 			//Save the Hash value that you sent request for
 			sentHashIdentifier := m.GetId()+ strconv.Itoa(m.GetRound())
 			reqSentHash[sentHashIdentifier] = m.GetHashData()
-
 			if exist, _ := checkDataExist(m.GetHashData()); !exist {
 				ReqSentSet[reqMes] = AccRecCountSet[accM]
 				//Send Req to these f + 1
@@ -220,27 +246,27 @@ func complexECCheck(m Message) {
 
 	if exist, value := checkDataExist(m.GetHashData()); exist {
 		echo := ECHOStruct{Header:ECHO, Round:m.GetRound(), HashData:m.GetHashData(), Id:m.GetId()}
-		acc := ACCStruct{Header:ACC, Round:m.GetRound(), HashData:m.GetHashData(), Id:m.GetId()}
+		acc := ACCStruct{Header:ACC, Round:m.GetRound(), Id:m.GetId()}
 
 
 		identifier := m.GetId() + strconv.Itoa(m.GetRound())
 
 		if EchoRecCountSet[echo] >= faulty + 1 {
-			fmt.Println("Receive more than faulty + 1 echo message")
 			if _, sent := EchoSentSet[identifier]; !sent {
+				fmt.Println("Receive more than faulty + 1 echo message")
+				EchoSentSet[identifier] = true
 				fmt.Println("Sent Echo to other servers")
 				shards := Encode(value, faulty + 1, total - (faulty + 1))
 				code := ConvertBytesToString(shards[serverMap[MyID]])
 				echoSend := ECHOStruct{Header:ECHO, Round:m.GetRound(), HashData:m.GetHashData(), Id:m.GetId(), SenderId:MyID, Data:code}
-				EchoSentSet[identifier] = true
 				sendReq := PrepareSend{M: echoSend, SendTo:"all"}
 				SendReqChan <- sendReq
 			}
 		}
 
 		if EchoRecCountSet[echo] >= total - faulty {
-			fmt.Println("Receive more than total - faulty echo message")
 			if _, sent := AccSentSet[identifier]; !sent {
+				fmt.Println("Receive more than total - faulty echo message")
 				AccSentSet[identifier] = true
 
 				accSend := ACCStruct{Header:ACC, Round:m.GetRound(), HashData:m.GetHashData(), Id:m.GetId(), SenderId:MyID}
@@ -252,7 +278,7 @@ func complexECCheck(m Message) {
 			}
 		}
 
-		//fmt.Println(len(AccRecCountSet[acc]), AccRecCountSet[acc])
+		fmt.Println("Check Acc ", len(AccRecCountSet[acc]), AccRecCountSet[acc])
 
 		if len(AccRecCountSet[acc]) >= faulty + 1 {
 			if _,sent := AccSentSet[identifier]; !sent {
