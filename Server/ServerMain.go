@@ -3,6 +3,7 @@ package Server
 import (
 	"HRB/HRBAlgorithm"
 	"fmt"
+	"time"
 )
 
 /*
@@ -48,7 +49,8 @@ func peerStartup(local bool) {
 
 }
 
-func LocalModeStartup(id int, isSourceFault bool) {
+//For One round
+func LocalModeStartup(id, algorithm int, isSourceFault bool) {
 	fmt.Println("Local Setup")
 	isLocalMode = true
 	localId = id
@@ -66,17 +68,62 @@ func LocalModeStartup(id int, isSourceFault bool) {
 	if isSourceFault {
 		trustedCount = trustedCount - 1;
 		faultyCount = faultyCount + 1;
+		fmt.Println("FaultyCount ", faultyCount)
 	}
 
 	//General setup
 	HRBAlgorithm.AlgorithmSetUp(MyId, serverList, trustedCount, faultyCount)
+	time.Sleep(1*time.Second)
+
+	if algorithm == 1 {
+		hashSimpleSetup()
+		if isSourceFault {
+
+		} else {
+			fmt.Println("Running Non-Faulty HashNonEquivocate")
+			if source {
+				simpleBroadcast("abcdef")
+			}
+		}
+	} else if algorithm == 2 {
+		hashComplexSetup()
+		if isSourceFault {
+			fmt.Println("Running Faulty HashEquivocate")
+			testSourceFault("abcdef")
+		} else {
+			fmt.Println("Running Non-Faulty HashEquivocate")
+			if source {
+				simpleBroadcast("abcdef")
+
+			}
+		}
+	} else if algorithm == 3 {
+		hashECSimpleSetup()
+		if sourceFault {
+
+		} else {
+			if source {
+				HRBAlgorithm.SimpleECBroadCast("abcdef")
+			}
+		}
+	} else if algorithm == 4 {
+		hashECComplexSetup()
+		if sourceFault {
+			fmt.Println("Running Faulty ECEquivocate")
+			testEcSourceFault("abcdef")
+		} else {
+			fmt.Println("Running Non-Faulty ECEquivocate")
+			if source {
+				HRBAlgorithm.ComplexECBroadCast("abcdef")
+			}
+		}
+	}
 
 	/*
 	Setup your algorithm
 	 */
-	hashECComplexSetup()
 
-	testEcSourceFault()
+
 
 	//if isSourceFault {
 	//	testSourceFault()
@@ -211,14 +258,12 @@ Simple Testing
 
 
 
-func testEcSourceFault() {
+func testEcSourceFault(s string) {
 	//test
 	if source {
-		s := "abcdef"
 		shards := HRBAlgorithm.Encode(s, faultyCount + 1, trustedCount - 1)
 		//Get the string version of the string
-		hash, _ := HRBAlgorithm.ConvertStringToBytes(s)
-		hashStr := HRBAlgorithm.ConvertBytesToString(hash)
+		hashStr := HRBAlgorithm.ConvertBytesToString(HRBAlgorithm.Hash([]byte(s)))
 
 		for id , server := range serverList {
 			if id == 2 || id == 3{
@@ -237,14 +282,16 @@ func testEcSourceFault() {
 	}
 }
 
-func testSourceFault() {
+func testSourceFault(s string) {
 	if source {
-		m := HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, Data:"abc", Header:0, Round:0}
-		faultym :=  HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, Data:"abcdef", Header:0, Round:0}
+		m := HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, Data:s, Header:0, Round:0}
+		faultym :=  HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, Data:"", Header:0, Round:0}
 		for id , server := range serverList {
-			if id == 3 {
+			if id == 2 || id == 3 {
 				tcpMessage := TcpMessage{Message:faultym}
 				SendChans[server] <- tcpMessage
+			} else if id == 4 || id == 5 {
+
 			} else {
 				tcpMessage := TcpMessage{Message:m}
 				SendChans[server] <- tcpMessage
@@ -253,10 +300,10 @@ func testSourceFault() {
 	}
 }
 
-func testSimple() {
+func simpleBroadcast(s string) {
 	if source {
-		//fmt.Println("I am the source")
-		m := HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, Data:"abc", Header:0, Round:0}
+		fmt.Println("I am the source")
+		m := HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, Data: s, Header:0, Round:0}
 		for _ , server := range serverList {
 			tcpMessage := TcpMessage{Message:m}
 			SendChans[server] <- tcpMessage

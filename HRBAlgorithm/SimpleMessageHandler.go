@@ -139,10 +139,9 @@ func SimpleCheck(m Message) {
 
 		if len(simpleEchoRecCountSet[echo]) >= total - faulty {
 			fmt.Println("Receive more than total - faulty echo message")
-			if _, sent := AccSentSet[identifier]; !sent {
-				AccSentSet[identifier] = true
-				fmt.Println("Simple Reliable Accept: " + value)
-				flags[1] = true
+			if _, e := acceptData[value]; ! e {
+				acceptData[value] = true
+				fmt.Println("Reliable Accept " + value)
 			}
 		}
 

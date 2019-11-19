@@ -89,8 +89,8 @@ func ComplexECEchoHandler(m Message) {
 			vals := permutation(codes, faulty + 1, total - (faulty + 1))
 			fmt.Println("Receive more than faulty + 1 and the list of permutations is ", vals)
 			for _, v := range vals {
-				expectedHash,_ := ConvertStringToBytes(echo.GetHashData())
-				inputHash, _:= ConvertStringToBytes(v)
+				expectedHash := echo.GetHashData()
+				inputHash := ConvertBytesToString(Hash([]byte(v)))
 				if compareHash(expectedHash, inputHash) {
 					fmt.Println("Include ", v)
 					DataSet[v] = echo.GetHashData()
@@ -171,8 +171,9 @@ func complexECFwdHandler(m Message) {
 				vals := permutation(codes, faulty + 1, total - (faulty + 1))
 				fmt.Println("Receive more than faulty + 1 and the list of permutations is ", vals)
 				for _, v := range vals {
-					expectedHash,_ := ConvertStringToBytes(hashStr)
-					inputHash, _:= ConvertStringToBytes(v)
+					expectedHash := hashStr
+					inputHash := ConvertBytesToString(Hash([]byte(v)))
+					fmt.Println("Epected: ", expectedHash, "Input: ",inputHash)
 					if compareHash(expectedHash, inputHash) {
 						fmt.Println("Include ", v)
 						DataSet[v] = hashStr
@@ -291,9 +292,10 @@ func complexECCheck(m Message) {
 		}
 
 		if len(AccRecCountSet[acc]) >= total - faulty {
-			//accept
-			fmt.Println("Reliable Accept " + value)
-			acceptData[value] = true
+			if _, e := acceptData[value]; ! e {
+				acceptData[value] = true
+				fmt.Println("Reliable Accept " + value)
+			}
 		}
 	}
 }

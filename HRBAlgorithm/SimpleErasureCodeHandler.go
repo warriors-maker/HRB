@@ -7,9 +7,9 @@ import (
 
 func SimpleECBroadCast(s string) {
 	shards := Encode(s, faulty + 1, total - (faulty + 1))
+	fmt.Println("Shards are ", shards)
 	//Get the string version of the string
-	hash, _ := ConvertStringToBytes(s)
-	hashStr := ConvertBytesToString(hash)
+	hashStr := ConvertBytesToString(Hash([]byte(s)))
 
 	for i := 0; i < total; i++ {
 		code := ConvertBytesToString(shards[i])
@@ -95,8 +95,9 @@ func SimpleECEchoHandler(m Message) {
 			vals := permutation(codes, faulty + 1, total - (faulty + 1))
 			fmt.Println("Receive more than faulty + 1 and the list of permutations is ", vals)
 			for _, v := range vals {
-				expectedHash,_ := ConvertStringToBytes(echo.GetHashData())
-				inputHash, _:= ConvertStringToBytes(v)
+				expectedHash := echo.GetHashData()
+				inputHash := ConvertBytesToString(Hash([]byte(v)))
+
 				if compareHash(expectedHash, inputHash) {
 					fmt.Println("Include ", v)
 					DataSet[v] = echo.GetHashData()
@@ -126,18 +127,15 @@ func SimpleECCheck(m Message) {
 			}
 		}
 		if EchoRecCountSet[echo] >= total - faulty {
-			fmt.Println("Reliable Accept " + data)
+			if _, e := acceptData[data]; ! e {
+				acceptData[data] = true
+				fmt.Println("Reliable Accept " + data)
+			}
 		}
 	}
 }
 
 
-func compareHash(expectedHash, inputHash []byte) bool{
-	fmt.Println("Compare", expectedHash, inputHash)
-	for i := 0; i < len(expectedHash); i++ {
-		if expectedHash[i] != inputHash[i] {
-			return false
-		}
-	}
-	return true
+func compareHash(expectedHash, inputHash string) bool{
+	return expectedHash == inputHash
 }
