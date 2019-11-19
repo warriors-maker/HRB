@@ -50,18 +50,20 @@ var trusted int
 var total int
 var MyID string
 
-var acceptData []interface{}
+var acceptData map[string] bool
 
 var SendReqChan chan PrepareSend
 
 //key: IP_ID, Value: index in the serverList
 var serverMap map[string] int
 var serverList []string
+var reqSentHash map[string] string
 
 
 
 func AlgorithmSetUp(myID string, servers []string, trustedCount, faultyCount int) {
 	serverMap = make(map[string] int)
+	acceptData = make(map[string]bool)
 	for index, server := range servers {
 		serverMap[server] = index
 	}
@@ -102,32 +104,14 @@ func AlgorithmSetUp(myID string, servers []string, trustedCount, faultyCount int
 	total = trusted + faulty
 	MyID = myID
 
+	reqSentHash = make(map[string] string)
+
 	//Register the concrete type for interface
 	gob.Register(ACCStruct{})
 	gob.Register(FWDStruct{})
 	gob.Register(REQStruct{})
 	gob.Register(MSGStruct{})
 	gob.Register(ECHOStruct{})
-}
-
-
-func hasSent(l []string, val string) bool{
-	for _, v := range l {
-		if v == val {
-			return true
-		}
-	}
-	return false
-}
-
-func checkDataExist(expectedHash string) (bool, string) {
-	for k,v := range DataSet {
-		if v == expectedHash {
-			//fmt.Println("Check exist" + expectedHash)
-			return true, k
-		}
-	}
-	return false,""
 }
 
 
@@ -182,4 +166,51 @@ func FilterSimpleErasureCodeRecData(message Message) {
 		fmt.Printf("Sending : %+v\n", v)
 		fmt.Println("I do ot understand what you send")
 	}
+}
+
+
+func FilterComplexErasureRecData(message Message) {
+	switch v := message.(type) {
+	case MSGStruct:
+		fmt.Println("Msg")
+		ComplexECMessageHandler(message)
+	case ECHOStruct:
+		fmt.Println("Echo")
+		ComplexECEchoHandler(message)
+	case ACCStruct:
+		fmt.Println("Acc")
+		complexECAccHandler(message)
+	case REQStruct:
+		fmt.Println("Req")
+		ComplexECReqHandler(message)
+	case FWDStruct:
+		fmt.Print("FWD")
+		complexECFwdHandler(message)
+	default:
+		fmt.Printf("Sending : %+v\n", v)
+		fmt.Println("I do ot understand what you send")
+	}
+}
+
+
+/*
+Helper Function
+ */
+
+func hasSent(l []string, val string) bool{
+	for _, v := range l {
+		if v == val {
+			return true
+		}
+	}
+	return false
+}
+
+func checkDataExist(expectedHash string) (bool, string) {
+	for k,v := range DataSet {
+		if v == expectedHash {
+			return true, k
+		}
+	}
+	return false,""
 }

@@ -6,7 +6,7 @@ import (
 )
 
 /*
-Note id is always the Ip + Port
+Note id is always the Ip + Port for Local
  */
 
 var serverList []string
@@ -88,15 +88,13 @@ func LocalModeStartup(id int, isSourceFault bool) {
 	//}
 }
 
+/*
+Four different algorithms to choose
+ */
+
 func hashSimpleSetup() {
-	/*
-		Setup the Tcp Reading portion
-	*/
 	ReadChans := setUpRead()
 	go filterSimple(ReadChans)
-	/*
-		Setup Tcp Write
-	*/
 	go setUpWrite()
 }
 
@@ -114,10 +112,12 @@ func hashECSimpleSetup() {
 }
 
 
-
-func ECComplexFilter() {
-
+func hashECComplexSetup() {
+	ReadChans := setUpRead()
+	go filterComplexEc(ReadChans)
+	go setUpWrite()
 }
+
 
 
 func NetworkModeStartup() {
@@ -127,9 +127,6 @@ func NetworkModeStartup() {
 	setUpWrite()
 	HRBAlgorithm.AlgorithmSetUp(MyId, serverList, trustedCount, faultyCount)
 }
-
-
-
 
 
 /*
@@ -162,6 +159,13 @@ func filterSimpleEC(ch chan TcpMessage) {
 	for {
 		message := <- ch
 		HRBAlgorithm.FilterSimpleErasureCodeRecData(message.Message)
+	}
+}
+
+func filterComplexEc(ch chan TcpMessage) {
+	for {
+		message := <- ch
+		HRBAlgorithm.FilterComplexErasureRecData(message.Message)
 	}
 }
 

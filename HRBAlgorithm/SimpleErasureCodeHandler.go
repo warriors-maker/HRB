@@ -57,7 +57,7 @@ func SimpleECMessageHandler(m Message) {
 			SendReqChan <- sendReq
 		}
 
-		SimpleCheck(m)
+		SimpleECCheck(m)
 	}
 }
 
