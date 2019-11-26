@@ -49,8 +49,9 @@ func peerStartup(local bool) {
 
 }
 
+
 //For One round
-func LocalModeStartup(id, algorithm int, isSourceFault bool) {
+func Startup(id, algorithm int, isSourceFault bool) {
 	fmt.Println("Local Setup")
 	isLocalMode = true
 	localId = id
@@ -117,6 +118,8 @@ func LocalModeStartup(id, algorithm int, isSourceFault bool) {
 				HRBAlgorithm.ComplexECBroadCast("abcdef")
 			}
 		}
+	} else {
+		fmt.Println("Do not understand what you give")
 	}
 
 	/*

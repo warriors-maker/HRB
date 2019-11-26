@@ -50,12 +50,12 @@ func main() {
 		if len (argsWithoutProg) == 3 {
 			sourceFault := false
 			idx, _ := strconv.Atoi(argsWithoutProg[2])
-			Server.LocalModeStartup(idx, algorithm, sourceFault)
+			Server.Startup(idx, algorithm, sourceFault)
 		} else {
 			//Source Fault
 			sourceFault := true
 			idx, _ := strconv.Atoi(argsWithoutProg[2])
-			Server.LocalModeStartup(idx, algorithm, sourceFault)
+			Server.Startup(idx, algorithm, sourceFault)
 		}
 	} else {
 		fmt.Println("Invalid mode")
