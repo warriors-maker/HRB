@@ -33,6 +33,16 @@ var localId int
 
 var sourceFault bool
 
+func createLogFile() {
+	file, err := os.OpenFile("output"+MyId+".txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Fprint(file, MyId)
+	fmt.Fprint(file, MyId+":6379" )
+	fmt.Fprint(file, serverList)
+}
 
 //Start up the peer
 func peerStartup(local bool) {
@@ -46,13 +56,7 @@ func peerStartup(local bool) {
 	if isFault {
 		fmt.Println(MyId + " is faulty")
 	}
-	file, err := os.OpenFile("output.txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Fprint(file, "%s\n", MyId)
-	fmt.Fprint(file, serverList)
+
 
 	fmt.Println("MyId: " + MyId)
 	fmt.Println("ServerList: ",serverList)
