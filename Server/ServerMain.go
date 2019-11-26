@@ -39,9 +39,13 @@ func writeLogFile() {
 		fmt.Println(err)
 		return
 	}
-	fmt.Fprint(file, MyId)
-	fmt.Fprint(file, MyId+":6379" )
+	fmt.Fprint(file, MyId+"\n")
+
+	fmt.Fprint(file, MyId+":6379\n" )
 	fmt.Fprint(file, serverList)
+	fmt.Fprint(file,"\n")
+
+
 }
 
 //Start up the peer
