@@ -45,7 +45,8 @@ func peerStartup(local bool) {
 	if isFault {
 		fmt.Println(MyId + " is faulty")
 	}
-	fmt.Println("MyId " + MyId)
+	fmt.Println("MyId: " + MyId)
+	fmt.Println("ServerList: ",serverList)
 
 }
 
