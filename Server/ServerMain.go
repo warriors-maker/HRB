@@ -3,6 +3,7 @@ package Server
 import (
 	"HRB/HRBAlgorithm"
 	"fmt"
+	"os"
 	"time"
 )
 
@@ -45,6 +46,14 @@ func peerStartup(local bool) {
 	if isFault {
 		fmt.Println(MyId + " is faulty")
 	}
+	file, err := os.OpenFile("output.txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Fprint(file, "%s\n", MyId)
+	fmt.Fprint(file, serverList)
+
 	fmt.Println("MyId: " + MyId)
 	fmt.Println("ServerList: ",serverList)
 
@@ -60,7 +69,7 @@ func Startup(id, algorithm int, isSourceFault bool) {
 		isLocalMode = true
 	}
 
-	localId = id
+	//localId = id
 
 	sourceFault = isSourceFault
 
