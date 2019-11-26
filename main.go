@@ -42,9 +42,12 @@ func main() {
 	fmt.Println(mode)
 	if mode == "network" {
 		if len (argsWithoutProg) == 2 {
-
+			soureceFault := false
+			Server.Startup(-1, 5, soureceFault)
 		} else {
 			//SourceFault
+			sourceFault := true
+			Server.Startup(-1, 5, sourceFault)
 		}
 	} else if mode == "local" {
 		if len (argsWithoutProg) == 3 {

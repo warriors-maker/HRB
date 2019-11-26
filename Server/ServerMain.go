@@ -54,12 +54,18 @@ func peerStartup(local bool) {
 //For One round
 func Startup(id, algorithm int, isSourceFault bool) {
 	fmt.Println("Local Setup")
-	isLocalMode = true
+	isLocalMode = false
+
+	if id != -1 {
+		isLocalMode = true
+	}
+
 	localId = id
 
 	sourceFault = isSourceFault
 
 	peerStartup(isLocalMode)
+
 	if serverList[0] == MyId {
 		source = true
 	} else {
