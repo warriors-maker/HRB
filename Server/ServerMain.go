@@ -33,7 +33,7 @@ var localId int
 
 var sourceFault bool
 
-func createLogFile() {
+func writeLogFile() {
 	file, err := os.OpenFile("output"+MyId+".txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
 	if err != nil {
 		fmt.Println(err)
@@ -57,7 +57,7 @@ func peerStartup(local bool) {
 		fmt.Println(MyId + " is faulty")
 	}
 
-
+	writeLogFile()
 	fmt.Println("MyId: " + MyId)
 	fmt.Println("ServerList: ",serverList)
 
