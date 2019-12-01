@@ -60,6 +60,15 @@ var serverList []string
 var reqSentHash map[string] string
 var FwdRecCountSet map[string] int
 
+/*
+Digest
+ */
+var genKey string
+var digestSourceData map[string] string
+var digestDataMap map[string] []digestStruct
+
+var digestRecSend map[string] [][]digestStruct
+
 
 
 func AlgorithmSetUp(myID string, servers []string, trustedCount, faultyCount int) {
@@ -105,8 +114,11 @@ func AlgorithmSetUp(myID string, servers []string, trustedCount, faultyCount int
 	faulty = faultyCount
 	total = trusted + faulty
 	MyID = myID
+	genKey = MyID
 
 	reqSentHash = make(map[string] string)
+	digestDataMap = make(map[string] []digestStruct)
+	digestRecSend = make(map[string] [][] digestStruct)
 
 	//Register the concrete type for interface
 	gob.Register(ACCStruct{})
