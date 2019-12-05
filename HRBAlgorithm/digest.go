@@ -66,12 +66,20 @@ func broadcastBinary(detect bool, Id string, round int ) {
 
 
 func checkDetect(binarys [] Message) bool{
+	count0 := 0
+	count1 := 1
 	for _, b := range binarys {
 		if b.GetHashData() == "1" {
-			return true
+			count1 += 1
+		} else {
+			count0 += 1
 		}
 	}
-	return false
+	if count0 > count1 {
+		return false
+	} else {
+		return true
+	}
 }
 
 
@@ -203,23 +211,25 @@ func receivePrepareFromSrc(m Message) {
 }
 
 func recBinary(m Message) {
-	identifier := m.GetId() + ":" + strconv.Itoa(m.GetRound())
-	if l, ok := binarySet[identifier]; !ok {
-		firstL := []Message{m}
-		binarySet[identifier] = firstL
-	} else {
-		l = append(l, m)
-		binarySet[identifier] = l
-		fmt.Println(binarySet[identifier])
-		if len(l) == digestTrustCount {
-			detect := checkDetect(l)
-			if detect {
-				fmt.Println("Fail to Accept Data")
-				broadCastSendRec(m.GetId(), m.GetRound(), digestRecSend[identifier])
-			} else {
-				data := digestSourceData[identifier]
-				fmt.Println("Accept Data", data)
-				acceptData[data] = true
+	if m.GetSenderId() != MyID {
+		identifier := m.GetId() + ":" + strconv.Itoa(m.GetRound())
+		if l, ok := binarySet[identifier]; !ok {
+			firstL := []Message{m}
+			binarySet[identifier] = firstL
+		} else {
+			l = append(l, m)
+			binarySet[identifier] = l
+			fmt.Println(binarySet[identifier])
+			if len(l) == digestTrustCount - 1 {
+				detect := checkDetect(l)
+				if detect {
+					fmt.Println("Fail to Accept Data")
+					broadCastSendRec(m.GetId(), m.GetRound(), digestRecSend[identifier])
+				} else {
+					data := digestSourceData[identifier]
+					fmt.Println("Accept Data", data)
+					acceptData[data] = true
+				}
 			}
 		}
 	}
