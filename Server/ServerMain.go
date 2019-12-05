@@ -61,7 +61,7 @@ func peerStartup(local bool) {
 		fmt.Println(MyId + " is faulty")
 	}
 
-	writeLogFile()
+	//writeLogFile()
 	fmt.Println("MyId: " + MyId)
 	fmt.Println("ServerList: ",serverList)
 
@@ -77,7 +77,7 @@ func Startup(id, algorithm int, isSourceFault bool) {
 		isLocalMode = true
 	}
 
-	//localId = id
+	localId = id
 
 	sourceFault = isSourceFault
 
@@ -142,6 +142,13 @@ func Startup(id, algorithm int, isSourceFault bool) {
 				HRBAlgorithm.ComplexECBroadCast("abcdef")
 			}
 		}
+	} else if algorithm == 5 {
+		digestSetup()
+		if source {
+			fmt.Println("Digest Broadcast")
+			HRBAlgorithm.BroadcastPrepare("abcd", 1)
+		}
+
 	} else {
 		fmt.Println("Do not understand what you give")
 	}
@@ -186,6 +193,12 @@ func hashECSimpleSetup() {
 func hashECComplexSetup() {
 	ReadChans := setUpRead()
 	go filterComplexEc(ReadChans)
+	go setUpWrite()
+}
+
+func digestSetup() {
+	ReadChans := setUpRead()
+	go filterDigest(ReadChans)
 	go setUpWrite()
 }
 
@@ -237,6 +250,13 @@ func filterComplexEc(ch chan TcpMessage) {
 	for {
 		message := <- ch
 		HRBAlgorithm.FilterComplexErasureRecData(message.Message)
+	}
+}
+
+func filterDigest(ch chan TcpMessage) {
+	for {
+		message := <- ch
+		HRBAlgorithm.FilterDigest(message.Message)
 	}
 }
 

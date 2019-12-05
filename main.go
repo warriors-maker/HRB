@@ -50,6 +50,7 @@ func main() {
 			Server.Startup(-1, 5, sourceFault)
 		}
 	} else if mode == "local" {
+		// ./main local 5 idx
 		if len (argsWithoutProg) == 3 {
 			sourceFault := false
 			idx, _ := strconv.Atoi(argsWithoutProg[2])

@@ -64,10 +64,18 @@ var FwdRecCountSet map[string] int
 Digest
  */
 var genKey string
-var digestSourceData map[string] string
-var digestDataMap map[string] []digestStruct
+var digestSourceData map[string] string //store the message sent from source
+var digestDataMap map[string] []digestStruct //All the Hash Data from peers
 
-var digestRecSend map[string] [][]digestStruct
+var digestRecSend map[string] [][]digestStruct //what you have sent in one round
+var faultyCountMap map[string] int
+var faultySet map[string] bool
+
+var augmentRecSend map[string] map[string] [][]digestStruct //Used during validate step
+var notTrustedListMap map[string] []string //Inidcating numbet of trusted
+var binarySet map[string] []Message
+
+var digestTrustCount int
 
 
 
@@ -115,10 +123,24 @@ func AlgorithmSetUp(myID string, servers []string, trustedCount, faultyCount int
 	total = trusted + faulty
 	MyID = myID
 	genKey = MyID
+	digestTrustCount = total
 
+	digestSourceData = make(map[string] string)
 	reqSentHash = make(map[string] string)
 	digestDataMap = make(map[string] []digestStruct)
 	digestRecSend = make(map[string] [][] digestStruct)
+	faultyCountMap = make(map[string] int)
+	faultySet = make(map[string] bool)
+
+	notTrustedListMap = make(map[string] []string)
+	for _, server := range serverList {
+		notTrustedListMap[server] = []string{}
+	}
+
+
+	augmentRecSend = make(map[string]map[string] [][] digestStruct)
+	trustedCount = total
+	binarySet = make(map[string] []Message)
 
 	//Register the concrete type for interface
 	gob.Register(ACCStruct{})
@@ -126,6 +148,8 @@ func AlgorithmSetUp(myID string, servers []string, trustedCount, faultyCount int
 	gob.Register(REQStruct{})
 	gob.Register(MSGStruct{})
 	gob.Register(ECHOStruct{})
+	gob.Register(Binary{})
+	gob.Register(RecSend{})
 }
 
 
@@ -203,6 +227,22 @@ func FilterComplexErasureRecData(message Message) {
 	default:
 		fmt.Printf("Sending : %+v\n", v)
 		fmt.Println("I do ot understand what you send")
+	}
+}
+
+func FilterDigest(message Message) {
+	switch v := message.(type) {
+	case MSGStruct:
+		receivePrepareFromSrc(message)
+	case ECHOStruct:
+		receiveDigestFromOthers(message)
+	case Binary:
+		recBinary(message)
+	case RecSend:
+		receiveRecSend(message)
+	default:
+		fmt.Printf("Sending : %+v\n", v)
+		fmt.Println("I donot understand what you send")
 	}
 }
 

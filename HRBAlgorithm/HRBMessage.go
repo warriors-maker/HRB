@@ -9,7 +9,8 @@ const (
 	ACC  TcpHeader = 2
 	REQ  TcpHeader = 3
 	FWD  TcpHeader = 4
-
+	BIN  TcpHeader = 5
+	RSS	 TcpHeader = 6
 )
 
 type Message interface {
@@ -70,6 +71,92 @@ type REQStruct struct {
 type PrepareSend struct {
 	M Message
 	SendTo string
+}
+
+type Binary struct {
+	Header TcpHeader
+	HashData string
+	round int
+	SenderId string
+	Id string
+}
+
+type RecSend struct {
+	Header TcpHeader
+	HashData string
+	round int
+	SenderId string
+	Id string
+	RecSend [][]digestStruct
+
+}
+
+func (b RecSend) GetRecSend() [][] digestStruct{
+	return b.RecSend
+}
+
+func (b RecSend) GetHeaderType() TcpHeader {
+	return b.Header
+}
+
+func (b RecSend) GetHashData() string {
+	return b.HashData
+}
+
+func (b RecSend) GetData() string {
+	return ""
+}
+
+func (b RecSend) GetId() string{
+	return ""
+}
+
+func (b RecSend) GetRound() int {
+	return b.round
+}
+
+func (b RecSend) GetSenderId() string {
+	return b.SenderId
+}
+
+func (b RecSend)SetSenderIdNull() {
+
+}
+
+func (b RecSend) SetSenderId(string) {
+
+}
+
+func (b Binary) GetHeaderType() TcpHeader {
+	return b.Header
+}
+
+func (b Binary) GetHashData() string {
+	return b.HashData
+}
+
+func (b Binary) GetData() string {
+	return ""
+}
+
+func (b Binary) GetId() string{
+	return ""
+}
+
+func (b Binary) GetRound() int {
+	return b.round
+}
+
+func (b Binary) GetSenderId() string {
+	return b.SenderId
+}
+
+func (b Binary)SetSenderIdNull() {
+
+}
+
+func (b Binary) SetSenderId(string) {
+
 }
 
 /*

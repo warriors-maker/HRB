@@ -14,14 +14,6 @@ type digestStruct struct{
 	Key string
 }
 
-func broadcast(s string, round int) {
-	for i := 0; i < total; i++ {
-		m := MSGStruct{Header:MSG, Id:MyID, SenderId:MyID, Data: s, Round:round}
-		sendReq := PrepareSend{M: m, SendTo: serverList[i]}
-		SendReqChan <- sendReq
-	}
-}
-
 func encrypt(data,key string) string{
 	h := hmac.New(sha256.New, []byte(key))
 	h.Write([]byte(data))
@@ -29,17 +21,163 @@ func encrypt(data,key string) string{
 	return sha
 }
 
+func validate(targetMessage string, l []digestStruct) bool{
+	for _, digestData := range l {
+		key := digestData.Key
+		digestM := digestData.DigestM
+		targetM := encrypt(targetMessage, key)
+		if targetM != digestM {
+			return false
+		}
+	}
+	return true
+}
 
-func receiveBroadCast(m Message) {
+
+func BroadcastPrepare(s string, round int) {
+	for i := 0; i < total; i++ {
+		m := MSGStruct{Header:MSG, Id:MyID, SenderId:MyID, Data: s, Round:round}
+		sendReq := PrepareSend{M: m, SendTo: serverList[i]}
+		SendReqChan <- sendReq
+	}
+}
+
+func broadCastSendRec(id string, round int, recSendArr [][]digestStruct) {
+	recSend := RecSend{Header: RSS, Id:id, SenderId:MyID, RecSend:recSendArr, round:round}
+	for i := 0; i < total; i++ {
+		sendReq := PrepareSend{M: recSend, SendTo: serverList[i]}
+		SendReqChan <- sendReq
+	}
+}
+
+func broadcastBinary(detect bool, Id string, round int ) {
+	var detectString string
+	if detect {
+		detectString = "1"
+	} else {
+		detectString = "0"
+	}
+	for i := 0; i < total; i++ {
+		m := Binary{Header: BIN, SenderId:MyID, Id:Id, round:round, HashData:detectString}
+		sendReq := PrepareSend{M: m, SendTo: serverList[i]}
+		SendReqChan <- sendReq
+	}
+}
+
+
+func checkDetect(binarys [] Message) bool{
+	for _, b := range binarys {
+		if b.GetHashData() == "1" {
+			return true
+		}
+	}
+	return false
+}
+
+
+func checkDuplicate(l []string, id string) bool{
+	for _, val := range l {
+		if val == id {
+			return true
+		}
+	}
+	return false
+}
+
+func findFaulty(augmented map[string] [][]digestStruct) {
+	for senderId, recSend := range augmented {
+		//check current send with other receive
+		senderIdx := serverMap[senderId]
+
+		send_arr := recSend[senderIdx]
+
+		for receiveId, aux := range augmented {
+			receiveIdx := serverMap[receiveId]
+			sendDigest := send_arr[receiveIdx]
+			receiveDigest := aux[senderIdx][receiveIdx]
+			if sendDigest.DigestM != receiveDigest.DigestM || sendDigest.Key != receiveDigest.Key {
+				l1 := notTrustedListMap[receiveId]
+				if ! checkDuplicate(l1, senderId) {
+					l1 = append(l1, senderId)
+					notTrustedListMap[receiveId] = l1
+				}
+				l2 := notTrustedListMap[senderId]
+				if ! checkDuplicate(l2, receiveId) {
+					l2 = append(l2, receiveId)
+					notTrustedListMap[senderId] = l2
+				}
+				if senderId == MyID {
+					faultySet[receiveId] = true
+				}
+			}
+		}
+
+		//check current receive with other send
+		for i := 0; i < total; i++ {
+			receiveDigest := recSend[i][senderIdx]
+			sendDigest := augmented[serverList[i]][i][senderIdx]
+			receiveId := serverList[i]
+
+			if receiveDigest.DigestM != sendDigest.DigestM || sendDigest.Key != receiveDigest.Key {
+				l1 := notTrustedListMap[receiveId]
+				if ! checkDuplicate(l1, senderId) {
+					l1 = append(l1, senderId)
+					notTrustedListMap[receiveId] = l1
+				}
+				l2 := notTrustedListMap[senderId]
+				if ! checkDuplicate(l2, receiveId) {
+					l2 = append(l2, receiveId)
+					notTrustedListMap[senderId] = l2
+				}
+
+				if senderId == MyID {
+					faultySet[receiveId] = true
+				}
+			}
+		}
+	}
+
+	//Check whether a Server is trusted by enough people
+	for server, conflictList := range notTrustedListMap{
+		if len(conflictList) >= faulty + 1 {
+			faultySet[server] = true
+		}
+	}
+}
+
+func receiveRecSend(message Message) {
+	identifier := message.GetId() + ":" + strconv.Itoa(message.GetRound())
+	recSendStruct, ok := message.(RecSend)
+	if ok {
+		if existMap, exist := augmentRecSend[identifier]; !exist {
+			m := make(map[string] [][]digestStruct)
+			m[message.GetSenderId()] = recSendStruct.RecSend
+			augmentRecSend[identifier] = m
+		} else {
+			existMap[message.GetSenderId()] = recSendStruct.RecSend
+			augmentRecSend[identifier] = existMap
+		}
+	}
+
+	if len(augmentRecSend[identifier]) == digestTrustCount {
+		findFaulty(augmentRecSend[identifier])
+	}
+}
+
+/*
+Receive
+ */
+
+func receivePrepareFromSrc(m Message) {
 	//The sender node does not need to send Hash
+	identifier := m.GetId() + ":" + strconv.Itoa(m.GetRound());
+	digestSourceData[identifier] = m.GetData()
 	if MyID != m.GetSenderId() {
-		identifier := m.GetId() + ":" + strconv.Itoa(m.GetRound());
-		digestSourceData[identifier] = m.GetData()
-
 		data := m.GetData()
 		round := m.GetRound()
 
 		senderIndex := serverMap[MyID]
+		//Broadcast to all other servers
 		for i := 0; i < total; i++ {
 			digestM := encrypt(data, genKey)
 			m := ECHOStruct{Header:ECHO, Id:m.GetId(), SenderId:MyID, HashData: genKey, Data: digestM, Round:round}
@@ -64,7 +202,30 @@ func receiveBroadCast(m Message) {
 	}
 }
 
-func receiveDigest(m Message) {
+func recBinary(m Message) {
+	identifier := m.GetId() + ":" + strconv.Itoa(m.GetRound())
+	if l, ok := binarySet[identifier]; !ok {
+		firstL := []Message{m}
+		binarySet[identifier] = firstL
+	} else {
+		l = append(l, m)
+		binarySet[identifier] = l
+		fmt.Println(binarySet[identifier])
+		if len(l) == digestTrustCount {
+			detect := checkDetect(l)
+			if detect {
+				fmt.Println("Fail to Accept Data")
+				broadCastSendRec(m.GetId(), m.GetRound(), digestRecSend[identifier])
+			} else {
+				data := digestSourceData[identifier]
+				fmt.Println("Accept Data", data)
+				acceptData[data] = true
+			}
+		}
+	}
+}
+
+func receiveDigestFromOthers(m Message) {
 	identifier := m.GetId() + ":" + strconv.Itoa(m.GetRound())
 	digestData := digestStruct{SenderId:m.GetSenderId(), DigestM:m.GetData(), Key:m.GetHashData()}
 
@@ -92,44 +253,14 @@ func receiveDigest(m Message) {
 		if len(l) == total - 1 {
 			data := digestSourceData[identifier]
 			if validate(data, l) {
-				fmt.Println("Accept Data", data)
-				acceptData[data] = true
-				broadcastBinary(false)
+				broadcastBinary(false, m.GetId(), m.GetRound())
 			} else {
 				//Broadcast Binary
-				broadcastBinary(true)
+				broadcastBinary(true, m.GetId(), m.GetRound())
 			}
 		}
 	}
 
 	arrays[senderIndex][receiverIndex] = digestData
 	digestRecSend[identifier] = arrays
-}
-
-func validate(targetMessage string, l []digestStruct) bool{
-	for _, digestData := range l {
-		key := digestData.Key
-		digestM := digestData.DigestM
-		targetM := encrypt(targetMessage, key)
-		if targetM != digestM {
-			return false
-		}
-	}
-	return true
-}
-
-func broadCastSendRec() {
-
-}
-
-func recBinary() {
-
-}
-
-func findFaulty() {
-
-}
-
-func broadcastBinary(detect bool) {
-
 }
