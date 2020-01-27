@@ -187,10 +187,13 @@ func receivePrepareFromSrc(m Message) {
 		senderIndex := serverMap[MyID]
 		//Broadcast to all other servers
 		for i := 0; i < total; i++ {
+			//digestM is the encryption of the data
 			digestM := encrypt(data, genKey)
 			m := ECHOStruct{Header:ECHO, Id:m.GetId(), SenderId:MyID, HashData: genKey, Data: digestM, Round:round}
 			sendReq := PrepareSend{M: m, SendTo: serverList[i]}
-			SendReqChan <- sendReq
+			SendReqChan <- sendReq //send to other servers
+
+
 			receiveIndex := serverMap[serverList[i]]
 
 			dataStruct := digestStruct{Key: genKey, SenderId:MyID, DigestM:digestM}

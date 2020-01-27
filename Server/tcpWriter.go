@@ -37,12 +37,13 @@ func TcpWriter(ipPort string, ch chan TcpMessage) {
 			/*
 			Test the Extreme Case for EC Coding
 			 */
-			if data.Message.GetHeaderType() == HRBAlgorithm.ECHO {
-				if ipPort != serverList[4] && ipPort !=serverList[5] {
-					fmt.Println("Faulty Sender sends echo to ", ipPort )
-					encoder.Encode(&data)
-				}
-			}
+
+			//if data.Message.GetHeaderType() == HRBAlgorithm.ECHO {
+			//	if ipPort != serverList[4] && ipPort !=serverList[5] {
+			//		fmt.Println("Faulty Sender sends echo to ", ipPort )
+			//		encoder.Encode(&data)
+			//	}
+			//}
 		} else {
 			if sourceFault && source {
 				if counter == 0 {
@@ -55,7 +56,8 @@ func TcpWriter(ipPort string, ch chan TcpMessage) {
 					}
 				}
 			} else {
-				fmt.Printf("Send Data to %+v\n",data)
+				//time.Sleep(5*time.Second)
+				fmt.Printf("Hey, Send Data to %+v\n",data)
 				encoder.Encode(&data)
 			}
 		}

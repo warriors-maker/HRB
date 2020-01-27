@@ -44,29 +44,7 @@ func writeLogFile() {
 	fmt.Fprint(file, MyId+":6379\n" )
 	fmt.Fprint(file, serverList)
 	fmt.Fprint(file,"\n")
-
-
 }
-
-//Start up the peer
-func peerStartup(local bool) {
-	trustedPath := "./Configuration/trusted"
-	faultedPath := "./Configuration/faulty"
-	if local {
-		serverList, MyId, isFault = readServerListLocal(trustedPath, faultedPath, localId)
-	} else {
-		serverList, MyId, isFault = readServerListNetwork(trustedPath, faultedPath)
-	}
-	if isFault {
-		fmt.Println(MyId + " is faulty")
-	}
-
-	//writeLogFile()
-	fmt.Println("MyId: " + MyId)
-	fmt.Println("ServerList: ",serverList)
-
-}
-
 
 //For One round
 func Startup(id, algorithm int, isSourceFault bool) {
@@ -149,25 +127,40 @@ func Startup(id, algorithm int, isSourceFault bool) {
 			HRBAlgorithm.BroadcastPrepare("abcd", 1)
 		}
 
+	} else if algorithm == 6 {
+		codedSetup()
+
+	} else if algorithm == 7 {
+		codedCrashSetup()
+		if source {
+			fmt.Println("Crash Ccoded Broadcast")
+			HRBAlgorithm.CrashECBroadCast("abcde", 1)
+		}
 	} else {
 		fmt.Println("Do not understand what you give")
 	}
+}
 
-	/*
-	Setup your algorithm
-	 */
+//Start up the peer
+func peerStartup(local bool) {
+	trustedPath := "./Configuration/trusted"
+	faultedPath := "./Configuration/faulty"
+	if local {
+		serverList, MyId, isFault = readServerListLocal(trustedPath, faultedPath, localId)
+	} else {
+		serverList, MyId, isFault = readServerListNetwork(trustedPath, faultedPath)
+	}
+	if isFault {
+		fmt.Println(MyId + " is faulty")
+	}
 
-
-
-	//if isSourceFault {
-	//	testSourceFault()
-	//} else {
-	//	test()
-	//}
+	//writeLogFile()
+	fmt.Println("MyId: " + MyId)
+	fmt.Println("ServerList: ",serverList)
 }
 
 /*
-Four different algorithms to choose
+Seven different algorithms to choose
  */
 
 func hashSimpleSetup() {
@@ -202,6 +195,17 @@ func digestSetup() {
 	go setUpWrite()
 }
 
+func codedSetup() {
+
+}
+
+func codedCrashSetup() {
+	fmt.Println("coded cRash")
+	HRBAlgorithm.InitCrash()
+	ReadChans := setUpRead()
+	go filterCrashCoded(ReadChans)
+	go setUpWrite()
+}
 
 
 func NetworkModeStartup() {
@@ -257,6 +261,13 @@ func filterDigest(ch chan TcpMessage) {
 	for {
 		message := <- ch
 		HRBAlgorithm.FilterDigest(message.Message)
+	}
+}
+
+func filterCrashCoded(ch chan TcpMessage) {
+	for {
+		message := <- ch
+		HRBAlgorithm.FilterCrashCode(message.Message)
 	}
 }
 

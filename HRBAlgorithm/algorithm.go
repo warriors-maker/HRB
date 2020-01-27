@@ -246,6 +246,20 @@ func FilterDigest(message Message) {
 	}
 }
 
+func FilterCrashCode(message Message) {
+	switch v := message.(type) {
+	case MSGStruct:
+		crashRecMsg(message)
+	case ECHOStruct:
+		crashRecEcho(message)
+	case ACCStruct:
+		crashRecAcc(message)
+	default:
+		fmt.Printf("Sending : %+v\n", v)
+		fmt.Println("I donot understand what you send")
+	}
+}
+
 
 /*
 Helper Function

@@ -21,8 +21,8 @@ func RandStringRunes(n int) string {
 
 /*
 Run Program:
-go rub main.go [local/network] [algorithm] [Id[0,1...]] [f / ""]
-go run main.go local local 1
+go run main.go [local/network] [algorithm] [Id[0,1...]] [f / ""]
+go run main.go local 1
  */
 func main() {
 	//fmt.Println("Here are the four algorithms you can choose")
