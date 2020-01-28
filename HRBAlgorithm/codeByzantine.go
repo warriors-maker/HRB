@@ -26,7 +26,7 @@ func ECByzBroadCast(s string, round int) {
 
 	for i := 0; i < total; i++ {
 		code1 := ConvertBytesToString(shards[i])
-		code2 := ConvertBytesToString(shards[i + total - 1])
+		code2 := ConvertBytesToString(shards[i + total])
 		m := MSGStruct{Header:MSG, Id:MyID, SenderId:MyID, Data: code1, Round: round, HashData: code2}
 		sendReq := PrepareSend{M: m, SendTo: serverList[i]}
 		SendReqChan <- sendReq
@@ -45,7 +45,7 @@ func ByzRecMsg(m Message) {
 	}
 
 	index1 := serverMap[MyID]
-	index2 := index1 + total - 1
+	index2 := index1 + total
 	code1, _ := ConvertStringToBytes(m.GetData())
 	code2, _ := ConvertStringToBytes(m.GetHashData())
 	fmt.Println("code1: ", code1, " code2: ", code2)
@@ -79,14 +79,14 @@ func ByzRecEcho(m Message) {
 		code, _ := ConvertStringToBytes(m.GetData())
 		ByzCodeElement[identifier][index] = code
 
-		if ByzCodeCounter[identifier] == total {
+		if ByzCodeCounter[identifier] == total + 1 {
 			var vals []string
+			fmt.Println("ByzCodes:",ByzCodeElement[identifier])
 			if faulty == 0 {
 				vals = permutation(ByzCodeElement[identifier], total, total)
 			} else {
 				vals = permutation(ByzCodeElement[identifier], total - faulty, 2*(total) - (total - faulty))
 			}
-			fmt.Println(ByzCodeCounter[identifier], ByzCodeElement[identifier])
 			detected := validateByzCode(vals)
 			broadcastBinary(detected, m.GetId(), m.GetRound())
 		}

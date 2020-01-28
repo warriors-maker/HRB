@@ -85,6 +85,8 @@ func decodePermutateHelper(shards, aux [][]byte,
 		val, err := Decode(aux, dataShards, parityShards)
 		if err == nil {
 			f(val)
+		} else {
+			f("")
 		}
 		return
 	}

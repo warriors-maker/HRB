@@ -201,7 +201,6 @@ func digestSetup() {
 }
 
 func codedSetup() {
-	fmt.Println("coded cRash")
 	HRBAlgorithm.InitByzCode()
 	ReadChans := setUpRead()
 	go filterByzCode(ReadChans)
