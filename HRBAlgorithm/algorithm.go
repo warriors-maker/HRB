@@ -246,6 +246,22 @@ func FilterDigest(message Message) {
 	}
 }
 
+func FilterByzCode(message Message) {
+	switch v := message.(type) {
+	case MSGStruct:
+		ByzRecMsg(message)
+	case ECHOStruct:
+		ByzRecEcho(message)
+	case Binary:
+		ByzRecBin(message)
+	//case RecSend:
+	//	receiveRecSend(message)
+	default:
+		fmt.Printf("Sending : %+v\n", v)
+		fmt.Println("I donot understand what you send")
+	}
+}
+
 func FilterCrashCode(message Message) {
 	switch v := message.(type) {
 	case MSGStruct:

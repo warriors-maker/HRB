@@ -30,7 +30,7 @@ func TcpWriter(ipPort string, ch chan TcpMessage) {
 				correct := data.Message
 				// Create a Faulty Message
 
-				faulty := HRBAlgorithm.ECHOStruct{Id:correct.GetId(), Data:"", SenderId:correct.GetSenderId(),
+				faulty := HRBAlgorithm.ECHOStruct{Id:correct.GetId(), Data: data.Message.GetData()+ "1", SenderId:correct.GetSenderId(),
 					HashData:correct.GetHashData(), Round:correct.GetRound(), Header:HRBAlgorithm.ECHO}
 				data = TcpMessage{Message:faulty, ID:MyId}
 

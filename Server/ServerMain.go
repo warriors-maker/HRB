@@ -129,6 +129,10 @@ func Startup(id, algorithm int, isSourceFault bool) {
 
 	} else if algorithm == 6 {
 		codedSetup()
+		if source {
+			fmt.Println("Digest Broadcast")
+			HRBAlgorithm.ECByzBroadCast("abcdabcd", 1)
+		}
 
 	} else if algorithm == 7 {
 		codedCrashSetup()
@@ -197,11 +201,14 @@ func digestSetup() {
 }
 
 func codedSetup() {
-
+	fmt.Println("coded cRash")
+	HRBAlgorithm.InitByzCode()
+	ReadChans := setUpRead()
+	go filterByzCode(ReadChans)
+	go setUpWrite()
 }
 
 func codedCrashSetup() {
-	fmt.Println("coded cRash")
 	HRBAlgorithm.InitCrash()
 	ReadChans := setUpRead()
 	go filterCrashCoded(ReadChans)
@@ -262,6 +269,13 @@ func filterDigest(ch chan TcpMessage) {
 	for {
 		message := <- ch
 		HRBAlgorithm.FilterDigest(message.Message)
+	}
+}
+
+func filterByzCode(ch chan TcpMessage) {
+	for {
+		message := <- ch
+		HRBAlgorithm.FilterByzCode(message.Message)
 	}
 }
 
