@@ -25,7 +25,21 @@ func TcpWriter(ipPort string, ch chan TcpMessage) {
 	for {
 		data := <-ch
 		if isFault {
+			if data.Message.GetHeaderType() == HRBAlgorithm.ECHO {
+				fmt.Println("Set data to null")
+				correct := data.Message
+				// Create a Faulty Message
 
+				faulty := HRBAlgorithm.ECHOStruct{Id:correct.GetId(), Data:"", SenderId:correct.GetSenderId(),
+					HashData:correct.GetHashData(), Round:correct.GetRound(), Header:HRBAlgorithm.ECHO}
+				data = TcpMessage{Message:faulty, ID:MyId}
+
+				fmt.Println(data.Message.GetData())
+
+				encoder.Encode(&data)
+			} else {
+				encoder.Encode(&data)
+			}
 			//if counter % 2 == 0 {
 			//
 			//} else {

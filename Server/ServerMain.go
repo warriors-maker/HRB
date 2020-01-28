@@ -190,6 +190,7 @@ func hashECComplexSetup() {
 }
 
 func digestSetup() {
+	HRBAlgorithm.InitDigest()
 	ReadChans := setUpRead()
 	go filterDigest(ReadChans)
 	go setUpWrite()

@@ -32,6 +32,9 @@ type FWDStruct struct {
 	SenderId string
 }
 
+func (d FWDStruct) SetDataNull(){
+
+}
 
 type MSGStruct struct {
 	Header TcpHeader
@@ -40,6 +43,10 @@ type MSGStruct struct {
 	Round int
 	Id string
 	SenderId string
+}
+
+func (d MSGStruct) SetDataNull(){
+	d.Data = ""
 }
 
 type ECHOStruct struct {
@@ -51,12 +58,20 @@ type ECHOStruct struct {
 	SenderId string
 }
 
+func (d ECHOStruct) SetDataNull(){
+	(&d).Data = ""
+}
+
 type ACCStruct struct {
 	Header TcpHeader
 	HashData string
 	Round int
 	Id string
 	SenderId string
+}
+
+func (d ACCStruct) SetDataNull(){
+
 }
 
 type REQStruct struct {
@@ -67,6 +82,9 @@ type REQStruct struct {
 	SenderId string
 }
 
+func (d REQStruct) SetDataNull(){
+
+}
 
 type PrepareSend struct {
 	M Message
@@ -79,6 +97,10 @@ type Binary struct {
 	round int
 	SenderId string
 	Id string
+}
+
+func (d Binary) SetDataNull(){
+
 }
 
 type RecSend struct {
@@ -127,6 +149,10 @@ func (b RecSend) SetSenderId(string) {
 
 }
 
+func (b RecSend) SetDataNull() {
+	b.HashData = ""
+}
+
 func (b Binary) GetHeaderType() TcpHeader {
 	return b.Header
 }
@@ -159,6 +185,7 @@ func (b Binary) SetSenderId(string) {
 
 }
 
+
 /*
 Implement the interface
  */
@@ -182,6 +209,7 @@ func (m ACCStruct) GetHeaderType() TcpHeader{
 func (m REQStruct) GetHeaderType() TcpHeader{
 	return m.Header
 }
+
 
 
 /*
@@ -208,6 +236,7 @@ func (m REQStruct) GetData() string {
 	return ""
 }
 
+
 /*
 Return the Value contained in the message for real message
 */
@@ -231,6 +260,7 @@ func (m ACCStruct) GetHashData() string{
 func (m REQStruct) GetHashData() string{
 	return m.HashData
 }
+
 
 
 /*

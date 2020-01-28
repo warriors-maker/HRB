@@ -238,8 +238,8 @@ func FilterDigest(message Message) {
 		receiveDigestFromOthers(message)
 	case Binary:
 		recBinary(message)
-	case RecSend:
-		receiveRecSend(message)
+	//case RecSend:
+	//	receiveRecSend(message)
 	default:
 		fmt.Printf("Sending : %+v\n", v)
 		fmt.Println("I donot understand what you send")
