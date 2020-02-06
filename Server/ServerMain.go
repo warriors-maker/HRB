@@ -11,8 +11,10 @@ import (
 Note id is always the Ip + Port for Local
  */
 
+var default_benchmark_port = "9000"
+
 var serverList []string
-var MyId string //basically the IP of individual server
+var MyId string //basically the IP of individual server (Note this is Benchmark port )
 var isFault bool //check whether I should be the faulty based on configuration
 
 var faultyCount int
@@ -20,7 +22,8 @@ var trustedCount int
 
 type messageChan chan TcpMessage
 
-var SendChans map[string] messageChan
+//var SendChans map[string] messageChan
+var SendChans chan TcpMessage
 var ReadChans chan TcpMessage
 
 var isLocalMode bool //indicate whether this is a local mode
@@ -29,7 +32,6 @@ var source bool //A flag to indicate whether I am the sender
 /*
 Only used in Local Mode for debugging purpose
  */
-var localId int
 
 var sourceFault bool
 
@@ -47,25 +49,16 @@ func writeLogFile() {
 }
 
 //For One round
-func Startup(id, algorithm int, isSourceFault bool) {
+func Startup(id int) {
 	fmt.Println("Local Setup")
-	isLocalMode = false
 
 	if id != -1 {
 		isLocalMode = true
-	}
-
-	localId = id
-
-	sourceFault = isSourceFault
-
-	peerStartup(isLocalMode)
-
-	if serverList[0] == MyId {
-		source = true
 	} else {
-		source = false
+		isLocalMode = false
 	}
+
+	algorithm, isSourceFault := peerStartup(id)
 
 	//HRBAlgorithm.AlgorithmSetUp(MyId, serverList, trustedCount, faultyCount)
 	if isSourceFault {
@@ -75,7 +68,9 @@ func Startup(id, algorithm int, isSourceFault bool) {
 	}
 
 	//General setup
+
 	HRBAlgorithm.AlgorithmSetUp(MyId, serverList, trustedCount, faultyCount)
+
 	time.Sleep(1*time.Second)
 
 	if algorithm == 1 {
@@ -85,19 +80,18 @@ func Startup(id, algorithm int, isSourceFault bool) {
 		} else {
 			fmt.Println("Running Non-Faulty HashNonEquivocate")
 			if source {
-				simpleBroadcast("abcdef")
+				//simpleBroadcast("abcdef")
 			}
 		}
 	} else if algorithm == 2 {
 		hashComplexSetup()
 		if isSourceFault {
 			fmt.Println("Running Faulty HashEquivocate")
-			testSourceFault("abcdef")
+			//testSourceFault("abcdef")
 		} else {
 			fmt.Println("Running Non-Faulty HashEquivocate")
 			if source {
-				simpleBroadcast("abcdef")
-
+				//simpleBroadcast("abcdef")
 			}
 		}
 	} else if algorithm == 3 {
@@ -113,7 +107,7 @@ func Startup(id, algorithm int, isSourceFault bool) {
 		hashECComplexSetup()
 		if sourceFault {
 			fmt.Println("Running Faulty ECEquivocate")
-			testEcSourceFault("abcdef")
+			//testEcSourceFault("abcdef")
 		} else {
 			fmt.Println("Running Non-Faulty ECEquivocate")
 			if source {
@@ -146,22 +140,29 @@ func Startup(id, algorithm int, isSourceFault bool) {
 }
 
 //Start up the peer
-func peerStartup(local bool) {
-	trustedPath := "./Configuration/trusted"
-	faultedPath := "./Configuration/faulty"
-	if local {
-		serverList, MyId, isFault = readServerListLocal(trustedPath, faultedPath, localId)
-	} else {
-		serverList, MyId, isFault = readServerListNetwork(trustedPath, faultedPath)
-	}
-	if isFault {
-		fmt.Println(MyId + " is faulty")
-	}
+func peerStartup(index int) (int, bool){
+	yamlStruct := decodeYamlFile()
+	trustedList := yamlStruct.Trusted
+	faultyList := yamlStruct.Faulty
+	serverList = append(trustedList, faultyList...)
 
+	if index == -1 {
+		myHostAddr := getLocalIP()
+		MyId = myHostAddr+":" + default_benchmark_port
+	} else {
+		if index == 0 {
+			source = true
+		} else {
+			source = false
+		}
+		MyId = serverList[index]
+	}
 	//writeLogFile()
 	fmt.Println("MyId: " + MyId)
 	fmt.Println("ServerList: ",serverList)
+	return yamlStruct.Algorithm, yamlStruct.Source_Byzantine
 }
+
 
 /*
 Seven different algorithms to choose
@@ -170,13 +171,11 @@ Seven different algorithms to choose
 func hashSimpleSetup() {
 	ReadChans := setUpRead()
 	go filterSimple(ReadChans)
-	go setUpWrite()
 }
 
 func hashComplexSetup() {
 	ReadChans := setUpRead()
 	go filter(ReadChans)
-	go setUpWrite()
 }
 
 
@@ -215,11 +214,10 @@ func codedCrashSetup() {
 }
 
 
-func NetworkModeStartup() {
+func NetworkModeStartup(id int) {
 	isLocalMode = false
-	peerStartup(isLocalMode)
+	peerStartup(id)
 	setUpRead()
-	setUpWrite()
 	HRBAlgorithm.AlgorithmSetUp(MyId, serverList, trustedCount, faultyCount)
 }
 
@@ -290,37 +288,30 @@ Writing to the Network
 */
 //Setting up writting Channels for individual sever
 
+
+
 func setUpWrite() {
-	SendChans = make (map[string] messageChan)
+	SendChans = make (messageChan)
+	go deliver(MyId, SendChans)
 
-	for _, serverId := range serverList {
-		SendChans[serverId] = make(chan TcpMessage)
-		go deliver(serverId, SendChans[serverId])
-	}
-	go reqSendListener()
-}
-
-func reqSendListener() {
 	//fmt.Println("Inside reqSendListener")
 	for {
 		req := <- HRBAlgorithm.SendReqChan
 		//fmt.Printf("Sending Msg: %+v\n",req.M)
-		if req.SendTo == "all" {
-			for _, sendChan := range SendChans {
-				tcpMessage := TcpMessage{Message:req.M}
-				sendChan <- tcpMessage
-			}
-		} else {
-			sendChan := SendChans[req.SendTo]
+		if req.SendTo == "all" ||  req.SendTo == ""{
 			tcpMessage := TcpMessage{Message:req.M}
-			sendChan <- tcpMessage
+			SendChans <- tcpMessage
+		} else {
+			tcpMessage := TcpMessage{Message:req.M, ID:req.SendTo}
+			SendChans <- tcpMessage
 		}
 	}
-
 }
 
+
+
 func deliver(ipPort string, ch chan TcpMessage) {
-	TcpWriter(ipPort, ch)
+	TcpWriter(ch)
 }
 
 
@@ -328,60 +319,58 @@ func deliver(ipPort string, ch chan TcpMessage) {
 Simple Testing
  */
 
-
-
-func testEcSourceFault(s string) {
-	//test
-	if source {
-		shards := HRBAlgorithm.Encode(s, faultyCount + 1, trustedCount - 1)
-		//Get the string version of the string
-		hashStr := HRBAlgorithm.ConvertBytesToString(HRBAlgorithm.Hash([]byte(s)))
-
-		for id , server := range serverList {
-			if id == 2 || id == 3{
-				wrong := HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, HashData: hashStr, Data: "", Header:0, Round:0}
-				tcpMessage := TcpMessage{Message: wrong}
-				SendChans[server] <- tcpMessage
-			} else if id == 4 || id ==5 {
-
-			} else {
-				codeString := HRBAlgorithm.ConvertBytesToString(shards[id])
-				correct := HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, HashData: hashStr, Data: codeString, Header:0, Round:0}
-				tcpMessage := TcpMessage{Message:correct}
-				SendChans[server] <- tcpMessage
-			}
-		}
-	}
-}
-
-func testSourceFault(s string) {
-	if source {
-		m := HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, Data:s, Header:0, Round:0}
-		faultym :=  HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, Data:"", Header:0, Round:0}
-		for id , server := range serverList {
-			if id == 2 || id == 3 {
-				tcpMessage := TcpMessage{Message:faultym}
-				SendChans[server] <- tcpMessage
-			} else if id == 4 || id == 5 {
-
-			} else {
-				tcpMessage := TcpMessage{Message:m}
-				SendChans[server] <- tcpMessage
-			}
-		}
-	}
-}
-
-func simpleBroadcast(s string) {
-	if source {
-		fmt.Println("I am the source")
-		m := HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, Data: s, Header:0, Round:0}
-		for _ , server := range serverList {
-			tcpMessage := TcpMessage{Message:m}
-			SendChans[server] <- tcpMessage
-		}
-	}
-}
+//func testEcSourceFault(s string) {
+//	//test
+//	if source {
+//		shards := HRBAlgorithm.Encode(s, faultyCount + 1, trustedCount - 1)
+//		//Get the string version of the string
+//		hashStr := HRBAlgorithm.ConvertBytesToString(HRBAlgorithm.Hash([]byte(s)))
+//
+//		for id , server := range serverList {
+//			if id == 2 || id == 3{
+//				wrong := HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, HashData: hashStr, Data: "", Header:0, Round:0}
+//				tcpMessage := TcpMessage{Message: wrong}
+//				SendChans[server] <- tcpMessage
+//			} else if id == 4 || id ==5 {
+//
+//			} else {
+//				codeString := HRBAlgorithm.ConvertBytesToString(shards[id])
+//				correct := HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, HashData: hashStr, Data: codeString, Header:0, Round:0}
+//				tcpMessage := TcpMessage{Message:correct}
+//				SendChans[server] <- tcpMessage
+//			}
+//		}
+//	}
+//}
+//
+//func testSourceFault(s string) {
+//	if source {
+//		m := HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, Data:s, Header:0, Round:0}
+//		faultym :=  HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, Data:"", Header:0, Round:0}
+//		for id , server := range serverList {
+//			if id == 2 || id == 3 {
+//				tcpMessage := TcpMessage{Message:faultym}
+//				SendChans[server] <- tcpMessage
+//			} else if id == 4 || id == 5 {
+//
+//			} else {
+//				tcpMessage := TcpMessage{Message:m}
+//				SendChans[server] <- tcpMessage
+//			}
+//		}
+//	}
+//}
+//
+//func simpleBroadcast(s string) {
+//	if source {
+//		fmt.Println("I am the source")
+//		m := HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, Data: s, Header:0, Round:0}
+//		for _ , server := range serverList {
+//			tcpMessage := TcpMessage{Message:m}
+//			SendChans[server] <- tcpMessage
+//		}
+//	}
+//}
 
 
 

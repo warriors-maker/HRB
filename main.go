@@ -2,7 +2,6 @@ package main
 
 import (
 	"HRB/Server"
-	"fmt"
 	"math/rand"
 	"os"
 	"strconv"
@@ -25,46 +24,20 @@ go run main.go [local/network] [algorithm] [Id[0,1...]] [f / ""]
 go run main.go local 1
  */
 func main() {
-	//fmt.Println("Here are the four algorithms you can choose")
-	//fmt.Println( "1. HashNonEquivocate")
-	//fmt.Println( "2. HashEquivocate")
-	//fmt.Println( "3. ECHashNonEquivocate")
-	//fmt.Println( "4. ECHashEquivocate")
-
 	var wg sync.WaitGroup
 	wg.Add(1)
 
 	argsWithoutProg := os.Args[1:]
 
-	mode := argsWithoutProg[0]
-	algorithm,_ := strconv.Atoi(argsWithoutProg[1])
+	// If the running argument has an extra index, then it is local mode
+	// where index represents what port local machine is using
 
-	fmt.Println(mode)
-	if mode == "network" {
-		if len (argsWithoutProg) == 2 {
-			soureceFault := false
-			Server.Startup(-1, 5, soureceFault)
-		} else {
-			//SourceFault
-			sourceFault := true
-			Server.Startup(-1, 5, sourceFault)
-		}
-	} else if mode == "local" {
-		// ./main local 5 idx
-		if len (argsWithoutProg) == 3 {
-			sourceFault := false
-			idx, _ := strconv.Atoi(argsWithoutProg[2])
-			Server.Startup(idx, algorithm, sourceFault)
-		} else {
-			//Source Fault
-			sourceFault := true
-			idx, _ := strconv.Atoi(argsWithoutProg[2])
-			Server.Startup(idx, algorithm, sourceFault)
-		}
+	if len(argsWithoutProg) == 0 {
+		Server.Startup(-1)
 	} else {
-		fmt.Println("Invalid mode")
+		index,_ := strconv.Atoi(argsWithoutProg[0])
+		Server.Startup(index)
 	}
-
 	wg.Wait()
 
 }
