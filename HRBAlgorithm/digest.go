@@ -90,7 +90,7 @@ func broadcastBinary(detect bool, Id string, round int) {
 		detectString = "0"
 	}
 
-	m := Binary{Header: BIN, SenderId:MyID, Id:Id, round:round, HashData:detectString}
+	m := Binary{Header: BIN, SenderId:MyID, Id:Id, Round:round, HashData:detectString}
 	for i := 0; i < total; i++ {
 		sendReq := PrepareSend{M: m, SendTo: serverList[i]}
 		SendReqChan <- sendReq
@@ -173,7 +173,7 @@ func recBinary(m Message) {
 						fmt.Printf("Stats: %+v\n",stats)
 						diff := fmt.Sprintf("%f",stats.End.Sub(stats.Start).Seconds())
 						fmt.Println()
-						fmt.Println("Reliable Accept "  + strconv.Itoa(m.GetRound()) + " " + diff, "digestIdentifier: ", identifier)
+						fmt.Println("Reliable Accept "  + strconv.Itoa(m.GetRound()) + " " + diff, data)
 						fmt.Println()
 					}
 				}

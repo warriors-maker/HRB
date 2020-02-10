@@ -94,7 +94,7 @@ type PrepareSend struct {
 type Binary struct {
 	Header TcpHeader
 	HashData string
-	round int
+	Round int
 	SenderId string
 	Id string
 }
@@ -170,7 +170,7 @@ func (b Binary) GetId() string{
 }
 
 func (b Binary) GetRound() int {
-	return b.round
+	return b.Round
 }
 
 func (b Binary) GetSenderId() string {

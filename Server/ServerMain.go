@@ -80,14 +80,14 @@ func ProtocalStart() {
 		digestSetup()
 		if source {
 			fmt.Println("Digest Broadcast")
-			HRBAlgorithm.BroadcastPrepare(100, 1)
+			HRBAlgorithm.BroadcastPrepare(100, 5)
 		}
 
 	} else if algorithm == 6 {
 		codedSetup()
 		if source {
 			fmt.Println("NCBA")
-			HRBAlgorithm.ECByzBroadCast("abcdabcd", 1)
+			HRBAlgorithm.ECByzBroadCast(10, 5)
 		}
 
 	} else if algorithm == 7 {
