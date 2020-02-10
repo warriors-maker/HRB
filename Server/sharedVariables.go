@@ -19,6 +19,9 @@ var isSourceFault bool
 var faultyList []string
 var trustedList []string
 
+
+
+
 type messageChan chan TcpMessage
 
 var internalReadAddr string

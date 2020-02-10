@@ -3,6 +3,7 @@ package Server
 import (
 	"HRB/HRBAlgorithm"
 	"fmt"
+	"math/rand"
 	"os"
 	"time"
 )
@@ -61,7 +62,7 @@ func ProtocalStart() {
 
 		} else {
 			if source {
-				HRBAlgorithm.SimpleECBroadCast("abcdef")
+				HRBAlgorithm.SimpleECBroadCast(100, 5)
 			}
 		}
 	} else if algorithm == 4 {
@@ -72,14 +73,14 @@ func ProtocalStart() {
 		} else {
 			fmt.Println("Running Non-Faulty ECEquivocate")
 			if source {
-				HRBAlgorithm.ComplexECBroadCast("abcdef")
+				HRBAlgorithm.ComplexECBroadCast(100,5)
 			}
 		}
 	} else if algorithm == 5 {
 		digestSetup()
 		if source {
 			fmt.Println("Digest Broadcast")
-			HRBAlgorithm.BroadcastPrepare("abcd", 1)
+			HRBAlgorithm.BroadcastPrepare(100, 3)
 		}
 
 	} else if algorithm == 6 {
@@ -93,7 +94,7 @@ func ProtocalStart() {
 		codedCrashSetup()
 		if source {
 			fmt.Println("Crash Ccoded Broadcast")
-			HRBAlgorithm.CrashECBroadCast("abcde", 1)
+			HRBAlgorithm.CrashECBroadCast(100, 5)
 		}
 	} else {
 		fmt.Println("Do not understand what you give")
@@ -101,7 +102,7 @@ func ProtocalStart() {
 
 	if algorithm == 1 || algorithm == 2 {
 		if source {
-			simpleBroadcast("abcdef")
+			simpleBroadcast(100, 5)
 		}
 	}
 }
@@ -309,15 +310,36 @@ Simple Testing
 //}
 //
 
-func simpleBroadcast(s string) {
+const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+func RandStringBytes(n int) string {
+	b := make([]byte, n)
+	for i := range b {
+		b[i] = letterBytes[rand.Intn(len(letterBytes))]
+	}
+	return string(b)
+}
+
+
+/*
+Used in Algorithm 1 and 2
+ */
+func simpleBroadcast(byte_length, round int) {
 	if source {
-		time.Sleep(1*time.Second)
-		fmt.Println("Broadcast")
-		m := HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, Data: s, Header:0, Round:0}
-		tcpMessage := TcpMessage{Message:m}
-		protocalSendChan <- tcpMessage
+		for i := 0; i < round; i++ {
+			time.Sleep(1*time.Second)
+			s := RandStringBytes(byte_length)
+			m := HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, Data: s, Header:0, Round:i}
+			for _, id := range serverList {
+				fmt.Println("Protocal send to ", id)
+				tcpMessage := TcpMessage{Message:m, ID:id}
+				protocalSendChan <- tcpMessage
+			}
+		}
 	}
 }
+
+
 
 
 

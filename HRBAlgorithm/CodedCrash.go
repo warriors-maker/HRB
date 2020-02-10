@@ -14,25 +14,30 @@ func InitCrash() {
 	codeElements= make(map[string] []string)
 }
 
-func CrashECBroadCast(s string, round int) {
+func CrashECBroadCast(length , round int) {
 	//need to make sure that coded element > f
 	time.Sleep(3*time.Second)
 	fmt.Println("MyID" + MyID)
 	var shards[][] byte
-	if faulty == 0 {
-		shards = Encode(s, total - 1, 1)
-	} else {
-		shards = Encode(s, faulty + 1, total - (faulty + 1))
-	}
-	fmt.Println("Shards are ", shards)
+
+	for r := 0; r < round; r ++ {
+		s := RandStringBytes(length)
+		if faulty == 0 {
+			shards = Encode(s, total - 1, 1)
+		} else {
+			shards = Encode(s, faulty + 1, total - (faulty + 1))
+		}
 
 
-	for i := 0; i < total; i++ {
-		code := ConvertBytesToString(shards[i])
-		m := MSGStruct{Header:MSG, Id:MyID, SenderId:MyID, Data: code, Round: round}
-		sendReq := PrepareSend{M: m, SendTo: serverList[i]}
-		SendReqChan <- sendReq
+		for i := 0; i < total; i++ {
+			code := ConvertBytesToString(shards[i])
+			m := MSGStruct{Header:MSG, Id:MyID, SenderId:MyID, Data: code, Round: r}
+			sendReq := PrepareSend{M: m, SendTo: serverList[i]}
+			SendReqChan <- sendReq
+		}
+
 	}
+
 }
 
 func identifierCreate(id string, round int) string{
@@ -42,6 +47,11 @@ func identifierCreate(id string, round int) string{
 func crashRecMsg(m Message) {
 	identifier := identifierCreate(m.GetId(), m.GetRound())
 	count, exist :=codeCounter[identifier]
+
+	stats := Stats{}
+	stats.Start = time.Now()
+	statsRecord[identifier] = stats
+	fmt.Printf("Begin Stats: %+v\n",stats)
 
 	if exist {
 		codeCounter[identifier] = count + 1
@@ -119,5 +129,12 @@ func crashRecEcho(m Message) {
 }
 
 func crashRecAcc(m Message) {
-	fmt.Println("Receive " + m.GetHashData() + " " + identifierCreate(m.GetId(), m.GetRound()))
+	acceptData[m.GetHashData()] = true
+	identifier := identifierCreate(m.GetId(), m.GetRound())
+	stats := statsRecord[identifier]
+	stats.Value = m.GetHashData()
+	stats.End = time.Now()
+	fmt.Printf("Stats: %+v\n",stats)
+	diff := fmt.Sprintf("%f",stats.End.Sub(stats.Start).Seconds())
+	fmt.Println("Reliable Accept "  + strconv.Itoa(m.GetRound()) + " " + diff)
 }

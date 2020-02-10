@@ -9,9 +9,9 @@ import (
 /*
 Note than Broadcast, MessageHandler and EchoHandler are the same for Complex version
  */
-func ComplexECBroadCast(s string) {
+func ComplexECBroadCast(length, round int) {
 	time.Sleep(3*time.Second)
-	SimpleECBroadCast(s)
+	SimpleECBroadCast(length, round)
 }
 
 func ComplexECMessageHandler(m Message) {
@@ -20,6 +20,10 @@ func ComplexECMessageHandler(m Message) {
 	identifier := data.GetId() + strconv.Itoa(data.GetRound())
 
 	if _, seen := MessageReceiveSet[identifier]; !seen {
+		stats := Stats{}
+		stats.Start = time.Now()
+		statsRecord[identifier] = stats
+		fmt.Printf("Begin Stats: %+v\n",stats)
 		MessageReceiveSet[identifier] = true
 
 		hashStr := data.GetHashData()
@@ -296,7 +300,12 @@ func complexECCheck(m Message) {
 		if len(AccRecCountSet[acc]) >= total - faulty {
 			if _, e := acceptData[value]; ! e {
 				acceptData[value] = true
-				fmt.Println("Reliable Accept " + value)
+				stats := statsRecord[identifier]
+				stats.Value = value
+				stats.End = time.Now()
+				fmt.Printf("Stats: %+v\n",stats)
+				diff := fmt.Sprintf("%f",stats.End.Sub(stats.Start).Seconds())
+				fmt.Println("Reliable Accept "  + strconv.Itoa(m.GetRound()) + " " + diff)
 			}
 		}
 	}

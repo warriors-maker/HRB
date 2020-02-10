@@ -3,6 +3,7 @@ package HRBAlgorithm
 import (
 	"fmt"
 	"strconv"
+	"time"
 )
 
 
@@ -13,6 +14,11 @@ func Msghandler (d Message) (bool, int, string){
 	identifier := data.GetId() + strconv.Itoa(data.GetRound())
 	if _, seen := MessageReceiveSet[identifier]; !seen {
 		MessageReceiveSet[identifier] = true
+
+		stats := Stats{}
+		stats.Start = time.Now()
+		statsRecord[identifier] = stats
+		fmt.Printf("Begin Stats: %+v\n",stats)
 
 		//include the data with key the original data and val its hashvalue
 		hashstr := ConvertBytesToString(Hash([]byte(data.GetData())))
@@ -219,9 +225,12 @@ func check(m Message) []bool {
 		}
 
 		if len(AccRecCountSet[acc]) >= total - faulty {
-			//accept
-			fmt.Println("Reliable Accept " + value)
-			flags[3] = true
+			stats := statsRecord[identifier]
+			stats.Value = value
+			stats.End = time.Now()
+			fmt.Printf("Stats: %+v\n",stats)
+			diff := fmt.Sprintf("%f",stats.End.Sub(stats.Start).Seconds())
+			fmt.Println("Reliable Accept "  + strconv.Itoa(m.GetRound()) + " " + diff)
 		}
 	}
 	return flags

@@ -48,15 +48,18 @@ func validate(targetMessage string, l []digestStruct) bool{
 }
 
 
-func BroadcastPrepare(s string, round int) {
+func BroadcastPrepare(length, round int) {
 	time.Sleep(3*time.Second)
 	identifier := MyID + ":" + strconv.Itoa(round);
-	dataFromSrc[identifier] = s
 
-	for i := 0; i < total; i++ {
-		m := MSGStruct{Header:MSG, Id:MyID, SenderId:MyID, Data: s, Round:round}
-		sendReq := PrepareSend{M: m, SendTo: serverList[i]}
-		SendReqChan <- sendReq
+	for r := 0; r < round; r++ {
+		s :=  RandStringBytes(length)
+		dataFromSrc[identifier] = s
+		for i := 0; i < total; i++ {
+			m := MSGStruct{Header:MSG, Id:MyID, SenderId:MyID, Data: s, Round:r}
+			sendReq := PrepareSend{M: m, SendTo: serverList[i]}
+			SendReqChan <- sendReq
+		}
 	}
 }
 
@@ -101,7 +104,14 @@ func receivePrepareFromSrc(m Message) {
 	//The sender node does not need to send Hash
 	identifier := m.GetId() + ":" + strconv.Itoa(m.GetRound());
 	dataFromSrc[identifier] = m.GetData()
+
+	stats := Stats{}
+	stats.Start = time.Now()
+	statsRecord[identifier] = stats
+	fmt.Printf("Begin Stats Digest: %+v\n",stats)
+
 	if MyID != m.GetSenderId() {
+
 		data := m.GetData()
 		round := m.GetRound()
 		//Broadcast to all other servers
@@ -147,9 +157,23 @@ func recBinary(m Message) {
 				detect := checkDetect(l)
 				if detect {
 					fmt.Println("Fail to Accept Data")
+					stats := statsRecord[identifier]
+					stats.End = time.Now()
+					fmt.Printf("Stats: %+v\n",stats)
+					diff := fmt.Sprintf("%f",stats.End.Sub(stats.Start).Seconds())
+					fmt.Println("Reliable Accept "  + strconv.Itoa(m.GetRound()) + " " + diff)
 				} else {
 					data := digestSourceData[identifier]
-					fmt.Println("Accept Data", data)
+					fmt.Println("Reliable Accept")
+					if _, e:= acceptData[data]; !e {
+						acceptData[data] = true
+						stats := statsRecord[identifier]
+						stats.Value = data
+						stats.End = time.Now()
+						fmt.Printf("Stats: %+v\n",stats)
+						diff := fmt.Sprintf("%f",stats.End.Sub(stats.Start).Seconds())
+						fmt.Println("Reliable Accept "  + strconv.Itoa(m.GetRound()) + " " + diff)
+					}
 				}
 			}
 		}

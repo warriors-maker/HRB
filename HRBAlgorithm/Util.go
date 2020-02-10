@@ -4,6 +4,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha512"
 	"encoding/base64"
+	"math/rand"
 )
 
 /*
@@ -37,4 +38,14 @@ func ConvertBytesToString(b []byte) string {
 
 func ConvertStringToBytes(s string) ([]byte, error) {
 	return base64.URLEncoding.DecodeString(s)
+}
+
+const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+func RandStringBytes(n int) string {
+	b := make([]byte, n)
+	for i := range b {
+		b[i] = letterBytes[rand.Intn(len(letterBytes))]
+	}
+	return string(b)
 }

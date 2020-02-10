@@ -6,18 +6,21 @@ import (
 	"time"
 )
 
-func SimpleECBroadCast(s string) {
+func SimpleECBroadCast(byte_length, round int) {
 	time.Sleep(3*time.Second)
-	shards := Encode(s, faulty + 1, total - (faulty + 1))
-	fmt.Println("Shards are ", shards)
-	//Get the string version of the string
-	hashStr := ConvertBytesToString(Hash([]byte(s)))
+	for r:= 0; r < round; r++ {
+		s := RandStringBytes(byte_length)
+		shards := Encode(s, faulty + 1, total - (faulty + 1))
+		fmt.Println("Shards are ", shards)
+		//Get the string version of the string
+		hashStr := ConvertBytesToString(Hash([]byte(s)))
 
-	for i := 0; i < total; i++ {
-		code := ConvertBytesToString(shards[i])
-		m := MSGStruct{Header:MSG, Id:MyID, SenderId:MyID, HashData: hashStr, Data: code, Round:1}
-		sendReq := PrepareSend{M: m, SendTo: serverList[i]}
-		SendReqChan <- sendReq
+		for i := 0; i < total; i++ {
+			code := ConvertBytesToString(shards[i])
+			m := MSGStruct{Header:MSG, Id:MyID, SenderId:MyID, HashData: hashStr, Data: code, Round:r}
+			sendReq := PrepareSend{M: m, SendTo: serverList[i]}
+			SendReqChan <- sendReq
+		}
 	}
 }
 
@@ -28,6 +31,11 @@ func SimpleECMessageHandler(m Message) {
 
 	if _, seen := MessageReceiveSet[identifier]; !seen {
 		MessageReceiveSet[identifier] = true
+
+		stats := Stats{}
+		stats.Start = time.Now()
+		statsRecord[identifier] = stats
+		fmt.Printf("Begin Stats: %+v\n",stats)
 
 		hashStr := data.GetHashData()
 
@@ -116,8 +124,8 @@ func SimpleECCheck(m Message) {
 
 	if dataExist {
 		echo := ECHOStruct{Header:ECHO, Id:m.GetId(), HashData:m.GetHashData(), Round: m.GetRound()}
+		identifier := m.GetId() + strconv.Itoa(m.GetRound())
 		if EchoRecCountSet[echo] >= faulty + 1 {
-			identifier := m.GetId() + strconv.Itoa(m.GetRound())
 			if _, sent := EchoSentSet[identifier]; !sent {
 				EchoSentSet[identifier] = true
 				shards := Encode(data, faulty + 1, total - (faulty + 1))
@@ -132,7 +140,12 @@ func SimpleECCheck(m Message) {
 		if EchoRecCountSet[echo] >= total - faulty {
 			if _, e := acceptData[data]; ! e {
 				acceptData[data] = true
-				fmt.Println("Reliable Accept " + data)
+				stats := statsRecord[identifier]
+				stats.Value = data
+				stats.End = time.Now()
+				fmt.Printf("Stats: %+v\n",stats)
+				diff := fmt.Sprintf("%f",stats.End.Sub(stats.Start).Seconds())
+				fmt.Println("Reliable Accept "  + strconv.Itoa(m.GetRound()) + " " + diff)
 			}
 		}
 	}

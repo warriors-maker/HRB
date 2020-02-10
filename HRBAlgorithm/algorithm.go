@@ -77,9 +77,12 @@ var binarySet map[string] []Message
 
 var digestTrustCount int
 
+var statsRecord map[string] Stats
+
 
 
 func AlgorithmSetUp(myID string, servers []string, trustedCount, faultyCount int) {
+	statsRecord = make(map[string]Stats)
 	serverMap = make(map[string] int)
 	acceptData = make(map[string]bool)
 	FwdRecCountSet = make (map [string] int)

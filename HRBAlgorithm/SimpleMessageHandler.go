@@ -3,6 +3,7 @@ package HRBAlgorithm
 import (
 	"fmt"
 	"strconv"
+	"time"
 )
 
 
@@ -12,6 +13,12 @@ func SimpleMsgHandler(d Message) {
 
 	identifier := data.GetId() + strconv.Itoa(data.GetRound())
 	if _, seen := MessageReceiveSet[identifier]; !seen {
+
+		stats := Stats{}
+		stats.Start = time.Now()
+		statsRecord[identifier] = stats
+		fmt.Printf("Begin Stats: %+v\n",stats)
+
 		MessageReceiveSet[identifier] = true
 
 		hashStr := ConvertBytesToString(Hash([]byte(data.GetData())))
@@ -141,7 +148,12 @@ func SimpleCheck(m Message) {
 			fmt.Println("Receive more than total - faulty echo message")
 			if _, e := acceptData[value]; ! e {
 				acceptData[value] = true
-				fmt.Println("Reliable Accept " + value)
+				stats := statsRecord[identifier]
+				stats.Value = value
+				stats.End = time.Now()
+				fmt.Printf("Stats: %+v\n",stats)
+				diff := fmt.Sprintf("%f",stats.End.Sub(stats.Start).Seconds())
+				fmt.Println("Reliable Accept "  + strconv.Itoa(m.GetRound()) + " " + diff)
 			}
 		}
 
