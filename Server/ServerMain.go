@@ -80,7 +80,7 @@ func ProtocalStart() {
 		digestSetup()
 		if source {
 			fmt.Println("Digest Broadcast")
-			HRBAlgorithm.BroadcastPrepare(100, 3)
+			HRBAlgorithm.BroadcastPrepare(100, 1)
 		}
 
 	} else if algorithm == 6 {

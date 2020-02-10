@@ -45,7 +45,7 @@ func internalHandleConnection(conn net.Conn, ch chan TcpMessage) {
 		//host := nets[0]
 		//port := nets[1]
 
-		fmt.Printf("Benchmark Receiving %+v from Protocal\n",data)
+		fmt.Printf("Benchmark Receiving %+v from Protocal\n", *data)
 		ch <- *data
 
 	}

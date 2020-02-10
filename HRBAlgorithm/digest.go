@@ -50,10 +50,10 @@ func validate(targetMessage string, l []digestStruct) bool{
 
 func BroadcastPrepare(length, round int) {
 	time.Sleep(3*time.Second)
-	identifier := MyID + ":" + strconv.Itoa(round);
 
-	for r := 0; r < round; r++ {
+	for r := 1; r <= round; r++ {
 		s :=  RandStringBytes(length)
+		identifier := MyID + ":" + strconv.Itoa(r);
 		dataFromSrc[identifier] = s
 		for i := 0; i < total; i++ {
 			m := MSGStruct{Header:MSG, Id:MyID, SenderId:MyID, Data: s, Round:r}
@@ -89,8 +89,9 @@ func broadcastBinary(detect bool, Id string, round int) {
 		fmt.Println("Does not detect Detect")
 		detectString = "0"
 	}
+
+	m := Binary{Header: BIN, SenderId:MyID, Id:Id, round:round, HashData:detectString}
 	for i := 0; i < total; i++ {
-		m := Binary{Header: BIN, SenderId:MyID, Id:Id, round:round, HashData:detectString}
 		sendReq := PrepareSend{M: m, SendTo: serverList[i]}
 		SendReqChan <- sendReq
 	}
@@ -108,7 +109,8 @@ func receivePrepareFromSrc(m Message) {
 	stats := Stats{}
 	stats.Start = time.Now()
 	statsRecord[identifier] = stats
-	fmt.Printf("Begin Stats Digest: %+v\n",stats)
+	fmt.Printf("Begin Stats Digest: %+v \n",stats)
+
 
 	if MyID != m.GetSenderId() {
 
@@ -145,7 +147,7 @@ func receivePrepareFromSrc(m Message) {
 
 func recBinary(m Message) {
 	if m.GetSenderId() != MyID {
-		identifier := m.GetId() + ":" + strconv.Itoa(m.GetRound())
+		identifier := serverList[0] + ":" +strconv.Itoa(m.GetRound());
 		if l, ok := binarySet[identifier]; !ok {
 			firstL := []Message{m}
 			binarySet[identifier] = firstL
@@ -156,15 +158,13 @@ func recBinary(m Message) {
 			if len(l) == digestTrustCount - 1 {
 				detect := checkDetect(l)
 				if detect {
-					fmt.Println("Fail to Accept Data")
 					stats := statsRecord[identifier]
 					stats.End = time.Now()
 					fmt.Printf("Stats: %+v\n",stats)
 					diff := fmt.Sprintf("%f",stats.End.Sub(stats.Start).Seconds())
-					fmt.Println("Reliable Accept "  + strconv.Itoa(m.GetRound()) + " " + diff)
+					fmt.Println("Reliable Accept Failure"  + strconv.Itoa(m.GetRound()) + " " + diff)
 				} else {
-					data := digestSourceData[identifier]
-					fmt.Println("Reliable Accept")
+					data := dataFromSrc[identifier]
 					if _, e:= acceptData[data]; !e {
 						acceptData[data] = true
 						stats := statsRecord[identifier]
@@ -172,7 +172,9 @@ func recBinary(m Message) {
 						stats.End = time.Now()
 						fmt.Printf("Stats: %+v\n",stats)
 						diff := fmt.Sprintf("%f",stats.End.Sub(stats.Start).Seconds())
-						fmt.Println("Reliable Accept "  + strconv.Itoa(m.GetRound()) + " " + diff)
+						fmt.Println()
+						fmt.Println("Reliable Accept "  + strconv.Itoa(m.GetRound()) + " " + diff, "digestIdentifier: ", identifier)
+						fmt.Println()
 					}
 				}
 			}
@@ -199,11 +201,11 @@ func receiveDigestFromOthers(m Message) {
 	if len (dataMap[identifier]) == total - 1 {
 		data := dataFromSrc[identifier]
 		if validate(data, dataMap[identifier]) {
-			fmt.Println("Broadcast detected No")
+			fmt.Println("Broadcast detected No ", m.GetRound())
 			broadcastBinary(false, m.GetId(), m.GetRound())
 		} else {
 			//Broadcast Binary
-			fmt.Println("Broadcast detected Yes")
+			fmt.Println("Broadcast detected Yes ", m.GetRound())
 			broadcastBinary(true, m.GetId(), m.GetRound())
 		}
 	}

@@ -39,6 +39,12 @@ func ByzRecMsg(m Message) {
 	identifier := identifierCreate(m.GetId(), m.GetRound())
 	count, exist := ByzCodeCounter[identifier]
 
+	statsIdentifier := strconv.Itoa(m.GetRound())
+	stats := Stats{}
+	stats.Start = time.Now()
+	statsRecord[statsIdentifier] = stats
+	fmt.Printf("Begin Stats: %+v\n",stats)
+
 	if exist {
 		ByzCodeCounter[identifier] = count + 2
 	} else {
@@ -81,17 +87,17 @@ func ByzRecEcho(m Message) {
 		code, _ := ConvertStringToBytes(m.GetData())
 		ByzCodeElement[identifier][index] = code
 
-		if ByzCodeCounter[identifier] == total + 1 {
-			var vals []string
-			fmt.Println("ByzCodes:",ByzCodeElement[identifier])
-			if faulty == 0 {
-				vals = permutation(ByzCodeElement[identifier], total, total)
-			} else {
-				vals = permutation(ByzCodeElement[identifier], total - faulty, 2*(total) - (total - faulty))
-			}
-			detected := validateByzCode(vals)
-			broadcastBinary(detected, m.GetId(), m.GetRound())
-		}
+		//if ByzCodeCounter[identifier] == total + 1 {
+		//	var vals []string
+		//	fmt.Println("ByzCodes:",ByzCodeElement[identifier])
+		//	if faulty == 0 {
+		//		vals = permutation(ByzCodeElement[identifier], total, total)
+		//	} else {
+		//		vals = permutation(ByzCodeElement[identifier], total - faulty, 2*(total) - (total - faulty))
+		//	}
+		//	detected := validateByzCode(vals)
+		//	broadcastBinary(detected, m.GetId(), m.GetRound())
+		//}
 	}
 }
 
