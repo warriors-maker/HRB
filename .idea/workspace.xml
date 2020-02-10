@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="92212f8a-9e41-4b3d-9b89-c1292143224f" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/Configuration/trusted" beforeDir="false" afterPath="$PROJECT_DIR$/Configuration/trusted" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HRBAlgorithm/SimpleErasureCodeHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/HRBAlgorithm/SimpleErasureCodeHandler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/ServerMain.go" beforeDir="false" afterPath="$PROJECT_DIR$/Server/ServerMain.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/benchmarkMain.go" beforeDir="false" afterPath="$PROJECT_DIR$/Server/benchmarkMain.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/protocalReader.go" beforeDir="false" afterPath="$PROJECT_DIR$/Server/protocalReader.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Server/protocalWriter.go" beforeDir="false" afterPath="$PROJECT_DIR$/Server/protocalWriter.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config.yaml" afterDir="false" />
-    </list>
+    <list default="true" id="92212f8a-9e41-4b3d-9b89-c1292143224f" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,11 +10,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Server/ServerMain.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="214">
-              <caret line="87" column="29" selection-start-line="87" selection-start-column="29" selection-end-line="87" selection-end-column="29" />
+            <state relative-caret-position="165">
+              <caret line="89" column="9" lean-forward="true" selection-start-line="89" selection-start-column="9" selection-end-line="89" selection-end-column="9" />
             </state>
           </provider>
         </entry>
@@ -61,19 +53,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Server/internalWriter.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="12" column="5" selection-start-line="12" selection-start-column="5" selection-end-line="12" selection-end-column="5" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Server/tcpWriter.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-425">
-              <caret line="2" column="7" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
+            <state relative-caret-position="56">
+              <caret line="26" column="29" selection-start-line="26" selection-start-column="29" selection-end-line="26" selection-end-column="29" />
               <folding>
                 <element signature="e#16#84#0" expanded="true" />
               </folding>
@@ -81,7 +64,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/HRBAlgorithm/SimpleErasureCodeHandler.go">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="-118">
@@ -111,7 +94,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/HRBAlgorithm/algorithm.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="125">
+            <state relative-caret-position="-634">
               <caret line="54" column="11" selection-start-line="54" selection-start-column="11" selection-end-line="54" selection-end-column="11" />
               <folding>
                 <element signature="e#22#55#0" expanded="true" />
@@ -147,8 +130,8 @@
       <find>ReadChans</find>
       <find>SendChan</find>
       <find>pro</find>
-      <find>SendTo</find>
       <find>Sending1</find>
+      <find>SendTo</find>
     </findStrings>
   </component>
   <component name="GOROOT" path="$PROJECT_DIR$/../../go1.13.6" />
@@ -199,7 +182,6 @@
         <option value="$PROJECT_DIR$/HRBAlgorithm/digest.go" />
         <option value="$PROJECT_DIR$/HRBAlgorithm/codeByzantine.go" />
         <option value="$PROJECT_DIR$/HRBAlgorithm/CodedCrash.go" />
-        <option value="$PROJECT_DIR$/Server/tcpWriter.go" />
         <option value="$PROJECT_DIR$/Server/internalWriter.go" />
         <option value="$PROJECT_DIR$/Server/internalReader.go" />
         <option value="$PROJECT_DIR$/Server/tcpReader.go" />
@@ -207,8 +189,9 @@
         <option value="$PROJECT_DIR$/Server/benchmarkMain.go" />
         <option value="$PROJECT_DIR$/HRBAlgorithm/SimpleErasureCodeHandler.go" />
         <option value="$PROJECT_DIR$/Server/protocalWriter.go" />
-        <option value="$PROJECT_DIR$/config.yaml" />
         <option value="$PROJECT_DIR$/Server/ServerMain.go" />
+        <option value="$PROJECT_DIR$/Server/tcpWriter.go" />
+        <option value="$PROJECT_DIR$/config.yaml" />
       </list>
     </option>
   </component>
@@ -493,16 +476,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Benchmark.go" />
     <entry file="file://$PROJECT_DIR$/Benchmark/tcpReader.go" />
-    <entry file="file://$PROJECT_DIR$/Server/yaml.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="7" lean-forward="true" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
-          <folding>
-            <element signature="e#14#64#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Server/util.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="276">
@@ -597,16 +570,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Server/tcpWriter.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-425">
-          <caret line="2" column="7" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
-          <folding>
-            <element signature="e#16#84#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Server/internalWriter.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
@@ -618,16 +581,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="57">
           <caret line="85" lean-forward="true" selection-start-line="85" selection-end-line="85" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/HRBAlgorithm/algorithm.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="125">
-          <caret line="54" column="11" selection-start-line="54" selection-start-column="11" selection-end-line="54" selection-end-column="11" />
-          <folding>
-            <element signature="e#22#55#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -658,6 +611,30 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/HRBAlgorithm/SimpleErasureCodeHandler.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-118">
+          <caret line="113" column="5" selection-start-line="113" selection-start-column="5" selection-end-line="113" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Server/tcpWriter.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="56">
+          <caret line="26" column="29" selection-start-line="26" selection-start-column="29" selection-end-line="26" selection-end-column="29" />
+          <folding>
+            <element signature="e#16#84#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Server/yaml.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" column="7" lean-forward="true" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/config.yaml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15">
@@ -665,17 +642,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Server/ServerMain.go">
+    <entry file="file://$PROJECT_DIR$/HRBAlgorithm/algorithm.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="214">
-          <caret line="87" column="29" selection-start-line="87" selection-start-column="29" selection-end-line="87" selection-end-column="29" />
+        <state relative-caret-position="-634">
+          <caret line="54" column="11" selection-start-line="54" selection-start-column="11" selection-end-line="54" selection-end-column="11" />
+          <folding>
+            <element signature="e#22#55#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/HRBAlgorithm/SimpleErasureCodeHandler.go">
+    <entry file="file://$PROJECT_DIR$/Server/ServerMain.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-118">
-          <caret line="113" column="5" selection-start-line="113" selection-start-column="5" selection-end-line="113" selection-end-column="5" />
+        <state relative-caret-position="165">
+          <caret line="89" column="9" lean-forward="true" selection-start-line="89" selection-start-column="9" selection-end-line="89" selection-end-column="9" />
         </state>
       </provider>
     </entry>
