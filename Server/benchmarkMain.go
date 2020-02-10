@@ -39,10 +39,11 @@ func internalRead() {
 		sendTo := data.ID
 		if sendTo == "" || sendTo == "all" {
 			for id , channel := range externalWriteChan {
-				fmt.Println("Send to ", id)
+				fmt.Println("Send to all now with", id)
 				channel <- data
 			}
 		}  else {
+			fmt.Println("Send to specific now with", sendTo)
 			externalWriteChan[sendTo] <- data
 		}
 	}
@@ -52,7 +53,7 @@ func networkRead(){
 	go ExternalTcpReader(externalReadChan, MyId)
 	for {
 		data := <- externalReadChan
-		protocalReadChan <- data
+		internalWriteChan <- data
 	}
 }
 

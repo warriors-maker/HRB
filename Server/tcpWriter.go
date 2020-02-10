@@ -24,6 +24,7 @@ func ExternalTcpWriter(ipPort string, ch chan TcpMessage) {
 	for {
 		counter := 0
 		data := <-ch
+		counter = counter + 1
 		if isFault {
 			//if crashFailure, just donot send the data
 			if algorithm == 7 {
@@ -40,11 +41,12 @@ func ExternalTcpWriter(ipPort string, ch chan TcpMessage) {
 
 					encoder.Encode(&data)
 				} else {
-					if counter % 2 == 0 {
+					if algorithm == 5 || algorithm == 6 {
+						encoder.Encode(&data)
+					} else if counter % 2 == 0 {
 						encoder.Encode(&data)
 					}
 				}
-				counter = counter + 1
 			}
 		} else {
 			fmt.Printf("Benchmark Send Data Externally to %+v\n",data)

@@ -28,7 +28,7 @@ func TcpWriter(ch chan TcpMessage) {
 	encoder := gob.NewEncoder(conn)
 	for {
 		data := <- ch
-		//fmt.Printf("Protocal Send Data to Benchmark: %+v\n",data)
+		fmt.Printf("Protocal Send Data to Benchmark: %+v\n",data)
 		encoder.Encode(&data)
 	}
 }

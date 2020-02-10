@@ -85,7 +85,7 @@ func ProtocalStart() {
 	} else if algorithm == 6 {
 		codedSetup()
 		if source {
-			fmt.Println("Digest Broadcast")
+			fmt.Println("NCBA")
 			HRBAlgorithm.ECByzBroadCast("abcdabcd", 1)
 		}
 
@@ -241,11 +241,14 @@ func setUpWrite() {
 		req := <- HRBAlgorithm.SendReqChan
 		//fmt.Printf("Sending Msg: %+v\n",req.M)
 		if req.SendTo == "all" ||  req.SendTo == ""{
-			fmt.Println("Sending1")
-			tcpMessage := TcpMessage{Message:req.M}
-			protocalSendChan <- tcpMessage
+			fmt.Println("Protocal send to all")
+			for _, id := range serverList {
+				fmt.Println("Protocal send to ", id)
+				tcpMessage := TcpMessage{Message:req.M, ID:id}
+				protocalSendChan <- tcpMessage
+			}
 		} else {
-			fmt.Println("Sending2")
+			fmt.Println("Protocal send to ", req.SendTo)
 			tcpMessage := TcpMessage{Message:req.M, ID:req.SendTo}
 			protocalSendChan <- tcpMessage
 		}

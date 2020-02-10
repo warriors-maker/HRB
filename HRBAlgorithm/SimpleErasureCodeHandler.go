@@ -55,7 +55,7 @@ func SimpleECMessageHandler(m Message) {
 		//Send Echo to all servers
 		if _, sent := EchoSentSet[identifier]; !sent {
 			EchoSentSet[identifier] = true
-			sendReq := PrepareSend{M: m, SendTo:"all"}
+			sendReq := PrepareSend{M: m, SendTo:""}
 			SendReqChan <- sendReq
 		}
 
@@ -124,7 +124,7 @@ func SimpleECCheck(m Message) {
 
 				code := ConvertBytesToString(shards[serverMap[MyID]])
 				echo = ECHOStruct{Header:ECHO, Id:m.GetId(), HashData:m.GetHashData(), Round: m.GetRound(), Data: code, SenderId:MyID}
-				sendReq := PrepareSend{M: echo, SendTo:"all"}
+				sendReq := PrepareSend{M: echo, SendTo:""}
 				SendReqChan <- sendReq
 			}
 		}
