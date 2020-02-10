@@ -3,9 +3,11 @@ package HRBAlgorithm
 import (
 	"fmt"
 	"strconv"
+	"time"
 )
 
 func SimpleECBroadCast(s string) {
+	time.Sleep(3*time.Second)
 	shards := Encode(s, faulty + 1, total - (faulty + 1))
 	fmt.Println("Shards are ", shards)
 	//Get the string version of the string
@@ -126,6 +128,7 @@ func SimpleECCheck(m Message) {
 				SendReqChan <- sendReq
 			}
 		}
+		print ("Check if can Reliable Accept",EchoRecCountSet[echo], total - faulty)
 		if EchoRecCountSet[echo] >= total - faulty {
 			if _, e := acceptData[data]; ! e {
 				acceptData[data] = true

@@ -16,6 +16,8 @@ var isLocalMode bool //indicate whether this is a local mode
 var source bool //A flag to indicate whether I am the sender
 var algorithm int
 var isSourceFault bool
+var faultyList []string
+var trustedList []string
 
 type messageChan chan TcpMessage
 
@@ -30,7 +32,12 @@ func InitSharedVariables(index int) {
 		Initialization of the Global Variable
 	*/
 
-	serverList = append(yamlStruct.Trusted, yamlStruct.Faulty...)
+	faultyList = yamlStruct.Faulty
+	trustedList = yamlStruct.Trusted
+	serverList = append(trustedList, faultyList...)
+
+	trustedCount = len(trustedList)
+	faultyCount = len(faultyList)
 
 	//-1: Network Benchmark
 	// >0: Local Benchmark:
@@ -49,9 +56,18 @@ func InitSharedVariables(index int) {
 		}
 		MyId = serverList[index]
 	}
+	checkIsFault()
 	algorithm = yamlStruct.Algorithm
 	isSourceFault = yamlStruct.Source_Byzantine
 	initOtherAddr()
+}
+
+func checkIsFault() {
+	for _, id := range faultyList {
+		if MyId == id {
+			isFault = true
+		}
+	}
 }
 
 func initOtherAddr() {

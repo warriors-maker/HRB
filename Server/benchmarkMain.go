@@ -1,5 +1,7 @@
 package Server
 
+import "fmt"
+
 //used in Benchmark
 var internalReadChan chan TcpMessage
 var internalWriteChan chan TcpMessage
@@ -35,8 +37,9 @@ func internalRead() {
 	for {
 		data := <- internalReadChan
 		sendTo := data.ID
-		if sendTo == "" {
-			for _, channel := range externalWriteChan {
+		if sendTo == "" || sendTo == "all" {
+			for id , channel := range externalWriteChan {
+				fmt.Println("Send to ", id)
 				channel <- data
 			}
 		}  else {
@@ -49,7 +52,7 @@ func networkRead(){
 	go ExternalTcpReader(externalReadChan, MyId)
 	for {
 		data := <- externalReadChan
-		internalReadChan <- data
+		protocalReadChan <- data
 	}
 }
 

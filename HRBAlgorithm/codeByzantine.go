@@ -3,6 +3,7 @@ package HRBAlgorithm
 import (
 	"fmt"
 	"strconv"
+	"time"
 )
 
 var ByzCodeCounter map[string] int
@@ -15,6 +16,7 @@ func InitByzCode() {
 
 func ECByzBroadCast(s string, round int) {
 	//need to make sure that coded element > f
+	time.Sleep(3*time.Second)
 	var shards[][] byte
 	if faulty == 0 {
 		shards = Encode(s, total, total)

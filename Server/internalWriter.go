@@ -17,7 +17,7 @@ func internalWriter(ipPort string, ch chan TcpMessage) {
 	//keep dialing until the server comes up
 	for err != nil {
 		conn, err= net.Dial("tcp",ipPort)
-		time.Sleep(2*time.Second)
+		time.Sleep(1*time.Second)
 	}
 
 	encoder := gob.NewEncoder(conn)
@@ -25,5 +25,6 @@ func internalWriter(ipPort string, ch chan TcpMessage) {
 	for {
 		data := <-ch
 		encoder.Encode(&data)
+		//fmt.Printf("Benchmark Send Data internally to Protocal %+v\n",data)
 	}
 }

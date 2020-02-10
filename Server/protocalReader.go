@@ -40,7 +40,7 @@ func handleConnection(conn net.Conn, ch chan TcpMessage) {
 			}
 		}
 
-		fmt.Printf("Receiving %+v\n",data.Message)
+		fmt.Printf("Receiving from Benchmark %+v\n",data.Message)
 
 		ch <- *data
 

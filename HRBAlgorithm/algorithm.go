@@ -121,6 +121,7 @@ func AlgorithmSetUp(myID string, servers []string, trustedCount, faultyCount int
 	trusted = trustedCount
 	faulty = faultyCount
 	total = trusted + faulty
+	fmt.Println("Hey come on:" , trusted, faulty, total)
 	MyID = myID
 	genKey = MyID
 	digestTrustCount = total

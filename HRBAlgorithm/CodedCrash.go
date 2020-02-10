@@ -3,6 +3,7 @@ package HRBAlgorithm
 import (
 	"fmt"
 	"strconv"
+	"time"
 )
 
 var codeCounter map[string] int
@@ -15,6 +16,7 @@ func InitCrash() {
 
 func CrashECBroadCast(s string, round int) {
 	//need to make sure that coded element > f
+	time.Sleep(3*time.Second)
 	fmt.Println("MyID" + MyID)
 	var shards[][] byte
 	if faulty == 0 {

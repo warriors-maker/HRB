@@ -3,12 +3,14 @@ package HRBAlgorithm
 import (
 	"fmt"
 	"strconv"
+	"time"
 )
 
 /*
 Note than Broadcast, MessageHandler and EchoHandler are the same for Complex version
  */
 func ComplexECBroadCast(s string) {
+	time.Sleep(3*time.Second)
 	SimpleECBroadCast(s)
 }
 

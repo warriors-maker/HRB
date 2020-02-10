@@ -38,7 +38,8 @@ func main() {
 		index,_ := strconv.Atoi(argsWithoutProg[0])
 		Server.InitSharedVariables(index)
 	}
-	go Server.BenchmarkStart()
-	go Server.ProtocalStart()
+
+	Server.BenchmarkStart()
+	Server.ProtocalStart()
 	wg.Wait()
 }

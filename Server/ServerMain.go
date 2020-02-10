@@ -11,9 +11,9 @@ import (
 Note id is always the Ip + Port for Local
  */
 
-//var SendChans map[string] messageChan
-var SendChans chan TcpMessage
-var ReadChans chan TcpMessage
+//var protocalSendChan map[string] messageChan
+var protocalSendChan chan TcpMessage
+var protocalReadChan chan TcpMessage
 
 
 /*
@@ -37,7 +37,6 @@ func writeLogFile() {
 func ProtocalStart() {
 	fmt.Println("Local Setup")
 
-
 	//HRBAlgorithm.AlgorithmSetUp(MyId, serverList, trustedCount, faultyCount)
 	if isSourceFault {
 		trustedCount = trustedCount - 1;
@@ -49,29 +48,13 @@ func ProtocalStart() {
 
 	HRBAlgorithm.AlgorithmSetUp(MyId, serverList, trustedCount, faultyCount)
 
-	time.Sleep(1*time.Second)
 
 	if algorithm == 1 {
 		hashSimpleSetup()
-		if isSourceFault {
 
-		} else {
-			fmt.Println("Running Non-Faulty HashNonEquivocate")
-			if source {
-				//simpleBroadcast("abcdef")
-			}
-		}
 	} else if algorithm == 2 {
 		hashComplexSetup()
-		if isSourceFault {
-			fmt.Println("Running Faulty HashEquivocate")
-			//testSourceFault("abcdef")
-		} else {
-			fmt.Println("Running Non-Faulty HashEquivocate")
-			if source {
-				simpleBroadcast("abcdef")
-			}
-		}
+
 	} else if algorithm == 3 {
 		hashECSimpleSetup()
 		if isSourceFault {
@@ -115,6 +98,12 @@ func ProtocalStart() {
 	} else {
 		fmt.Println("Do not understand what you give")
 	}
+
+	if algorithm == 1 || algorithm == 2 {
+		if source {
+			simpleBroadcast("abcdef")
+		}
+	}
 }
 
 
@@ -123,49 +112,49 @@ Seven different algorithms to choose
  */
 
 func hashSimpleSetup() {
-	ReadChans := setUpRead()
-	go filterSimple(ReadChans)
+	protocalReadChan = setUpRead()
+	go filterSimple(protocalReadChan)
 	go setUpWrite()
 }
 
 func hashComplexSetup() {
-	ReadChans := setUpRead()
-	go filter(ReadChans)
+	protocalReadChan = setUpRead()
+	go filter(protocalReadChan)
 	go setUpWrite()
 }
 
 
 func hashECSimpleSetup() {
-	ReadChans := setUpRead()
-	go filterSimpleEC(ReadChans)
+	protocalReadChan = setUpRead()
+	go filterSimpleEC(protocalReadChan)
 	go setUpWrite()
 }
 
 
 func hashECComplexSetup() {
-	ReadChans := setUpRead()
-	go filterComplexEc(ReadChans)
+	protocalReadChan = setUpRead()
+	go filterComplexEc(protocalReadChan)
 	go setUpWrite()
 }
 
 func digestSetup() {
 	HRBAlgorithm.InitDigest()
-	ReadChans := setUpRead()
-	go filterDigest(ReadChans)
+	protocalReadChan = setUpRead()
+	go filterDigest(protocalReadChan)
 	go setUpWrite()
 }
 
 func codedSetup() {
 	HRBAlgorithm.InitByzCode()
-	ReadChans := setUpRead()
-	go filterByzCode(ReadChans)
+	protocalReadChan= setUpRead()
+	go filterByzCode(protocalReadChan)
 	go setUpWrite()
 }
 
 func codedCrashSetup() {
 	HRBAlgorithm.InitCrash()
-	ReadChans := setUpRead()
-	go filterCrashCoded(ReadChans)
+	protocalReadChan= setUpRead()
+	go filterCrashCoded(protocalReadChan)
 	go setUpWrite()
 }
 
@@ -182,10 +171,10 @@ Reading from the network
 */
 
 func setUpRead() chan TcpMessage{
-	ReadChans = make (chan TcpMessage)
+	protocalReadChan = make (chan TcpMessage)
 	//Start listening data
-	go TcpReader(ReadChans, MyId)
-	return ReadChans
+	go TcpReader(protocalReadChan, MyId)
+	return protocalReadChan
 }
 
 func filter (ch chan TcpMessage) {
@@ -246,19 +235,19 @@ Writing to the Network
 
 
 func setUpWrite() {
-	SendChans = make (messageChan)
-	go deliver(MyId, SendChans)
+	protocalSendChan = make(chan TcpMessage)
+	go deliver(MyId, protocalSendChan)
 	for {
 		req := <- HRBAlgorithm.SendReqChan
 		//fmt.Printf("Sending Msg: %+v\n",req.M)
 		if req.SendTo == "all" ||  req.SendTo == ""{
 			fmt.Println("Sending1")
 			tcpMessage := TcpMessage{Message:req.M}
-			SendChans <- tcpMessage
+			protocalSendChan <- tcpMessage
 		} else {
 			fmt.Println("Sending2")
 			tcpMessage := TcpMessage{Message:req.M, ID:req.SendTo}
-			SendChans <- tcpMessage
+			protocalSendChan <- tcpMessage
 		}
 	}
 }
@@ -285,14 +274,14 @@ Simple Testing
 //			if id == 2 || id == 3{
 //				wrong := HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, HashData: hashStr, Data: "", Header:0, Round:0}
 //				tcpMessage := TcpMessage{Message: wrong}
-//				SendChans[server] <- tcpMessage
+//				protocalSendChan[server] <- tcpMessage
 //			} else if id == 4 || id ==5 {
 //
 //			} else {
 //				codeString := HRBAlgorithm.ConvertBytesToString(shards[id])
 //				correct := HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, HashData: hashStr, Data: codeString, Header:0, Round:0}
 //				tcpMessage := TcpMessage{Message:correct}
-//				SendChans[server] <- tcpMessage
+//				protocalSendChan[server] <- tcpMessage
 //			}
 //		}
 //	}
@@ -305,12 +294,12 @@ Simple Testing
 //		for id , server := range serverList {
 //			if id == 2 || id == 3 {
 //				tcpMessage := TcpMessage{Message:faultym}
-//				SendChans[server] <- tcpMessage
+//				protocalSendChan[server] <- tcpMessage
 //			} else if id == 4 || id == 5 {
 //
 //			} else {
 //				tcpMessage := TcpMessage{Message:m}
-//				SendChans[server] <- tcpMessage
+//				protocalSendChan[server] <- tcpMessage
 //			}
 //		}
 //	}
@@ -319,10 +308,11 @@ Simple Testing
 
 func simpleBroadcast(s string) {
 	if source {
+		time.Sleep(1*time.Second)
 		fmt.Println("Broadcast")
 		m := HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, Data: s, Header:0, Round:0}
-		tcpMessage := TcpMessage{Message:m, ID:"1234"}
-		SendChans <- tcpMessage
+		tcpMessage := TcpMessage{Message:m}
+		protocalSendChan <- tcpMessage
 	}
 }
 

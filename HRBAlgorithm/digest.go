@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"strconv"
+	"time"
 )
 
 var dataMap map[string] []digestStruct
@@ -48,6 +49,7 @@ func validate(targetMessage string, l []digestStruct) bool{
 
 
 func BroadcastPrepare(s string, round int) {
+	time.Sleep(3*time.Second)
 	identifier := MyID + ":" + strconv.Itoa(round);
 	dataFromSrc[identifier] = s
 
