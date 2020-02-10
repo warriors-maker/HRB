@@ -6,29 +6,33 @@ import (
 	"log"
 	"net"
 	"os"
-	"strconv"
 	"strings"
+
 )
 
-func TcpReader(ch chan TcpMessage, listeningIp string) {
-	portNum, _ := strconv.Atoi(strings.Split(listeningIp, ":")[1])
-	port := strconv.Itoa(portNum - 1000)
+func ExternalTcpReader(ch chan TcpMessage, listeningIp string) {
+	nets := strings.Split(listeningIp, ":")
+	host := nets[0]
+	port := nets[1]
 	ln, _ := net.Listen("tcp",":"+port)
+	fmt.Println("Benchmark Listening externally at addr: " + host + ":" + port)
 
-	conn, err := ln.Accept()
-	fmt.Println("Get Internal connection from " + conn.RemoteAddr().String())
-	if err != nil {
-		log.Fatal(err)
+	for {
+		conn, err := ln.Accept()
+		fmt.Println("Get external connection from " + conn.RemoteAddr().String())
+		if err != nil {
+			log.Fatal(err)
+		}
+		// Each HandleConnection handle one connection with one node
+		go ExternalHandleConnection(conn, ch)
 	}
-	// Each HandleConnection handle one connection with one node
-	go handleConnection(conn, ch)
 }
 
-func handleConnection(conn net.Conn, ch chan TcpMessage) {
+func ExternalHandleConnection(conn net.Conn, ch chan TcpMessage) {
 	defer conn.Close()
 	/*
-	Register the concrete Type
-	 */
+		Register the concrete Type
+	*/
 	dec := gob.NewDecoder(conn)
 
 	data := &TcpMessage{}
@@ -47,3 +51,4 @@ func handleConnection(conn net.Conn, ch chan TcpMessage) {
 	}
 	fmt.Println("Connection closed")
 }
+

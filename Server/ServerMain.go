@@ -11,29 +11,14 @@ import (
 Note id is always the Ip + Port for Local
  */
 
-var default_benchmark_port = "9000"
-
-var serverList []string
-var MyId string //basically the IP of individual server (Note this is Benchmark port )
-var isFault bool //check whether I should be the faulty based on configuration
-
-var faultyCount int
-var trustedCount int
-
-type messageChan chan TcpMessage
-
 //var SendChans map[string] messageChan
 var SendChans chan TcpMessage
 var ReadChans chan TcpMessage
 
-var isLocalMode bool //indicate whether this is a local mode
-var source bool //A flag to indicate whether I am the sender
 
 /*
 Only used in Local Mode for debugging purpose
  */
-
-var sourceFault bool
 
 func writeLogFile() {
 	file, err := os.OpenFile("output"+MyId+".txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
@@ -49,16 +34,9 @@ func writeLogFile() {
 }
 
 //For One round
-func Startup(id int) {
+func ProtocalStart() {
 	fmt.Println("Local Setup")
 
-	if id != -1 {
-		isLocalMode = true
-	} else {
-		isLocalMode = false
-	}
-
-	algorithm, isSourceFault := peerStartup(id)
 
 	//HRBAlgorithm.AlgorithmSetUp(MyId, serverList, trustedCount, faultyCount)
 	if isSourceFault {
@@ -91,12 +69,12 @@ func Startup(id int) {
 		} else {
 			fmt.Println("Running Non-Faulty HashEquivocate")
 			if source {
-				//simpleBroadcast("abcdef")
+				simpleBroadcast("abcdef")
 			}
 		}
 	} else if algorithm == 3 {
 		hashECSimpleSetup()
-		if sourceFault {
+		if isSourceFault {
 
 		} else {
 			if source {
@@ -105,7 +83,7 @@ func Startup(id int) {
 		}
 	} else if algorithm == 4 {
 		hashECComplexSetup()
-		if sourceFault {
+		if isSourceFault {
 			fmt.Println("Running Faulty ECEquivocate")
 			//testEcSourceFault("abcdef")
 		} else {
@@ -139,30 +117,6 @@ func Startup(id int) {
 	}
 }
 
-//Start up the peer
-func peerStartup(index int) (int, bool){
-	yamlStruct := decodeYamlFile()
-	trustedList := yamlStruct.Trusted
-	faultyList := yamlStruct.Faulty
-	serverList = append(trustedList, faultyList...)
-
-	if index == -1 {
-		myHostAddr := getLocalIP()
-		MyId = myHostAddr+":" + default_benchmark_port
-	} else {
-		if index == 0 {
-			source = true
-		} else {
-			source = false
-		}
-		MyId = serverList[index]
-	}
-	//writeLogFile()
-	fmt.Println("MyId: " + MyId)
-	fmt.Println("ServerList: ",serverList)
-	return yamlStruct.Algorithm, yamlStruct.Source_Byzantine
-}
-
 
 /*
 Seven different algorithms to choose
@@ -171,11 +125,13 @@ Seven different algorithms to choose
 func hashSimpleSetup() {
 	ReadChans := setUpRead()
 	go filterSimple(ReadChans)
+	go setUpWrite()
 }
 
 func hashComplexSetup() {
 	ReadChans := setUpRead()
 	go filter(ReadChans)
+	go setUpWrite()
 }
 
 
@@ -216,7 +172,6 @@ func codedCrashSetup() {
 
 func NetworkModeStartup(id int) {
 	isLocalMode = false
-	peerStartup(id)
 	setUpRead()
 	HRBAlgorithm.AlgorithmSetUp(MyId, serverList, trustedCount, faultyCount)
 }
@@ -293,15 +248,15 @@ Writing to the Network
 func setUpWrite() {
 	SendChans = make (messageChan)
 	go deliver(MyId, SendChans)
-
-	//fmt.Println("Inside reqSendListener")
 	for {
 		req := <- HRBAlgorithm.SendReqChan
 		//fmt.Printf("Sending Msg: %+v\n",req.M)
 		if req.SendTo == "all" ||  req.SendTo == ""{
+			fmt.Println("Sending1")
 			tcpMessage := TcpMessage{Message:req.M}
 			SendChans <- tcpMessage
 		} else {
+			fmt.Println("Sending2")
 			tcpMessage := TcpMessage{Message:req.M, ID:req.SendTo}
 			SendChans <- tcpMessage
 		}
@@ -361,16 +316,15 @@ Simple Testing
 //	}
 //}
 //
-//func simpleBroadcast(s string) {
-//	if source {
-//		fmt.Println("I am the source")
-//		m := HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, Data: s, Header:0, Round:0}
-//		for _ , server := range serverList {
-//			tcpMessage := TcpMessage{Message:m}
-//			SendChans[server] <- tcpMessage
-//		}
-//	}
-//}
+
+func simpleBroadcast(s string) {
+	if source {
+		fmt.Println("Broadcast")
+		m := HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, Data: s, Header:0, Round:0}
+		tcpMessage := TcpMessage{Message:m, ID:"1234"}
+		SendChans <- tcpMessage
+	}
+}
 
 
 

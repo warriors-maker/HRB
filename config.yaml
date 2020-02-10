@@ -1,6 +1,6 @@
-trusted : [127.0.0.1:8000, 127.0.0.1:8001, 127:0.0.1:8002]
-faulty : [127.0.0.1:8003, 127.0.0.1:8004]
-algorithm : 2
+trusted : [127.0.0.1:8000]
+faulty : []
+algorithm : 1
 source_byzantine : false
 data_size : 100
 rounds : 100

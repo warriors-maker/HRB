@@ -33,11 +33,12 @@ func main() {
 	// where index represents what port local machine is using
 
 	if len(argsWithoutProg) == 0 {
-		Server.Startup(-1)
+		Server.InitSharedVariables(-1)
 	} else {
 		index,_ := strconv.Atoi(argsWithoutProg[0])
-		Server.Startup(index)
+		Server.InitSharedVariables(index)
 	}
+	go Server.BenchmarkStart()
+	go Server.ProtocalStart()
 	wg.Wait()
-
 }
