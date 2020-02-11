@@ -35,7 +35,7 @@ func optimalBroadcast(length, round int) {
 		var shards [][]byte
 		//Generate the Coded Message
 		if faulty == 0 {
-			shards = Encode(data, total - 1, 1)
+			shards = Encode(data, total / 2, total - (total / 2))
 		} else {
 			shards = Encode(data, total - 3*faulty, total - (total - 3*faulty))
 		}
@@ -82,6 +82,7 @@ func optimalMsgHandler(m Message) {
 
 		//Main logic
 		//Note data.GetData() is the string version of my code
+		//DATA IS code
 		m := ECHOStruct{Header:ECHO, Id:data.GetId(), Data: data.GetData(), Round: data.GetRound(), SenderId:MyID}
 
 		//Send Echo to all servers
@@ -101,7 +102,7 @@ func optimalEchoHandler(m Message) {
 	if _,seen := EchoReceiveSet[identifier]; !seen {
 		EchoReceiveSet[identifier] = true
 
-		echo := ECHOStruct{Header:ECHO, Id:m.GetId(), HashData:m.GetHashData(), Round: m.GetRound()}
+		echo := ECHOStruct{Header:ECHO, Id:m.GetId(), Round: m.GetRound()}
 		//fmt.Printf("%+v\n",m)
 		if count, ok := EchoRecCountSet[echo]; ok {
 			EchoRecCountSet[echo] = count + 1
@@ -125,7 +126,7 @@ func optimalEchoHandler(m Message) {
 		if EchoRecCountSet[echo] >= total - faulty {
 			var vals []string
 			if faulty == 0 {
-				vals = permutation(codes, total - 1, 1)
+				vals = permutation(codes, total / 2, total - (total / 2))
 			} else {
 				vals = permutation(codes, total - 3 * faulty, total - (total - 3 * faulty))
 			}
@@ -135,7 +136,9 @@ func optimalEchoHandler(m Message) {
 				if _, e := msgSet[codeIdentifier]; !e {
 					msgSet[codeIdentifier] = []string{vals[0]}
 				} else {
-					msgSet[codeIdentifier] = append(msgSet[codeIdentifier], vals[0])
+					if !checkValExist(vals[0], msgSet[codeIdentifier]) {
+						msgSet[codeIdentifier] = append(msgSet[codeIdentifier], vals[0])
+					}
 				}
 
 				exist, hashData := checkHashExist(vals[0] ,codeIdentifier)
@@ -209,8 +212,8 @@ func optimalFwdHandler(m Message) {
 	roundIdentifier := m.GetId() + strconv.Itoa(m.GetRound())
 	//fmt.Printf("Fwd: %+v\n",data)
 
-	hashSentIdentifier := m.GetId() + strconv.Itoa(m.GetRound())
-	hashStr := reqSentHash[hashSentIdentifier]
+
+	hashStr := reqSentHash[roundIdentifier]
 	req := REQStruct{Header:REQ, Id:m.GetId(), Round: m.GetRound(), SenderId:MyID, HashData:hashStr}
 
 	if hasSent(ReqSentSet[req], m.GetSenderId()) {
@@ -247,7 +250,7 @@ func optimalFwdHandler(m Message) {
 
 func optimalHashTagHandler(m Message) {
 	roundIdentifier := m.GetId() + strconv.Itoa(m.GetRound())
-	if _, e := hashSet[roundIdentifier]; !e {
+	if _, e := hashSet[roundIdentifier]; e {
 		hashSet[roundIdentifier] = append(hashSet[roundIdentifier], m.GetHashData())
 	} else {
 		hashSet[roundIdentifier] = []string{m.GetHashData()}
@@ -308,13 +311,15 @@ func checkOptimalDataExist(hashData, roundIdentifier string) (bool, string){
 	return false, ""
 }
 
+//input is data
 func checkHashExist(m, identifier string) (bool, string){
 	messageBytes, _ := ConvertStringToBytes(m)
 	hashData := Hash(messageBytes)
+	hashDataString := ConvertBytesToString(hashData)
 
 	hashes := hashSet[identifier]
 	for i := 0; i < len(hashes); i++ {
-		if hashes[i] == ConvertBytesToString(hashData) {
+		if hashes[i] == hashDataString {
 			return true, hashes[i]
 		}
 	}
@@ -330,4 +335,13 @@ func checkDecodeSet(vals []string) bool{
 		}
 	}
 	return true
+}
+
+func checkValExist(input string, vals []string) bool{
+	for _, val := range vals {
+		if val == input {
+			return true
+		}
+	}
+	return false
 }
