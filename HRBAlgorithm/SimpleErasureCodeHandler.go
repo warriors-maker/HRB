@@ -14,7 +14,6 @@ func SimpleECBroadCast(byte_length, round int) {
 		fmt.Println("Shards are ", shards)
 		//Get the string version of the string
 		hashStr := ConvertBytesToString(Hash([]byte(s)))
-
 		for i := 0; i < total; i++ {
 			code := ConvertBytesToString(shards[i])
 			m := MSGStruct{Header:MSG, Id:MyID, SenderId:MyID, HashData: hashStr, Data: code, Round:r}

@@ -43,7 +43,7 @@ var ecDataSet map[string] [][]byte
 
 
 // Send Phase to the TCPWriter
-var sendChan chan Message
+//var sendChan chan Message
 
 var faulty int
 var trusted int
@@ -64,14 +64,14 @@ var FwdRecCountSet map[string] int
 Digest
  */
 var genKey string
-var digestSourceData map[string] string //store the message sent from source
-var digestDataMap map[string] []digestStruct //All the Hash Data from peers
+//var digestSourceData map[string] string //store the message sent from source
+//var digestDataMap map[string] []digestStruct //All the Hash Data from peers
 
-var digestRecSend map[string] [][]digestStruct //what you have sent in one round
-var faultyCountMap map[string] int
-var faultySet map[string] bool
+//var digestRecSend map[string] [][]digestStruct //what you have sent in one round
+//var faultyCountMap map[string] int
+//var faultySet map[string] bool
 
-var augmentRecSend map[string] map[string] [][]digestStruct //Used during validate step
+//var augmentRecSend map[string] map[string] [][]digestStruct //Used during validate step
 var notTrustedListMap map[string] []string //Inidcating numbet of trusted
 var binarySet map[string] []Message
 
@@ -116,7 +116,7 @@ func AlgorithmSetUp(myID string, servers []string, trustedCount, faultyCount int
 
 	ecDataSet = make(map[string] [][]byte)
 
-	sendChan = make(chan Message)
+	//sendChan = make(chan Message)
 
 	SendReqChan = make (chan PrepareSend)
 
@@ -129,12 +129,12 @@ func AlgorithmSetUp(myID string, servers []string, trustedCount, faultyCount int
 	genKey = MyID
 	digestTrustCount = total
 
-	digestSourceData = make(map[string] string)
 	reqSentHash = make(map[string] string)
-	digestDataMap = make(map[string] []digestStruct)
-	digestRecSend = make(map[string] [][] digestStruct)
-	faultyCountMap = make(map[string] int)
-	faultySet = make(map[string] bool)
+	//digestSourceData = make(map[string] string)
+	//digestDataMap = make(map[string] []digestStruct)
+	//digestRecSend = make(map[string] [][] digestStruct)
+	//faultyCountMap = make(map[string] int)
+	//faultySet = make(map[string] bool)
 
 	notTrustedListMap = make(map[string] []string)
 	for _, server := range serverList {
@@ -142,7 +142,7 @@ func AlgorithmSetUp(myID string, servers []string, trustedCount, faultyCount int
 	}
 
 
-	augmentRecSend = make(map[string]map[string] [][] digestStruct)
+	//augmentRecSend = make(map[string]map[string] [][] digestStruct)
 	trustedCount = total
 	binarySet = make(map[string] []Message)
 
@@ -278,6 +278,25 @@ func FilterCrashCode(message Message) {
 	}
 }
 
+func FilterOptimal(message Message) {
+	switch v := message.(type) {
+	case MSGStruct:
+		optimalMsgHandler(message)
+	case ECHOStruct:
+		optimalEchoHandler(message)
+	case ACCStruct:
+		optimalAccHandler(message)
+	case Binary:
+		optimalHashTagHandler(message)
+	case FWDStruct:
+		optimalFwdHandler(message)
+	case REQStruct:
+		optimalReqHandler(message)
+	default:
+		fmt.Printf("Sending : %+v\n", v)
+		fmt.Println("I donot understand what you send")
+	}
+}
 
 /*
 Helper Function

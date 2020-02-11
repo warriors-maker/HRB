@@ -27,6 +27,7 @@ type Message interface {
 type FWDStruct struct {
 	Header TcpHeader
 	Data   string
+	HashData string
 	Round int
 	Id string
 	SenderId string
@@ -242,7 +243,7 @@ Return the Value contained in the message for real message
 */
 
 func (m FWDStruct) GetHashData() string{
-	return ""
+	return m.HashData
 }
 
 func (m MSGStruct) GetHashData() string{

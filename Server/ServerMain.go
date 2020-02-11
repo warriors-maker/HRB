@@ -96,6 +96,8 @@ func ProtocalStart() {
 			fmt.Println("Crash Ccoded Broadcast")
 			HRBAlgorithm.CrashECBroadCast(100, 5)
 		}
+	} else if algorithm == 8 {
+		optimalSetup()
 	} else {
 		fmt.Println("Do not understand what you give")
 	}
@@ -156,6 +158,12 @@ func codedCrashSetup() {
 	HRBAlgorithm.InitCrash()
 	protocalReadChan= setUpRead()
 	go filterCrashCoded(protocalReadChan)
+	go setUpWrite()
+}
+
+func optimalSetup() {
+	protocalReadChan= setUpRead()
+	go filterOptimal(protocalReadChan)
 	go setUpWrite()
 }
 
@@ -225,6 +233,13 @@ func filterCrashCoded(ch chan TcpMessage) {
 	for {
 		message := <- ch
 		HRBAlgorithm.FilterCrashCode(message.Message)
+	}
+}
+
+func filterOptimal(ch chan TcpMessage) {
+	for {
+		message := <- ch
+		HRBAlgorithm.FilterOptimal(message.Message)
 	}
 }
 
