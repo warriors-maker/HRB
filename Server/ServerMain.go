@@ -43,6 +43,10 @@ func ProtocalStart() {
 		trustedCount = trustedCount - 1;
 		faultyCount = faultyCount + 1;
 		fmt.Println("FaultyCount ", faultyCount)
+		if MyId == serverList[0] {
+			isFault = true
+			isSourceFault = true
+		}
 	}
 
 	//General setup
@@ -98,6 +102,9 @@ func ProtocalStart() {
 		}
 	} else if algorithm == 8 {
 		optimalSetup()
+		if source {
+			HRBAlgorithm.OptimalBroadcast(10,1)
+		}
 	} else {
 		fmt.Println("Do not understand what you give")
 	}
@@ -162,6 +169,7 @@ func codedCrashSetup() {
 }
 
 func optimalSetup() {
+	HRBAlgorithm.InitOptimal()
 	protocalReadChan= setUpRead()
 	go filterOptimal(protocalReadChan)
 	go setUpWrite()

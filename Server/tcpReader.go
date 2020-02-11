@@ -44,7 +44,7 @@ func ExternalHandleConnection(conn net.Conn, ch chan TcpMessage) {
 			}
 		}
 
-		fmt.Printf("Receiving from others externally %+v \n",data.Message)
+		//fmt.Printf("Receiving from others externally %+v \n",data.Message)
 
 		ch <- *data
 

@@ -167,7 +167,7 @@ func (b Binary) GetData() string {
 }
 
 func (b Binary) GetId() string{
-	return ""
+	return b.Id
 }
 
 func (b Binary) GetRound() int {

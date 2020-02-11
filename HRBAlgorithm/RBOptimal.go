@@ -10,7 +10,12 @@ var codeSet map[string] [][]byte //ecDataSet
 var msgSet map[string] []string
 var hashSet map[string] []string
 
-func optimalBroadcast(length, round int) {
+func InitOptimal() {
+	msgSet = make(map[string] []string)
+	hashSet = make(map[string] []string)
+}
+
+func OptimalBroadcast(length, round int) {
 	time.Sleep(3*time.Second)
 	for r := 0; r < round; r ++ {
 		//Generate the message
@@ -142,6 +147,7 @@ func optimalEchoHandler(m Message) {
 				}
 
 				exist, hashData := checkHashExist(vals[0] ,codeIdentifier)
+				fmt.Println(exist, hashData)
 				if exist {
 					accStruct := ACCStruct{Header:ACC, HashData:hashData, Id:m.GetId(), SenderId:MyID, Round:m.GetRound()}
 
@@ -249,12 +255,16 @@ func optimalFwdHandler(m Message) {
 }
 
 func optimalHashTagHandler(m Message) {
-	roundIdentifier := m.GetId() + strconv.Itoa(m.GetRound())
+	fmt.Printf("Fwd: %+v\n",m)
+	roundIdentifier := m.GetId()+ strconv.Itoa(m.GetRound())
+
 	if _, e := hashSet[roundIdentifier]; e {
 		hashSet[roundIdentifier] = append(hashSet[roundIdentifier], m.GetHashData())
 	} else {
 		hashSet[roundIdentifier] = []string{m.GetHashData()}
 	}
+
+	fmt.Println("Hashset:" + hashSet[roundIdentifier][0] + " " + roundIdentifier)
 
 	//Send Acc
 	exist, _ := checkOptimalDataExist(m.GetHashData(), roundIdentifier)
@@ -316,9 +326,11 @@ func checkHashExist(m, identifier string) (bool, string){
 	messageBytes, _ := ConvertStringToBytes(m)
 	hashData := Hash(messageBytes)
 	hashDataString := ConvertBytesToString(hashData)
+	fmt.Println(m + ", " + hashDataString + ", " + identifier)
 
 	hashes := hashSet[identifier]
 	for i := 0; i < len(hashes); i++ {
+		fmt.Println("Print checkHash exsist", hashes[i], hashDataString)
 		if hashes[i] == hashDataString {
 			return true, hashes[i]
 		}

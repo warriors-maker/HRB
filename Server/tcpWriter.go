@@ -30,7 +30,18 @@ func ExternalTcpWriter(ipPort string, ch chan TcpMessage) {
 			if algorithm == 7 {
 
 			} else {
-				if data.Message.GetHeaderType() == HRBAlgorithm.ECHO {
+				//Source Equivocate
+				if source {
+					if data.Message.GetHeaderType() == HRBAlgorithm.MSG {
+						if ipPort == serverList[1] {
+							fmt.Println("Do not send to" + ipPort)
+						} else {
+							encoder.Encode(&data)
+						}
+					} else {
+						encoder.Encode(&data)
+					}
+				} else if data.Message.GetHeaderType() == HRBAlgorithm.ECHO {
 					fmt.Println("Set data to null")
 					correct := data.Message
 					// Create a Faulty Message
@@ -49,7 +60,7 @@ func ExternalTcpWriter(ipPort string, ch chan TcpMessage) {
 				}
 			}
 		} else {
-			fmt.Printf("Benchmark Send Data Externally to %+v\n",data)
+			//fmt.Printf("Benchmark Send Data Externally to %+v\n",data)
 			encoder.Encode(&data)
 		}
 	}

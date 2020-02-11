@@ -8,6 +8,7 @@ var internalWriteChan chan TcpMessage
 var externalReadChan chan TcpMessage
 var externalWriteChan map[string] messageChan
 
+
 func BenchmarkStart() {
 	initChannels()
 	readSetup()
