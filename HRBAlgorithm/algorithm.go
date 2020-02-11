@@ -153,7 +153,7 @@ func AlgorithmSetUp(myID string, servers []string, trustedCount, faultyCount int
 	gob.Register(MSGStruct{})
 	gob.Register(ECHOStruct{})
 	gob.Register(Binary{})
-	gob.Register(RecSend{})
+	gob.Register(StatStruct{})
 }
 
 
