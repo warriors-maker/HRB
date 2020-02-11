@@ -1,16 +1,23 @@
 package Server
 
-import "fmt"
+import (
+	"HRB/HRBAlgorithm"
+	"fmt"
+	"strconv"
+	"time"
+)
 
 //used in Benchmark
 var internalReadChan chan TcpMessage
 var internalWriteChan chan TcpMessage
 var externalReadChan chan TcpMessage
 var externalWriteChan map[string] messageChan
+var statsChan chan HRBAlgorithm.Message
 
 
 func BenchmarkStart() {
 	initChannels()
+	statSetup()
 	readSetup()
 	writeSetup()
 }
@@ -20,6 +27,11 @@ func initChannels() {
 	internalWriteChan = make (chan TcpMessage)
 	externalWriteChan = make (map[string] messageChan)
 	externalReadChan = make(chan TcpMessage)
+	statsChan = make (chan HRBAlgorithm.Message)
+}
+
+func statSetup() {
+	go statsCalculate(statsChan)
 }
 
 func readSetup() {
@@ -38,14 +50,19 @@ func internalRead() {
 	for {
 		data := <- internalReadChan
 		sendTo := data.ID
-		if sendTo == "" || sendTo == "all" {
-			for id , channel := range externalWriteChan {
-				fmt.Println("Send to all now with", id)
-				channel <- data
+		//Reliable Broadcast
+		if data.Message.GetHeaderType() == HRBAlgorithm.Stat {
+			statsChan <- data.Message
+		} else {
+			if sendTo == "" || sendTo == "all" {
+				for id , channel := range externalWriteChan {
+					fmt.Println("Send to all now with", id)
+					channel <- data
+				}
+			}  else {
+				fmt.Println("Send to specific now with", sendTo)
+				externalWriteChan[sendTo] <- data
 			}
-		}  else {
-			fmt.Println("Send to specific now with", sendTo)
-			externalWriteChan[sendTo] <- data
 		}
 	}
 }
@@ -54,6 +71,10 @@ func networkRead(){
 	go ExternalTcpReader(externalReadChan, MyId)
 	for {
 		data := <- externalReadChan
+		if data.Message.GetHeaderType() == HRBAlgorithm.ECHO {
+			identifier := strconv.Itoa(data.Message.GetRound())
+			statsMap[identifier] = time.Now()
+		}
 		internalWriteChan <- data
 	}
 }

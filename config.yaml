@@ -1,7 +1,7 @@
-trusted : [127.0.0.1:8000,127.0.0.1:8001,127.0.0.1:8002,127.0.0.1:8003, 127.0.0.1:8004]
+trusted : [127.0.0.1:8000, 127.0.0.1:8001, 127.0.0.1:8002, 127.0.0.1:8003]
 faulty : []
-algorithm : 8
-source_byzantine : true
+algorithm : 1
+source_byzantine : false
 data_size : 100
-rounds : 100
+rounds : 10
 faulty_behavior : wrong_message

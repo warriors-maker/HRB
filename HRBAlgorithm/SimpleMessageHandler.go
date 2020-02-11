@@ -3,7 +3,6 @@ package HRBAlgorithm
 import (
 	"fmt"
 	"strconv"
-	"time"
 )
 
 
@@ -14,11 +13,6 @@ func SimpleMsgHandler(d Message) {
 	identifier := data.GetId() + strconv.Itoa(data.GetRound())
 	if _, seen := MessageReceiveSet[identifier]; !seen {
 
-		stats := Stats{}
-		stats.Start = time.Now()
-		statsRecord[identifier] = stats
-		fmt.Printf("Begin Stats: %+v\n",stats)
-
 		MessageReceiveSet[identifier] = true
 
 		hashStr := ConvertBytesToString(Hash([]byte(data.GetData())))
@@ -28,14 +22,6 @@ func SimpleMsgHandler(d Message) {
 
 		//Main logic
 		m := ECHOStruct{Header:ECHO, Id:data.GetId(), HashData:hashStr, Round: data.GetRound(), SenderId:MyID}
-		//fmt.Printf("HeyMsg: %+v\n",m)
-
-		//if l, ok := simpleEchoRecCountSet[m]; ok {
-		//	l = append(l, d.GetSenderId())
-		//	simpleEchoRecCountSet[m] = l
-		//} else {
-		//	simpleEchoRecCountSet[m] = []string{d.GetSenderId()}
-		//}
 
 		//ToDo: Send Echo to all servers
 		if _, sent := EchoSentSet[identifier]; !sent {
@@ -148,12 +134,9 @@ func SimpleCheck(m Message) {
 			fmt.Println("Receive more than total - faulty echo message")
 			if _, e := acceptData[value]; ! e {
 				acceptData[value] = true
-				stats := statsRecord[identifier]
-				stats.Value = value
-				stats.End = time.Now()
-				fmt.Printf("Stats: %+v\n",stats)
-				diff := fmt.Sprintf("%f",stats.End.Sub(stats.Start).Seconds())
-				fmt.Println("Reliable Accept "  + strconv.Itoa(m.GetRound()) + " " + diff)
+				stats := StatStruct{Id:m.GetId(), round: m.GetRound(), Header:Stat}
+				statInfo :=PrepareSend{M:stats, SendTo:MyID}
+				SendReqChan <- statInfo
 			}
 		}
 

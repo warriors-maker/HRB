@@ -18,6 +18,8 @@ var algorithm int
 var isSourceFault bool
 var faultyList []string
 var trustedList []string
+var round int
+var dataSize int
 
 
 
@@ -41,6 +43,9 @@ func InitSharedVariables(index int) {
 
 	trustedCount = len(trustedList)
 	faultyCount = len(faultyList)
+
+	round = yamlStruct.Rounds
+	dataSize = yamlStruct.Data_size
 
 	//-1: Network Benchmark
 	// >0: Local Benchmark:

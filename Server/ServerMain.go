@@ -4,7 +4,6 @@ import (
 	"HRB/HRBAlgorithm"
 	"fmt"
 	"math/rand"
-	"os"
 	"time"
 )
 
@@ -21,18 +20,6 @@ var protocalReadChan chan TcpMessage
 Only used in Local Mode for debugging purpose
  */
 
-func writeLogFile() {
-	file, err := os.OpenFile("output"+MyId+".txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Fprint(file, MyId+"\n")
-
-	fmt.Fprint(file, MyId+":6379\n" )
-	fmt.Fprint(file, serverList)
-	fmt.Fprint(file,"\n")
-}
 
 //For One round
 func ProtocalStart() {
@@ -56,10 +43,14 @@ func ProtocalStart() {
 
 	if algorithm == 1 {
 		hashSimpleSetup()
-
+		if source {
+			simpleBroadcast(dataSize, round)
+		}
 	} else if algorithm == 2 {
 		hashComplexSetup()
-
+		if source {
+			simpleBroadcast(100, 5)
+		}
 	} else if algorithm == 3 {
 		hashECSimpleSetup()
 		if isSourceFault {
@@ -109,11 +100,6 @@ func ProtocalStart() {
 		fmt.Println("Do not understand what you give")
 	}
 
-	if algorithm == 1 || algorithm == 2 {
-		if source {
-			simpleBroadcast(100, 5)
-		}
-	}
 }
 
 
