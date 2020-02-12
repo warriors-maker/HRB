@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="92212f8a-9e41-4b3d-9b89-c1292143224f" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/HRBAlgorithm/algorithm.go" beforeDir="false" afterPath="$PROJECT_DIR$/HRBAlgorithm/algorithm.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/StatsWriter.go" beforeDir="false" afterPath="$PROJECT_DIR$/Server/StatsWriter.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -35,15 +34,20 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/HRBAlgorithm/algorithm.go">
+        <entry file="file://$PROJECT_DIR$/Server/StatsWriter.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
-              <caret line="126" column="6" selection-start-line="126" selection-start-column="6" selection-end-line="126" selection-end-column="6" />
+            <state relative-caret-position="288">
+              <caret line="141" column="30" selection-start-line="141" selection-start-column="30" selection-end-line="141" selection-end-column="30" />
               <folding>
-                <element signature="e#22#55#0" expanded="true" />
+                <element signature="e#16#103#0" expanded="true" />
               </folding>
             </state>
           </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Server/tcpMessage.go">
+          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
     </leaf>
@@ -133,18 +137,18 @@
         <option value="$PROJECT_DIR$/Server/protocalWriter.go" />
         <option value="$PROJECT_DIR$/Server/ServerMain.go" />
         <option value="$PROJECT_DIR$/Server/sharedVariables.go" />
-        <option value="$PROJECT_DIR$/Server/StatsWriter.go" />
         <option value="$PROJECT_DIR$/Server/tcpReader.go" />
         <option value="$PROJECT_DIR$/Server/tcpWriter.go" />
         <option value="$PROJECT_DIR$/Server/util.go" />
         <option value="$PROJECT_DIR$/HRBAlgorithm/SimpleMessageHandler.go" />
         <option value="$PROJECT_DIR$/HRBAlgorithm/algorithm.go" />
+        <option value="$PROJECT_DIR$/Server/StatsWriter.go" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="1">
-    <option name="x" value="215" />
-    <option name="y" value="110" />
+  <component name="ProjectFrameBounds">
+    <option name="x" value="893" />
+    <option name="y" value="108" />
     <option name="width" value="1680" />
     <option name="height" value="942" />
   </component>
@@ -165,7 +169,7 @@
             <path>
               <item name="HRB" type="b2602c69:ProjectViewProjectNode" />
               <item name="HRB" type="462c0819:PsiDirectoryNode" />
-              <item name="HRBAlgorithm" type="462c0819:PsiDirectoryNode" />
+              <item name="Server" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -312,7 +316,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="215" y="110" width="1680" height="942" extended-state="1" />
+    <frame x="893" y="108" width="1680" height="942" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24481075" />
@@ -564,16 +568,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Server/StatsWriter.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="931">
-          <caret line="121" column="1" lean-forward="true" selection-start-line="121" selection-start-column="1" selection-end-line="121" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Server/tcpMessage.go">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/Server/tcpReader.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="645">
@@ -583,16 +577,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Server/unit_test.go">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Server/tcpWriter.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-33">
-          <caret line="57" column="31" selection-start-line="57" selection-start-column="26" selection-end-line="57" selection-end-column="31" />
-          <folding>
-            <element signature="e#16#84#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Server/util.go">
       <provider selected="true" editor-type-id="text-editor">
@@ -641,10 +625,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Server/ServerMain.go">
+    <entry file="file://$PROJECT_DIR$/Server/tcpWriter.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="146">
-          <caret line="253" column="14" selection-start-line="253" selection-start-column="14" selection-end-line="253" selection-end-column="14" />
+        <state relative-caret-position="128">
+          <caret line="57" column="31" selection-start-line="57" selection-start-column="26" selection-end-line="57" selection-end-column="31" />
         </state>
       </provider>
     </entry>
@@ -654,6 +638,26 @@
           <caret line="126" column="6" selection-start-line="126" selection-start-column="6" selection-end-line="126" selection-end-column="6" />
           <folding>
             <element signature="e#22#55#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Server/ServerMain.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="146">
+          <caret line="253" column="14" selection-start-line="253" selection-start-column="14" selection-end-line="253" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Server/tcpMessage.go">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Server/StatsWriter.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="288">
+          <caret line="141" column="30" selection-start-line="141" selection-start-column="30" selection-end-line="141" selection-end-column="30" />
+          <folding>
+            <element signature="e#16#103#0" expanded="true" />
           </folding>
         </state>
       </provider>

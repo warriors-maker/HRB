@@ -139,7 +139,7 @@ func writeThroughPut(throuput int) {
 Throughput Part
  */
 func throughputCalculator() {
-	time.Sleep(1* time.Minute)
+	time.Sleep(80* time.Second)
 	//Write to File
 	writeThroughPut(counter.getCount())
 }
