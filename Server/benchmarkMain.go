@@ -46,15 +46,15 @@ func writeSetup() {
 
 
 func internalRead() {
-	count := 0
+	//count := 0
 	go internalReader(internalReadChan)
 	for {
 		data := <- internalReadChan
 		sendTo := data.ID
 		//Reliable Broadcast
 		if data.Message.GetHeaderType() == HRBAlgorithm.Stat {
-			count += 1
-			fmt.Println(count)
+			//count += 1
+			//fmt.Println(count)
 			statsChan <- data.Message
 		} else {
 			if sendTo == "" || sendTo == "all" {
