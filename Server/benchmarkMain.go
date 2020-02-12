@@ -16,6 +16,7 @@ var statsChan chan HRBAlgorithm.Message
 
 func BenchmarkStart() {
 	initChannels()
+	initStats()
 	statSetup()
 	readSetup()
 	writeSetup()

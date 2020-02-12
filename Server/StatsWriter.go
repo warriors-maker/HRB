@@ -73,7 +73,6 @@ func statsCalculate(statsChan chan HRBAlgorithm.Message) {
 Latency Part
  */
 func latencyCalculator(statsChan chan HRBAlgorithm.Message) {
-	initStats()
 	for {
 		data := <- statsChan
 		identifier := strconv.Itoa(data.GetRound())

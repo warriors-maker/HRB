@@ -103,10 +103,8 @@ Receive
 func receivePrepareFromSrc(m Message) {
 	//The sender node does not need to send Hash
 	identifier := m.GetId() + ":" + strconv.Itoa(m.GetRound());
-	dataFromSrc[identifier] = m.GetData()
-
 	if MyID != m.GetSenderId() {
-
+		dataFromSrc[identifier] = m.GetData()
 		data := m.GetData()
 		round := m.GetRound()
 		//Broadcast to all other servers
