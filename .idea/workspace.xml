@@ -74,7 +74,7 @@
         <entry file="file://$PROJECT_DIR$/config.yaml">
           <provider selected="true" editor-type-id="text-editor">
             <state>
-              <caret column="66" selection-start-column="66" selection-end-column="66" />
+              <caret column="67" selection-start-column="67" selection-end-column="67" />
             </state>
           </provider>
         </entry>
@@ -209,9 +209,9 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="126" />
-    <option name="y" value="433" />
+  <component name="ProjectFrameBounds" extendedState="1">
+    <option name="x" value="79" />
+    <option name="y" value="33" />
     <option name="width" value="1680" />
     <option name="height" value="942" />
   </component>
@@ -228,6 +228,11 @@
             <path>
               <item name="HRB" type="b2602c69:ProjectViewProjectNode" />
               <item name="HRB" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="HRB" type="b2602c69:ProjectViewProjectNode" />
+              <item name="HRB" type="462c0819:PsiDirectoryNode" />
+              <item name="Data" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -374,7 +379,8 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="128" y="54" width="1680" height="942" extended-state="0" />
+    <frame x="79" y="23" width="1680" height="942" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24481075" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -422,12 +428,6 @@
     <option name="version" value="1" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Latency|127.0.0.1:8003|4|2020-02-11 19:27:09.4234 -0500 EST m=+0.001782193.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Latency|127.0.0.1:8004|4|2020-02-11 19:27:11.705181 -0500 EST m=+0.001752933.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/Latency|127.0.0.1:8001|4|2020-02-11 19:27:04.254583 -0500 EST m=+0.002393811.txt">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -672,10 +672,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Data/emptyFile.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Data/empty.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/config.yaml">
       <provider selected="true" editor-type-id="text-editor">
         <state>
-          <caret column="66" selection-start-column="66" selection-end-column="66" />
+          <caret column="67" selection-start-column="67" selection-end-column="67" />
         </state>
       </provider>
     </entry>
