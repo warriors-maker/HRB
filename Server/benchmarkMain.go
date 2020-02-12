@@ -76,7 +76,9 @@ func networkRead(){
 		data := <- externalReadChan
 		if data.Message.GetHeaderType() == HRBAlgorithm.MSG {
 			identifier := strconv.Itoa(data.Message.GetRound())
+			statsMapMutex.Lock()
 			statsMap[identifier] = time.Now()
+			statsMapMutex.Unlock()
 		}
 		internalWriteChan <- data
 	}

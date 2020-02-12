@@ -51,6 +51,9 @@ func BroadcastPrepare(length, round int) {
 	time.Sleep(3*time.Second)
 
 	for r := 1; r <= round; r++ {
+		//if r % 1000 == 0 {
+		//	time.Sleep(1*time.Second)
+		//}
 		s :=  RandStringBytes(length)
 		identifier := MyID + ":" + strconv.Itoa(r);
 		dataFromSrc[identifier] = s
