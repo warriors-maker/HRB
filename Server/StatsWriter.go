@@ -95,7 +95,6 @@ func latencyCalculator(statsChan chan HRBAlgorithm.Message) {
 		//If equal to the total Round flush to a file
 		if counter.counter == round {
 			writeLatencyFile()
-			time.Sleep(30*time.Second)
 			writeAllSuccess()
 		}
 	}
@@ -138,7 +137,7 @@ func writeThroughPut(throuput int) {
 Throughput Part
  */
 func throughputCalculator() {
-	time.Sleep(35* time.Second)
+	time.Sleep(15* time.Second)
 	//Write to File
 	writeThroughPut(counter.getCount())
 }
