@@ -3,5 +3,5 @@ faulty : [] #faulty ip + port
 algorithm : 1 #[1,2,3,4...,8]
 source_byzantine : false #[true, false]
 data_size : 100 #size is bytes
-rounds : 5 # number of data reliable broadcast from the source
+rounds : 100 # number of data reliable broadcast from the source
 faulty_behavior : wrong_message #Could be extended in the future for certain faulty behaviour
