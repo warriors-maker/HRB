@@ -131,12 +131,8 @@ func crashRecEcho(m Message) {
 func crashRecAcc(m Message) {
 	if _, e := acceptData[m.GetHashData()]; !e {
 		acceptData[m.GetHashData()] = true
-		identifier := identifierCreate(m.GetId(), m.GetRound())
-		stats := statsRecord[identifier]
-		stats.Value = m.GetHashData()
-		stats.End = time.Now()
-		fmt.Printf("Stats: %+v\n",stats)
-		diff := fmt.Sprintf("%f",stats.End.Sub(stats.Start).Seconds())
-		fmt.Println("Reliable Accept "  + strconv.Itoa(m.GetRound()) + " " + diff)
+		stats := StatStruct{Id:m.GetId(), Round: m.GetRound(), Header:Stat}
+		statInfo :=PrepareSend{M:stats, SendTo:MyID}
+		SendReqChan <- statInfo
 	}
 }

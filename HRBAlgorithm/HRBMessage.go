@@ -107,7 +107,7 @@ func (d Binary) SetDataNull(){
 
 type StatStruct struct {
 	Header TcpHeader
-	round int
+	Round int
 	Id string
 }
 
@@ -132,7 +132,7 @@ func (b StatStruct) GetId() string{
 }
 
 func (b StatStruct) GetRound() int {
-	return b.round
+	return b.Round
 }
 
 func (b StatStruct) GetSenderId() string{

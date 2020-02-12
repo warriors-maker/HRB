@@ -126,25 +126,34 @@ func ByzRecBin(m Message) {
 				if detect {
 					if _, e:= acceptData[identifier]; !e {
 						acceptData[identifier] = true
-						stats := statsRecord[identifier]
-						stats.End = time.Now()
-						fmt.Printf("Stats: %+v\n",stats)
-						diff := fmt.Sprintf("%f",stats.End.Sub(stats.Start).Seconds())
+						stat := statsRecord[identifier]
+						stat.End = time.Now()
+						fmt.Printf("Stats: %+v\n",stat)
+						diff := fmt.Sprintf("%f",stat.End.Sub(stat.Start).Seconds())
 						fmt.Println()
+						fmt.Println(stat.Start.String(), stat.End.String())
 						fmt.Println("Reliable Accept Failure"  + strconv.Itoa(m.GetRound()) + " " + diff)
 						fmt.Println()
+
+						stats := StatStruct{Id:m.GetId(), Round: m.GetRound(), Header:Stat}
+						statInfo :=PrepareSend{M:stats, SendTo:MyID}
+						SendReqChan <- statInfo
 					}
 
 				} else {
 					if _, e:= acceptData[identifier]; !e {
 						acceptData[identifier] = true
-						stats := statsRecord[identifier]
-						stats.End = time.Now()
-						fmt.Printf("Stats: %+v\n",stats)
-						diff := fmt.Sprintf("%f",stats.End.Sub(stats.Start).Seconds())
+						stat := statsRecord[identifier]
+						stat.End = time.Now()
+						fmt.Printf("Stats: %+v\n",stat)
+						diff := fmt.Sprintf("%f",stat.End.Sub(stat.Start).Seconds())
 						fmt.Println()
 						fmt.Println("Reliable Accept "  + strconv.Itoa(m.GetRound()) + " " + diff, dataFromSrc[identifier])
 						fmt.Println()
+
+						stats := StatStruct{Id:m.GetId(), Round: m.GetRound(), Header:Stat}
+						statInfo :=PrepareSend{M:stats, SendTo:MyID}
+						SendReqChan <- statInfo
 					}
 				}
 

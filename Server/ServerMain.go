@@ -49,7 +49,7 @@ func ProtocalStart() {
 	} else if algorithm == 2 {
 		hashComplexSetup()
 		if source {
-			simpleBroadcast(100, 5)
+			simpleBroadcast(dataSize, round)
 		}
 	} else if algorithm == 3 {
 		hashECSimpleSetup()
@@ -57,44 +57,38 @@ func ProtocalStart() {
 
 		} else {
 			if source {
-				HRBAlgorithm.SimpleECBroadCast(100, 5)
+				HRBAlgorithm.SimpleECBroadCast(dataSize, round)
 			}
 		}
 	} else if algorithm == 4 {
 		hashECComplexSetup()
-		if isSourceFault {
-			fmt.Println("Running Faulty ECEquivocate")
-			//testEcSourceFault("abcdef")
-		} else {
-			fmt.Println("Running Non-Faulty ECEquivocate")
-			if source {
-				HRBAlgorithm.ComplexECBroadCast(100,5)
-			}
+		if source {
+			HRBAlgorithm.ComplexECBroadCast(dataSize,round)
 		}
 	} else if algorithm == 5 {
 		digestSetup()
 		if source {
 			fmt.Println("Digest Broadcast")
-			HRBAlgorithm.BroadcastPrepare(100, 5)
+			HRBAlgorithm.BroadcastPrepare(dataSize, round)
 		}
 
 	} else if algorithm == 6 {
 		codedSetup()
 		if source {
 			fmt.Println("NCBA")
-			HRBAlgorithm.ECByzBroadCast(10, 5)
+			HRBAlgorithm.ECByzBroadCast(dataSize, round)
 		}
 
 	} else if algorithm == 7 {
 		codedCrashSetup()
 		if source {
 			fmt.Println("Crash Ccoded Broadcast")
-			HRBAlgorithm.CrashECBroadCast(100, 5)
+			HRBAlgorithm.CrashECBroadCast(dataSize, round)
 		}
 	} else if algorithm == 8 {
 		optimalSetup()
 		if source {
-			HRBAlgorithm.OptimalBroadcast(10,1)
+			HRBAlgorithm.OptimalBroadcast(dataSize,round)
 		}
 	} else {
 		fmt.Println("Do not understand what you give")

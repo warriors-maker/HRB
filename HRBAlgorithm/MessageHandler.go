@@ -3,7 +3,6 @@ package HRBAlgorithm
 import (
 	"fmt"
 	"strconv"
-	"time"
 )
 
 
@@ -15,10 +14,6 @@ func Msghandler (d Message) (bool, int, string){
 	if _, seen := MessageReceiveSet[identifier]; !seen {
 		MessageReceiveSet[identifier] = true
 
-		stats := Stats{}
-		stats.Start = time.Now()
-		statsRecord[identifier] = stats
-		fmt.Printf("Begin Stats: %+v\n",stats)
 
 		//include the data with key the original data and val its hashvalue
 		hashstr := ConvertBytesToString(Hash([]byte(data.GetData())))
@@ -177,7 +172,7 @@ func check(m Message) []bool {
 	fmt.Println("Inside check")
 	flags := []bool{false, false, false, false}
 
-	if exist, value := checkDataExist(m.GetHashData()); exist {
+	if exist, _ := checkDataExist(m.GetHashData()); exist {
 		echo := ECHOStruct{Header:ECHO, Round:m.GetRound(), HashData:m.GetHashData(), Id:m.GetId()}
 		acc := ACCStruct{Header:ACC, Round:m.GetRound(), HashData:m.GetHashData(), Id:m.GetId()}
 
@@ -225,12 +220,12 @@ func check(m Message) []bool {
 		}
 
 		if len(AccRecCountSet[acc]) >= total - faulty {
-			stats := statsRecord[identifier]
-			stats.Value = value
-			stats.End = time.Now()
-			fmt.Printf("Stats: %+v\n",stats)
-			diff := fmt.Sprintf("%f",stats.End.Sub(stats.Start).Seconds())
-			fmt.Println("Reliable Accept "  + strconv.Itoa(m.GetRound()) + " " + diff)
+			if _, e :=acceptData[identifier]; !e {
+				acceptData[identifier] = true
+				stats := StatStruct{Id:m.GetId(), Round: m.GetRound(), Header:Stat}
+				statInfo :=PrepareSend{M:stats, SendTo:MyID}
+				SendReqChan <- statInfo
+			}
 		}
 	}
 	return flags

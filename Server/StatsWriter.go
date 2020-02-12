@@ -33,12 +33,14 @@ func (counter *StatsCounter) getCount() int{
 var statsMap map[string] time.Time
 var acceptMap map[string] string
 var counter StatsCounter
+var startTime time.Time
 
 
 func initStats() {
 	statsMap = make(map[string] time.Time)
 	acceptMap = make(map[string] string)
 	counter = StatsCounter{counter:0, m: &sync.Mutex{}}
+	startTime = time.Now()
 }
 
 func statsCalculate(statsChan chan HRBAlgorithm.Message) {
@@ -55,11 +57,14 @@ func latencyCalculator(statsChan chan HRBAlgorithm.Message) {
 		data := <- statsChan
 		identifier := strconv.Itoa(data.GetRound())
 
+		fmt.Println("Stats_Counter: " + identifier)
+
 		start, recorded := statsMap[identifier]
 		if recorded {
 			if _, e := acceptMap[identifier]; !e {
 				end := time.Now()
 				diff := fmt.Sprintf("%f", end.Sub(start).Seconds())
+				fmt.Println(end.String(), start.String())
 				acceptMap[identifier] = diff
 				counter.increment()
 				writeLatencyFile(identifier, diff)
@@ -76,8 +81,8 @@ func latencyCalculator(statsChan chan HRBAlgorithm.Message) {
 }
 
 func writeLatencyFile(round, latency string) {
-	fileName := "Latency" + "|" + MyId +"|"+ strconv.Itoa(algorithm) +time.Now().String()+".txt"
-	file, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
+	fileName := strconv.Itoa(algorithm) +":Latency" + "|" + MyId +"|" + startTime.String()+".txt"
+	file, err := os.OpenFile(fileName, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0666)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -86,8 +91,8 @@ func writeLatencyFile(round, latency string) {
 }
 
 func writeAllSuccess() {
-	fileName := "Latency" + "|" + MyId +"|"+ strconv.Itoa(algorithm) +time.Now().String()+".txt"
-	file, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
+	fileName := strconv.Itoa(algorithm) +":Latency" + "|" + MyId +"|" + startTime.String()+".txt"
+	file, err := os.OpenFile(fileName, os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -106,7 +111,7 @@ func throughputCalculator() {
 }
 
 func writeThroughPut(throuput int) {
-	fileName := "Throughput" + "|" + MyId +"|"+ strconv.Itoa(algorithm) +time.Now().String()+".txt"
+	fileName := strconv.Itoa(algorithm) +":Throuput" + "|" + MyId +"|" + startTime.String()+".txt"
 	file, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
 	if err != nil {
 		fmt.Println(err)

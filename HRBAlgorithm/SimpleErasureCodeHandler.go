@@ -31,11 +31,6 @@ func SimpleECMessageHandler(m Message) {
 	if _, seen := MessageReceiveSet[identifier]; !seen {
 		MessageReceiveSet[identifier] = true
 
-		stats := Stats{}
-		stats.Start = time.Now()
-		statsRecord[identifier] = stats
-		fmt.Printf("Begin Stats: %+v\n",stats)
-
 		hashStr := data.GetHashData()
 
 		var codes [][]byte
@@ -135,16 +130,13 @@ func SimpleECCheck(m Message) {
 				SendReqChan <- sendReq
 			}
 		}
-		print ("Check if can Reliable Accept",EchoRecCountSet[echo], total - faulty)
+		//print ("Check if can Reliable Accept",EchoRecCountSet[echo], total - faulty)
 		if EchoRecCountSet[echo] >= total - faulty {
 			if _, e := acceptData[data]; ! e {
 				acceptData[data] = true
-				stats := statsRecord[identifier]
-				stats.Value = data
-				stats.End = time.Now()
-				fmt.Printf("Stats: %+v\n",stats)
-				diff := fmt.Sprintf("%f",stats.End.Sub(stats.Start).Seconds())
-				fmt.Println("Reliable Accept "  + strconv.Itoa(m.GetRound()) + " " + diff)
+				stats := StatStruct{Id:m.GetId(), Round: m.GetRound(), Header:Stat}
+				statInfo :=PrepareSend{M:stats, SendTo:MyID}
+				SendReqChan <- statInfo
 			}
 		}
 	}

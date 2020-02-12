@@ -20,10 +20,6 @@ func ComplexECMessageHandler(m Message) {
 	identifier := data.GetId() + strconv.Itoa(data.GetRound())
 
 	if _, seen := MessageReceiveSet[identifier]; !seen {
-		stats := Stats{}
-		stats.Start = time.Now()
-		statsRecord[identifier] = stats
-		fmt.Printf("Begin Stats: %+v\n",stats)
 		MessageReceiveSet[identifier] = true
 
 		hashStr := data.GetHashData()
@@ -300,12 +296,9 @@ func complexECCheck(m Message) {
 		if len(AccRecCountSet[acc]) >= total - faulty {
 			if _, e := acceptData[value]; ! e {
 				acceptData[value] = true
-				stats := statsRecord[identifier]
-				stats.Value = value
-				stats.End = time.Now()
-				fmt.Printf("Stats: %+v\n",stats)
-				diff := fmt.Sprintf("%f",stats.End.Sub(stats.Start).Seconds())
-				fmt.Println("Reliable Accept "  + strconv.Itoa(m.GetRound()) + " " + diff)
+				stats := StatStruct{Id:m.GetId(), Round: m.GetRound(), Header:Stat}
+				statInfo :=PrepareSend{M:stats, SendTo:MyID}
+				SendReqChan <- statInfo
 			}
 		}
 	}

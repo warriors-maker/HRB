@@ -29,6 +29,20 @@ func ExternalTcpWriter(ipPort string, ch chan TcpMessage) {
 			//if crashFailure, just donot send the data
 			if algorithm == 7 {
 
+			} else if algorithm ==5 || algorithm == 6 {
+				if source {
+					if data.Message.GetHeaderType() == HRBAlgorithm.MSG {
+						if ipPort == serverList[1] {
+							wrongMessage := HRBAlgorithm.MSGStruct{Header:HRBAlgorithm.MSG, Id:data.Message.GetId(), SenderId:data.Message.GetSenderId(), Data:"Asdaw!2heyhe", Round:data.Message.GetRound()}
+							wrongTcpMessage := TcpMessage{Message:wrongMessage}
+							encoder.Encode(&wrongTcpMessage)
+						} else {
+							encoder.Encode(&data)
+						}
+					} else {
+						encoder.Encode(&data)
+					}
+				}
 			} else {
 				//Source Equivocate
 				if source {

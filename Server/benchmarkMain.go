@@ -71,7 +71,7 @@ func networkRead(){
 	go ExternalTcpReader(externalReadChan, MyId)
 	for {
 		data := <- externalReadChan
-		if data.Message.GetHeaderType() == HRBAlgorithm.ECHO {
+		if data.Message.GetHeaderType() == HRBAlgorithm.MSG {
 			identifier := strconv.Itoa(data.Message.GetRound())
 			statsMap[identifier] = time.Now()
 		}

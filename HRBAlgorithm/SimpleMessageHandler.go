@@ -23,7 +23,6 @@ func SimpleMsgHandler(d Message) {
 		//Main logic
 		m := ECHOStruct{Header:ECHO, Id:data.GetId(), HashData:hashStr, Round: data.GetRound(), SenderId:MyID}
 
-		//ToDo: Send Echo to all servers
 		if _, sent := EchoSentSet[identifier]; !sent {
 			EchoSentSet[identifier] = true
 			sendReq := PrepareSend{M: m, SendTo:"all"}
@@ -107,8 +106,6 @@ func SimpleEchoHandler(d Message) {
 }
 
 func SimpleCheck(m Message) {
-	fmt.Println(m.GetHashData())
-	fmt.Println(DataSet)
 	if exist, value := checkDataExist(m.GetHashData()); exist {
 		echo := ECHOStruct{Header:ECHO, Round:m.GetRound(), HashData:m.GetHashData(), Id:m.GetId()}
 		//fmt.Printf("%+v\n",echo)
@@ -134,7 +131,7 @@ func SimpleCheck(m Message) {
 			fmt.Println("Receive more than total - faulty echo message")
 			if _, e := acceptData[value]; ! e {
 				acceptData[value] = true
-				stats := StatStruct{Id:m.GetId(), round: m.GetRound(), Header:Stat}
+				stats := StatStruct{Id:m.GetId(), Round: m.GetRound(), Header:Stat}
 				statInfo :=PrepareSend{M:stats, SendTo:MyID}
 				SendReqChan <- statInfo
 			}

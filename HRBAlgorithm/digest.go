@@ -106,12 +106,6 @@ func receivePrepareFromSrc(m Message) {
 	identifier := m.GetId() + ":" + strconv.Itoa(m.GetRound());
 	dataFromSrc[identifier] = m.GetData()
 
-	stats := Stats{}
-	stats.Start = time.Now()
-	statsRecord[identifier] = stats
-	fmt.Printf("Begin Stats Digest: %+v \n",stats)
-
-
 	if MyID != m.GetSenderId() {
 
 		data := m.GetData()
@@ -123,24 +117,6 @@ func receivePrepareFromSrc(m Message) {
 			m := ECHOStruct{Header:ECHO, Id:m.GetId(), SenderId:MyID, HashData: genKey, Data: digestM, Round:round}
 			sendReq := PrepareSend{M: m, SendTo: serverList[i]}
 			SendReqChan <- sendReq //send to other servers
-
-			//senderIndex := serverMap[MyID]
-			//receiveIndex := serverMap[serverList[i]]
-			//
-			//dataStruct := digestStruct{Key: genKey, SenderId:MyID, DigestM:digestM}
-
-
-			//if arr , ok := digestRecSend[identifier]; !ok {
-			//	arrays := make([][]digestStruct, total)
-			//	for i := range arrays {
-			//		arrays[i] = make([]digestStruct, total)
-			//	}
-			//	arrays[senderIndex][receiveIndex] = dataStruct;
-			//	digestRecSend[identifier] = arrays
-			//} else {
-			//	arr[senderIndex][receiveIndex] = dataStruct;
-			//	digestRecSend[identifier] = arr;
-			//}
 		}
 	}
 }
@@ -158,23 +134,18 @@ func recBinary(m Message) {
 			if len(l) == digestTrustCount - 1 {
 				detect := checkDetect(l)
 				if detect {
-					stats := statsRecord[identifier]
-					stats.End = time.Now()
-					fmt.Printf("Stats: %+v\n",stats)
-					diff := fmt.Sprintf("%f",stats.End.Sub(stats.Start).Seconds())
-					fmt.Println("Reliable Accept Failure"  + strconv.Itoa(m.GetRound()) + " " + diff)
+					if _, e:= acceptData[identifier]; !e {
+						acceptData[identifier] = true
+						stats := StatStruct{Id:m.GetId(), Round: m.GetRound(), Header:Stat}
+						statInfo :=PrepareSend{M:stats, SendTo:MyID}
+						SendReqChan <- statInfo
+					}
 				} else {
-					data := dataFromSrc[identifier]
-					if _, e:= acceptData[data]; !e {
-						acceptData[data] = true
-						stats := statsRecord[identifier]
-						stats.Value = data
-						stats.End = time.Now()
-						fmt.Printf("Stats: %+v\n",stats)
-						diff := fmt.Sprintf("%f",stats.End.Sub(stats.Start).Seconds())
-						fmt.Println()
-						fmt.Println("Reliable Accept "  + strconv.Itoa(m.GetRound()) + " " + diff, data)
-						fmt.Println()
+					if _, e:= acceptData[identifier]; !e {
+						acceptData[identifier] = true
+						stats := StatStruct{Id:m.GetId(), Round: m.GetRound(), Header:Stat}
+						statInfo :=PrepareSend{M:stats, SendTo:MyID}
+						SendReqChan <- statInfo
 					}
 				}
 			}
