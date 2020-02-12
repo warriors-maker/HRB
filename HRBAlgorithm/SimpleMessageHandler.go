@@ -1,7 +1,6 @@
 package HRBAlgorithm
 
 import (
-	"fmt"
 	"strconv"
 )
 
@@ -113,7 +112,7 @@ func SimpleCheck(m Message) {
 		identifier := m.GetId() + strconv.Itoa(m.GetRound())
 		flags := []bool{false, false}
 
-		fmt.Println(simpleEchoRecCountSet[echo], len(simpleEchoRecCountSet[echo]))
+		//fmt.Println(simpleEchoRecCountSet[echo], len(simpleEchoRecCountSet[echo]))
 		if len(simpleEchoRecCountSet[echo]) >= faulty + 1 {
 			//fmt.Println("Receive more than faulty + 1 echo message")
 			if _, sent := EchoSentSet[identifier]; !sent {
