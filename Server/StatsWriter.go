@@ -29,25 +29,45 @@ func (counter *StatsCounter) getCount() int{
 	return count
 }
 
-
+type flag struct {
+	flag bool
+	m       * sync.Mutex
+}
 
 var statsMap map[string] time.Time
 var acceptMap map[string] string
 var counter StatsCounter
 var startTime time.Time
+var reachFlag flag
 
 
 func initStats() {
 	statsMap = make(map[string] time.Time)
 	acceptMap = make(map[string] string)
 	counter = StatsCounter{counter:0, m: &sync.Mutex{}}
+	reachFlag = flag{flag:false, m: &sync.Mutex{}}
 	startTime = time.Now()
+}
+
+func (f *flag)setFlag() {
+	f.m.Lock()
+	f.flag = true
+	f.m.Lock()
+}
+
+func (f *flag)getFlag() bool{
+	var reach bool
+	f.m.Lock()
+	reach = f.flag
+	f.m.Unlock()
+	return reach
 }
 
 func statsCalculate(statsChan chan HRBAlgorithm.Message) {
 	go latencyCalculator(statsChan)
 	go throughputCalculator()
 }
+
 
 /*
 Latency Part
@@ -68,7 +88,6 @@ func latencyCalculator(statsChan chan HRBAlgorithm.Message) {
 				//fmt.Println(end.String(), start.String())
 				acceptMap[identifier] = diff
 				counter.increment()
-				writeLatencyFile(identifier, diff)
 			}
 		} else {
 			counter.increment();
@@ -76,29 +95,43 @@ func latencyCalculator(statsChan chan HRBAlgorithm.Message) {
 
 		//If equal to the total Round flush to a file
 		if counter.counter == round {
+			writeLatencyFile()
+			time.Sleep(30*time.Second)
 			writeAllSuccess()
 		}
 	}
 }
 
-func writeLatencyFile(round, latency string) {
+func writeLatencyFile() {
 	fileName := strconv.Itoa(algorithm) +":Latency" + "|" + MyId +"|" + startTime.String()+".txt"
 	file, err := os.OpenFile(filepath.Join("./Data", fileName), os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0666)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Fprintf(file, round+ ":" + latency +"\n")
+	for round, latency := range acceptMap {
+		fmt.Fprintf(file, round+ ":" + latency +"\n")
+	}
 }
 
 func writeAllSuccess() {
-	fileName := strconv.Itoa(algorithm) +":Latency" + "|" + MyId +"|" + startTime.String()+".txt"
-	file, err := os.OpenFile(filepath.Join("./Data", fileName), os.O_WRONLY|os.O_APPEND, 0666)
+	//fileName := strconv.Itoa(algorithm) +":Latency" + "|" + MyId +"|" + startTime.String()+".txt"
+	//file, err := os.OpenFile(filepath.Join("./Data", fileName), os.O_WRONLY|os.O_APPEND, 0666)
+	//if err != nil {
+	//	fmt.Println(err)
+	//	return
+	//}
+	fmt.Println("Successful receive all message")
+}
+
+func writeThroughPut(throuput int) {
+	fileName := strconv.Itoa(algorithm) +":Throuput" + "|" + MyId +"|" + startTime.String()+".txt"
+	file, err := os.OpenFile(filepath.Join("./Data", fileName), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Fprintf(file, "Successfully receive all the data")
+	fmt.Fprintf(file, strconv.Itoa(throuput)+"\n")
 }
 
 
@@ -111,12 +144,7 @@ func throughputCalculator() {
 	writeThroughPut(counter.getCount())
 }
 
-func writeThroughPut(throuput int) {
-	fileName := strconv.Itoa(algorithm) +":Throuput" + "|" + MyId +"|" + startTime.String()+".txt"
-	file, err := os.OpenFile(filepath.Join("./Data", fileName), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Fprintf(file, strconv.Itoa(throuput)+"\n")
+
+func latencyCalculator1Min() {
+	time.Sleep(1* time.Minute)
 }

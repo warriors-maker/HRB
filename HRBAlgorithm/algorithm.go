@@ -91,7 +91,7 @@ func AlgorithmSetUp(myID string, servers []string, trustedCount, faultyCount int
 	}
 	serverList = servers
 
-	fmt.Println("These are the servers", serverMap)
+	//fmt.Println("These are the servers", serverMap)
 	MessageReceiveSet = make(map[string] bool)
 	//MessageSentSet = make(map[string] bool)
 
@@ -124,7 +124,7 @@ func AlgorithmSetUp(myID string, servers []string, trustedCount, faultyCount int
 	trusted = trustedCount
 	faulty = faultyCount
 	total = trusted + faulty
-	fmt.Println("Hey come on:" , trusted, faulty, total)
+	//fmt.Println("Hey come on:" , trusted, faulty, total)
 	MyID = myID
 	genKey = MyID
 	digestTrustCount = total
