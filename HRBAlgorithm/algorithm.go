@@ -176,19 +176,19 @@ func SimpleFilterRecData(message Message) {
 func FilterRecData (message Message) {
 	switch v := message.(type) {
 	case MSGStruct:
-		fmt.Println("Msg")
+		//fmt.Println("Msg")
 		Msghandler(message)
 	case ECHOStruct:
-		fmt.Println("Echo")
+		//fmt.Println("Echo")
 		EchoHandler(message)
 	case ACCStruct:
-		fmt.Println("Acc")
+		//fmt.Println("Acc")
 		AccHandler(message)
 	case REQStruct:
-		fmt.Println("Req")
+		//fmt.Println("Req")
 		ReqHandler(message)
 	case FWDStruct:
-		fmt.Print("FWD")
+		//fmt.Print("FWD")
 		FwdHandler(message)
 	default:
 		fmt.Printf("Sending : %+v\n", v)
@@ -199,14 +199,14 @@ func FilterRecData (message Message) {
 func FilterSimpleErasureCodeRecData(message Message) {
 	switch v := message.(type) {
 	case MSGStruct:
-		fmt.Println("Msg")
+		//fmt.Println("Msg")
 		SimpleECMessageHandler(message)
 	case ECHOStruct:
-		fmt.Println("Echo")
+		//fmt.Println("Echo")
 		SimpleECEchoHandler(message)
 	default:
 		fmt.Printf("Sending : %+v\n", v)
-		fmt.Println("I do ot understand what you send")
+		//fmt.Println("I do ot understand what you send")
 	}
 }
 
@@ -214,19 +214,19 @@ func FilterSimpleErasureCodeRecData(message Message) {
 func FilterComplexErasureRecData(message Message) {
 	switch v := message.(type) {
 	case MSGStruct:
-		fmt.Println("Msg")
+		//fmt.Println("Msg")
 		ComplexECMessageHandler(message)
 	case ECHOStruct:
-		fmt.Println("Echo")
+		//fmt.Println("Echo")
 		ComplexECEchoHandler(message)
 	case ACCStruct:
-		fmt.Println("Acc")
+		//fmt.Println("Acc")
 		complexECAccHandler(message)
 	case REQStruct:
-		fmt.Println("Req")
+		//fmt.Println("Req")
 		ComplexECReqHandler(message)
 	case FWDStruct:
-		fmt.Print("FWD")
+		//fmt.Print("FWD")
 		complexECFwdHandler(message)
 	default:
 		fmt.Printf("Sending : %+v\n", v)
