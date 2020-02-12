@@ -1,6 +1,8 @@
 package Server
 
 import (
+	"fmt"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -20,9 +22,6 @@ var faultyList []string
 var trustedList []string
 var round int
 var dataSize int
-
-
-
 
 type messageChan chan TcpMessage
 
@@ -54,7 +53,16 @@ func InitSharedVariables(index int) {
 	if index == -1 {
 		isLocalMode = false
 		myHostAddr := getLocalIP()
-		MyId = myHostAddr+":" + default_benchmark_port
+		writeSystemOut("My address: " + myHostAddr)
+		for i := 0; i < len(serverList); i++ {
+			nets := strings.Split(serverList[i], ":")
+			host := nets[0]
+			writeSystemOut("Other address: " + host)
+			if host == myHostAddr {
+				MyId = serverList[i]
+			}
+		}
+
 	} else {
 		isLocalMode = true
 		if index == 0 {
@@ -68,6 +76,16 @@ func InitSharedVariables(index int) {
 	algorithm = yamlStruct.Algorithm
 	isSourceFault = yamlStruct.Source_Byzantine
 	initOtherAddr()
+}
+
+func writeSystemOut(s string) {
+	fileName :=  MyId +"|" + startTime.String()+".txt"
+	file, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Fprintf(file, s +"\n")
 }
 
 func checkIsFault() {
