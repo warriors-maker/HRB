@@ -1,6 +1,7 @@
 package HRBAlgorithm
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 )
@@ -11,7 +12,7 @@ func SimpleBroadcast(byteLength, round int) {
 		s := RandStringBytes(byteLength)
 		m := MSGStruct{Id: MyID, SenderId:MyID, Data: s, Header:MSG, Round:i}
 		for _, server := range serverList {
-			//fmt.Println("Protocal send to ", id)
+			//fmt.Println("Protocal send to ", server)
 			sendReq := PrepareSend{M: m, SendTo: server}
 			SendReqChan <- sendReq
 		}
@@ -143,6 +144,7 @@ func SimpleCheck(m Message) {
 			//fmt.Println("Receive more than total - faulty echo message")
 			if _, e := acceptData[value]; ! e {
 				acceptData[value] = true
+				fmt.Println(m.GetRound())
 				stats := StatStruct{Id:m.GetId(), Round: m.GetRound(), Header:Stat}
 				statInfo :=PrepareSend{M:stats, SendTo:MyID}
 				SendReqChan <- statInfo

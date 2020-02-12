@@ -4,6 +4,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
+	"fmt"
 	"strconv"
 	"time"
 )
@@ -136,16 +137,18 @@ func recBinary(m Message) {
 				if detect {
 					if _, e:= acceptData[identifier]; !e {
 						acceptData[identifier] = true
-						stats := StatStruct{Id:m.GetId(), Round: m.GetRound(), Header:Stat}
-						statInfo :=PrepareSend{M:stats, SendTo:MyID}
-						SendReqChan <- statInfo
+						fmt.Println(m.GetRound())
+						//stats := StatStruct{Id:m.GetId(), Round: m.GetRound(), Header:Stat}
+						//statInfo :=PrepareSend{M:stats, SendTo:MyID}
+						//SendReqChan <- statInfo
 					}
 				} else {
 					if _, e:= acceptData[identifier]; !e {
 						acceptData[identifier] = true
-						stats := StatStruct{Id:m.GetId(), Round: m.GetRound(), Header:Stat}
-						statInfo :=PrepareSend{M:stats, SendTo:MyID}
-						SendReqChan <- statInfo
+						fmt.Println(m.GetRound())
+						//stats := StatStruct{Id:m.GetId(), Round: m.GetRound(), Header:Stat}
+						//statInfo :=PrepareSend{M:stats, SendTo:MyID}
+						//SendReqChan <- statInfo
 					}
 				}
 			}
@@ -172,11 +175,11 @@ func receiveDigestFromOthers(m Message) {
 	if len (dataMap[identifier]) == total - 1 {
 		data := dataFromSrc[identifier]
 		if validate(data, dataMap[identifier]) {
-			//fmt.Println("Broadcast detected No ", m.GetRound())
+			//fmt.Println( m.GetRound())
 			broadcastBinary(false, m.GetId(), m.GetRound())
 		} else {
 			//Broadcast Binary
-			//fmt.Println("Broadcast detected Yes ", m.GetRound())
+			//fmt.Println(m.GetRound())
 			broadcastBinary(true, m.GetId(), m.GetRound())
 		}
 	}

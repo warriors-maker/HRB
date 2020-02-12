@@ -42,7 +42,7 @@ func ProtocalStart() {
 	if algorithm == 1 {
 		hashSimpleSetup()
 		if source {
-			HRBAlgorithm.SimpleBroadcast(dataSize, round)
+			go HRBAlgorithm.SimpleBroadcast(dataSize, round)
 		}
 	} else if algorithm == 2 {
 		hashComplexSetup()

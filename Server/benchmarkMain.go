@@ -27,7 +27,7 @@ func initChannels() {
 	internalWriteChan = make (chan TcpMessage)
 	externalWriteChan = make (map[string] messageChan)
 	externalReadChan = make(chan TcpMessage)
-	statsChan = make (chan HRBAlgorithm.Message)
+	//statsChan = make (chan HRBAlgorithm.Message)
 }
 
 func statSetup() {
@@ -55,7 +55,7 @@ func internalRead() {
 		if data.Message.GetHeaderType() == HRBAlgorithm.Stat {
 			//count += 1
 			//fmt.Println(count)
-			statsChan <- data.Message
+			//statsChan <- data.Message
 		} else {
 			if sendTo == "" || sendTo == "all" {
 				for _ , channel := range externalWriteChan {

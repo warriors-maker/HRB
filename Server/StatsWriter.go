@@ -67,8 +67,8 @@ func (f *flag)getFlag() bool{
 
 func statsCalculate(statsChan chan HRBAlgorithm.Message) {
 	//go latencyCalculator(statsChan)
-	go counterUpDate(statsChan)
-	go throughputCalculator()
+	//go counterUpDate(statsChan)
+	//go throughputCalculator()
 }
 
 
