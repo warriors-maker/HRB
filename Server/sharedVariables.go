@@ -53,13 +53,16 @@ func InitSharedVariables(index int) {
 	if index == -1 {
 		isLocalMode = false
 		myHostAddr := getLocalIP()
-		writeSystemOut("My address: " + myHostAddr)
+		//writeSystemOut("My address: " + myHostAddr)
 		for i := 0; i < len(serverList); i++ {
 			nets := strings.Split(serverList[i], ":")
 			host := nets[0]
-			writeSystemOut("Other address: " + host)
+			//writeSystemOut("Other address: " + host)
 			if host == myHostAddr {
 				MyId = serverList[i]
+				if i == 0 {
+					source = true
+				}
 			}
 		}
 
