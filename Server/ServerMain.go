@@ -3,7 +3,6 @@ package Server
 import (
 	"HRB/HRBAlgorithm"
 	"math/rand"
-	"time"
 )
 
 /*
@@ -43,12 +42,12 @@ func ProtocalStart() {
 	if algorithm == 1 {
 		hashSimpleSetup()
 		if source {
-			simpleBroadcast(dataSize, round)
+			HRBAlgorithm.SimpleBroadcast(dataSize, round)
 		}
 	} else if algorithm == 2 {
 		hashComplexSetup()
 		if source {
-			simpleBroadcast(dataSize, round)
+			HRBAlgorithm.SimpleBroadcast(dataSize, round)
 		}
 	} else if algorithm == 3 {
 		hashECSimpleSetup()
@@ -326,20 +325,7 @@ func RandStringBytes(n int) string {
 /*
 Used in Algorithm 1 and 2
  */
-func simpleBroadcast(byte_length, round int) {
-	if source {
-		for i := 0; i < round; i++ {
-			time.Sleep(1*time.Second)
-			s := RandStringBytes(byte_length)
-			m := HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, Data: s, Header:0, Round:i}
-			for _, id := range serverList {
-				//fmt.Println("Protocal send to ", id)
-				tcpMessage := TcpMessage{Message:m, ID:id}
-				protocalSendChan <- tcpMessage
-			}
-		}
-	}
-}
+
 
 
 

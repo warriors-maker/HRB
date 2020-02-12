@@ -2,8 +2,21 @@ package HRBAlgorithm
 
 import (
 	"strconv"
+	"time"
 )
 
+func SimpleBroadcast(byteLength, round int) {
+	time.Sleep(3 *time.Second)
+	for i := 0; i < round; i++ {
+		s := RandStringBytes(byteLength)
+		m := MSGStruct{Id: MyID, SenderId:MyID, Data: s, Header:MSG, Round:i}
+		for _, server := range serverList {
+			//fmt.Println("Protocal send to ", id)
+			sendReq := PrepareSend{M: m, SendTo: server}
+			SendReqChan <- sendReq
+		}
+	}
+}
 
 //Same as the more complicated one
 func SimpleMsgHandler(d Message) {
