@@ -4,6 +4,7 @@ import (
 	"HRB/HRBAlgorithm"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
 	"sync"
 	"time"
@@ -82,7 +83,7 @@ func latencyCalculator(statsChan chan HRBAlgorithm.Message) {
 
 func writeLatencyFile(round, latency string) {
 	fileName := strconv.Itoa(algorithm) +":Latency" + "|" + MyId +"|" + startTime.String()+".txt"
-	file, err := os.OpenFile(fileName, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0666)
+	file, err := os.OpenFile(filepath.Join("./Data", fileName), os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0666)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -92,7 +93,7 @@ func writeLatencyFile(round, latency string) {
 
 func writeAllSuccess() {
 	fileName := strconv.Itoa(algorithm) +":Latency" + "|" + MyId +"|" + startTime.String()+".txt"
-	file, err := os.OpenFile(fileName, os.O_WRONLY|os.O_APPEND, 0666)
+	file, err := os.OpenFile(filepath.Join("./Data", fileName), os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -112,7 +113,7 @@ func throughputCalculator() {
 
 func writeThroughPut(throuput int) {
 	fileName := strconv.Itoa(algorithm) +":Throuput" + "|" + MyId +"|" + startTime.String()+".txt"
-	file, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
+	file, err := os.OpenFile(filepath.Join("./Data", fileName), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
 	if err != nil {
 		fmt.Println(err)
 		return

@@ -1,4 +1,4 @@
-trusted : [10.0.0.1:8000] #trusted ip + port
+trusted : [127.0.0.1:8000] #trusted ip + port
 faulty : [] #faulty ip + port
 algorithm : 1 #[1,2,3,4...,8]
 source_byzantine : false #[true, false]
