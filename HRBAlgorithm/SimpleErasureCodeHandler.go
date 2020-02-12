@@ -1,7 +1,6 @@
 package HRBAlgorithm
 
 import (
-	"fmt"
 	"strconv"
 	"time"
 )
@@ -11,7 +10,7 @@ func SimpleECBroadCast(byte_length, round int) {
 	for r:= 0; r < round; r++ {
 		s := RandStringBytes(byte_length)
 		shards := Encode(s, faulty + 1, total - (faulty + 1))
-		fmt.Println("Shards are ", shards)
+		//fmt.Println("Shards are ", shards)
 		//Get the string version of the string
 		hashStr := ConvertBytesToString(Hash([]byte(s)))
 		for i := 0; i < total; i++ {
@@ -48,7 +47,7 @@ func SimpleECMessageHandler(m Message) {
 		codes[serverMap[MyID]], _= ConvertStringToBytes(data.GetData())
 
 		ecDataSet[hashStr] = codes
-		fmt.Println("EcDataSet, hashStr ", ecDataSet[hashStr], hashStr)
+		//fmt.Println("EcDataSet, hashStr ", ecDataSet[hashStr], hashStr)
 
 		//Main logic
 		//Note data.GetData() is the string version of my code
@@ -80,30 +79,30 @@ func SimpleECEchoHandler(m Message) {
 
 		var codes [][]byte
 		//include the data with key the original data and val its hashvalue
-		fmt.Println("Get hashData ", echo.GetHashData())
+		//fmt.Println("Get hashData ", echo.GetHashData())
 		if  c ,ok := ecDataSet[m.GetHashData()]; !ok {
 			codes = make([][]byte, total)
 		} else {
-			fmt.Println("It exists")
+			//fmt.Println("It exists")
 			codes = c
-			fmt.Println("The codes look like", codes)
+			//fmt.Println("The codes look like", codes)
 		}
 		//Echo Message is always the codes of the sender
 
-		fmt.Println(m.GetSenderId(), serverMap[m.GetSenderId()])
+		//fmt.Println(m.GetSenderId(), serverMap[m.GetSenderId()])
 		codes[serverMap[m.GetSenderId()]], _ = ConvertStringToBytes(m.GetData())
 
 
 		dataExist, _:= checkDataExist(echo.GetHashData())
 		if !dataExist && EchoRecCountSet[echo] >= faulty + 1 {
 			vals := permutation(codes, faulty + 1, total - (faulty + 1))
-			fmt.Println("Receive more than faulty + 1 and the list of permutations is ", vals)
+			//fmt.Println("Receive more than faulty + 1 and the list of permutations is ", vals)
 			for _, v := range vals {
 				expectedHash := echo.GetHashData()
 				inputHash := ConvertBytesToString(Hash([]byte(v)))
 
 				if compareHash(expectedHash, inputHash) {
-					fmt.Println("Include ", v)
+					//fmt.Println("Include ", v)
 					DataSet[v] = echo.GetHashData()
 					break
 				}

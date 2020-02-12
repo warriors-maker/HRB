@@ -1,7 +1,6 @@
 package HRBAlgorithm
 
 import (
-	"fmt"
 	"strconv"
 )
 
@@ -169,7 +168,7 @@ func AccHandler (data Message) (bool, int, bool){
 }
 
 func check(m Message) []bool {
-	fmt.Println("Inside check")
+	//fmt.Println("Inside check")
 	flags := []bool{false, false, false, false}
 
 	if exist, _ := checkDataExist(m.GetHashData()); exist {
@@ -181,8 +180,8 @@ func check(m Message) []bool {
 
 		if EchoRecCountSet[echo] >= faulty + 1 {
 			if _, sent := EchoSentSet[identifier]; !sent {
-				fmt.Println("Receive more than faulty + 1 echo message")
-				fmt.Println("Sent Echo to other servers")
+				//fmt.Println("Receive more than faulty + 1 echo message")
+				//fmt.Println("Sent Echo to other servers")
 				echoSend := ECHOStruct{Header:ECHO, Round:m.GetRound(), HashData:m.GetHashData(), Id:m.GetId(), SenderId:MyID}
 				EchoSentSet[identifier] = true
 				sendReq := PrepareSend{M: echoSend, SendTo:"all"}
@@ -192,7 +191,7 @@ func check(m Message) []bool {
 
 		if EchoRecCountSet[echo] >= total - faulty {
 			if _, sent := AccSentSet[identifier]; !sent {
-				fmt.Println("Receive more than total - faulty echo message")
+				//fmt.Println("Receive more than total - faulty echo message")
 				AccSentSet[identifier] = true
 
 				accSend := ACCStruct{Header:ACC, Round:m.GetRound(), HashData:m.GetHashData(), Id:m.GetId(), SenderId:MyID}
@@ -205,11 +204,11 @@ func check(m Message) []bool {
 			}
 		}
 
-		fmt.Println("Acc Info",len(AccRecCountSet[acc]), AccRecCountSet[acc], faulty + 1)
+		//fmt.Println("Acc Info",len(AccRecCountSet[acc]), AccRecCountSet[acc], faulty + 1)
 
 		if len(AccRecCountSet[acc]) >= faulty + 1 {
 			if _,sent := AccSentSet[identifier]; !sent {
-				fmt.Println("Receive more than f + 1 Acc message")
+				//fmt.Println("Receive more than f + 1 Acc message")
 				AccSentSet[identifier] = true
 				accSend := ACCStruct{Header:ACC, Round:m.GetRound(), HashData:m.GetHashData(), Id:m.GetId(), SenderId:MyID}
 				//send ACC to all servers

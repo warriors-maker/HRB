@@ -1,8 +1,6 @@
 package Server
 
 import (
-	"fmt"
-	"os"
 	"strconv"
 	"strings"
 )
@@ -81,15 +79,6 @@ func InitSharedVariables(index int) {
 	initOtherAddr()
 }
 
-func writeSystemOut(s string) {
-	fileName :=  MyId +"|" + startTime.String()+".txt"
-	file, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Fprintf(file, s +"\n")
-}
 
 func checkIsFault() {
 	for _, id := range faultyList {

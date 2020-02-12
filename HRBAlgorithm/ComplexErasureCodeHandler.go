@@ -1,7 +1,6 @@
 package HRBAlgorithm
 
 import (
-	"fmt"
 	"strconv"
 	"time"
 )
@@ -39,7 +38,7 @@ func ComplexECMessageHandler(m Message) {
 		codes[serverMap[MyID]], _= ConvertStringToBytes(data.GetData())
 
 		ecDataSet[hashStr] = codes
-		fmt.Println("EcDataSet, hashStr ", ecDataSet[hashStr], hashStr)
+		//fmt.Println("EcDataSet, hashStr ", ecDataSet[hashStr], hashStr)
 
 		//Main logic
 		//Note data.GetData() is the string version of my code
@@ -72,29 +71,29 @@ func ComplexECEchoHandler(m Message) {
 
 		var codes [][]byte
 		//include the data with key the original data and val its hashvalue
-		fmt.Println("Get hashData ", echo.GetHashData())
+		//fmt.Println("Get hashData ", echo.GetHashData())
 		if  c ,ok := ecDataSet[m.GetHashData()]; !ok {
 			codes = make([][]byte, total)
 		} else {
-			fmt.Println("It exists")
+			//fmt.Println("It exists")
 			codes = c
-			fmt.Println("The codes look like", codes)
+			//fmt.Println("The codes look like", codes)
 		}
 		//Echo Message is always the codes of the sender
 
-		fmt.Println(m.GetSenderId(), serverMap[m.GetSenderId()])
+		//fmt.Println(m.GetSenderId(), serverMap[m.GetSenderId()])
 		codes[serverMap[m.GetSenderId()]], _ = ConvertStringToBytes(m.GetData())
 
 
 		dataExist, _:= checkDataExist(echo.GetHashData())
 		if !dataExist && EchoRecCountSet[echo] >= faulty + 1 {
 			vals := permutation(codes, faulty + 1, total - (faulty + 1))
-			fmt.Println("Receive more than faulty + 1 and the list of permutations is ", vals)
+			//fmt.Println("Receive more than faulty + 1 and the list of permutations is ", vals)
 			for _, v := range vals {
 				expectedHash := echo.GetHashData()
 				inputHash := ConvertBytesToString(Hash([]byte(v)))
 				if compareHash(expectedHash, inputHash) {
-					fmt.Println("Include ", v)
+					//fmt.Println("Include ", v)
 					DataSet[v] = echo.GetHashData()
 					break
 				}
@@ -113,7 +112,7 @@ func ComplexECReqHandler(m Message) {
 		ReqReceiveSet[identifier] = true
 		if exist, data := checkDataExist(m.GetHashData()); exist {
 			//Decode the data
-			fmt.Println("Inside req ", data)
+			//fmt.Println("Inside req ", data)
 			shards := Encode(data, faulty + 1, total - (faulty + 1))
 
 			code := ConvertBytesToString(shards[serverMap[MyID]])
@@ -167,17 +166,17 @@ func complexECFwdHandler(m Message) {
 			codes[serverMap[m.GetSenderId()]], _= ConvertStringToBytes(m.GetData())
 
 			ecDataSet[hashStr] = codes
-			fmt.Println("EcDataSet, hashStr, size of Foward ", ecDataSet[hashStr], hashStr, FwdRecCountSet[fwdIdentifier])
+			//fmt.Println("EcDataSet, hashStr, size of Foward ", ecDataSet[hashStr], hashStr, FwdRecCountSet[fwdIdentifier])
 
 			if FwdRecCountSet[fwdIdentifier] >= faulty + 1 {
 				vals := permutation(codes, faulty + 1, total - (faulty + 1))
-				fmt.Println("Receive more than faulty + 1 and the list of permutations is ", vals)
+				//fmt.Println("Receive more than faulty + 1 and the list of permutations is ", vals)
 				for _, v := range vals {
 					expectedHash := hashStr
 					inputHash := ConvertBytesToString(Hash([]byte(v)))
-					fmt.Println("Epected: ", expectedHash, "Input: ",inputHash)
+					//fmt.Println("Epected: ", expectedHash, "Input: ",inputHash)
 					if compareHash(expectedHash, inputHash) {
-						fmt.Println("Include ", v)
+						//fmt.Println("Include ", v)
 						DataSet[v] = hashStr
 						break
 					}
@@ -245,7 +244,7 @@ func complexECAccHandler(m Message) {
 }
 
 func complexECCheck(m Message) {
-	fmt.Println("Inside check")
+	//fmt.Println("Inside check")
 
 	if exist, value := checkDataExist(m.GetHashData()); exist {
 		echo := ECHOStruct{Header:ECHO, Round:m.GetRound(), HashData:m.GetHashData(), Id:m.GetId()}
@@ -256,9 +255,9 @@ func complexECCheck(m Message) {
 
 		if EchoRecCountSet[echo] >= faulty + 1 {
 			if _, sent := EchoSentSet[identifier]; !sent {
-				fmt.Println("Receive more than faulty + 1 echo message")
+				//fmt.Println("Receive more than faulty + 1 echo message")
 				EchoSentSet[identifier] = true
-				fmt.Println("Sent Echo to other servers")
+				//fmt.Println("Sent Echo to other servers")
 				shards := Encode(value, faulty + 1, total - (faulty + 1))
 				code := ConvertBytesToString(shards[serverMap[MyID]])
 				echoSend := ECHOStruct{Header:ECHO, Round:m.GetRound(), HashData:m.GetHashData(), Id:m.GetId(), SenderId:MyID, Data:code}
@@ -269,7 +268,7 @@ func complexECCheck(m Message) {
 
 		if EchoRecCountSet[echo] >= total - faulty {
 			if _, sent := AccSentSet[identifier]; !sent {
-				fmt.Println("Receive more than total - faulty echo message")
+				//fmt.Println("Receive more than total - faulty echo message")
 				AccSentSet[identifier] = true
 
 				accSend := ACCStruct{Header:ACC, Round:m.GetRound(), HashData:m.GetHashData(), Id:m.GetId(), SenderId:MyID}
@@ -281,7 +280,7 @@ func complexECCheck(m Message) {
 			}
 		}
 
-		fmt.Println("Check Acc ", len(AccRecCountSet[acc]), AccRecCountSet[acc])
+		//fmt.Println("Check Acc ", len(AccRecCountSet[acc]), AccRecCountSet[acc])
 
 		if len(AccRecCountSet[acc]) >= faulty + 1 {
 			if _,sent := AccSentSet[identifier]; !sent {

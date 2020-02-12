@@ -58,14 +58,14 @@ func latencyCalculator(statsChan chan HRBAlgorithm.Message) {
 		data := <- statsChan
 		identifier := strconv.Itoa(data.GetRound())
 
-		fmt.Println("Stats_Counter: " + identifier)
+		//fmt.Println("Stats_Counter: " + identifier)
 
 		start, recorded := statsMap[identifier]
 		if recorded {
 			if _, e := acceptMap[identifier]; !e {
 				end := time.Now()
 				diff := fmt.Sprintf("%f", end.Sub(start).Seconds())
-				fmt.Println(end.String(), start.String())
+				//fmt.Println(end.String(), start.String())
 				acceptMap[identifier] = diff
 				counter.increment()
 				writeLatencyFile(identifier, diff)

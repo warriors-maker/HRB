@@ -1,7 +1,6 @@
 package HRBAlgorithm
 
 import (
-	"fmt"
 	"strconv"
 	"time"
 )
@@ -17,7 +16,7 @@ func InitCrash() {
 func CrashECBroadCast(length , round int) {
 	//need to make sure that coded element > f
 	time.Sleep(3*time.Second)
-	fmt.Println("MyID" + MyID)
+	//fmt.Println("MyID" + MyID)
 	var shards[][] byte
 
 	for r := 0; r < round; r ++ {
@@ -51,7 +50,7 @@ func crashRecMsg(m Message) {
 	stats := Stats{}
 	stats.Start = time.Now()
 	statsRecord[identifier] = stats
-	fmt.Printf("Begin Stats: %+v\n",stats)
+	//fmt.Printf("Begin Stats: %+v\n",stats)
 
 	if exist {
 		codeCounter[identifier] = count + 1
@@ -81,7 +80,7 @@ func listToShards(list []string) [][]byte{
 			shards[i], _ = ConvertStringToBytes(list[i])
 		}
 	}
-	fmt.Println(shards)
+	//fmt.Println(shards)
 	return shards
 }
 

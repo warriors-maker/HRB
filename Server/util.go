@@ -2,8 +2,6 @@ package Server
 
 import (
 	"bufio"
-	"fmt"
-
 	//"fmt"
 	"log"
 	"net"
@@ -38,7 +36,7 @@ func loadConfigServerFile(filePath string) []string{
 func readTrustedFaulted(trustedPath, faultyPath string) ([]string, []string){
 	trusted := loadConfigServerFile(trustedPath)
 	faulty := loadConfigServerFile(faultyPath)
-	fmt.Println(trusted, faulty)
+	//fmt.Println(trusted, faulty)
 	return trusted, faulty
 
 }

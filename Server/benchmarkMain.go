@@ -2,7 +2,6 @@ package Server
 
 import (
 	"HRB/HRBAlgorithm"
-	"fmt"
 	"strconv"
 	"time"
 )
@@ -55,12 +54,12 @@ func internalRead() {
 			statsChan <- data.Message
 		} else {
 			if sendTo == "" || sendTo == "all" {
-				for id , channel := range externalWriteChan {
-					fmt.Println("Send to all now with", id)
+				for _ , channel := range externalWriteChan {
+					//fmt.Println("Send to all now with", id)
 					channel <- data
 				}
 			}  else {
-				fmt.Println("Send to specific now with", sendTo)
+				//fmt.Println("Send to specific now with", sendTo)
 				externalWriteChan[sendTo] <- data
 			}
 		}

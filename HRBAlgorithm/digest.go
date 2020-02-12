@@ -4,7 +4,6 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
-	"fmt"
 	"strconv"
 	"time"
 )
@@ -31,14 +30,14 @@ func encrypt(data,key string) string{
 }
 
 func validate(targetMessage string, l []digestStruct) bool{
-	fmt.Println(targetMessage)
+	//fmt.Println(targetMessage)
 
 	for _, digestData := range l {
 		if (digestStruct{}) != digestData {
 			key := digestData.Key
 			digestM := digestData.DigestM
 			targetM := encrypt(targetMessage, key)
-			fmt.Println(digestM, targetM)
+			//fmt.Println(digestM, targetM)
 			if targetM != digestM {
 				return false
 			}
@@ -83,10 +82,10 @@ func checkDetect(binarys [] Message) bool{
 func broadcastBinary(detect bool, Id string, round int) {
 	var detectString string
 	if detect {
-		fmt.Println("Detect")
+		//fmt.Println("Detect")
 		detectString = "1"
 	} else {
-		fmt.Println("Does not detect Detect")
+		//fmt.Println("Does not detect Detect")
 		detectString = "0"
 	}
 
@@ -130,7 +129,7 @@ func recBinary(m Message) {
 		} else {
 			l = append(l, m)
 			binarySet[identifier] = l
-			fmt.Println(binarySet[identifier])
+			//fmt.Println(binarySet[identifier])
 			if len(l) == digestTrustCount - 1 {
 				detect := checkDetect(l)
 				if detect {
@@ -168,15 +167,15 @@ func receiveDigestFromOthers(m Message) {
 		dataMap[identifier] = digestList
 	}
 
-	fmt.Println(dataMap[identifier], len(dataMap[identifier]))
+	//fmt.Println(dataMap[identifier], len(dataMap[identifier]))
 	if len (dataMap[identifier]) == total - 1 {
 		data := dataFromSrc[identifier]
 		if validate(data, dataMap[identifier]) {
-			fmt.Println("Broadcast detected No ", m.GetRound())
+			//fmt.Println("Broadcast detected No ", m.GetRound())
 			broadcastBinary(false, m.GetId(), m.GetRound())
 		} else {
 			//Broadcast Binary
-			fmt.Println("Broadcast detected Yes ", m.GetRound())
+			//fmt.Println("Broadcast detected Yes ", m.GetRound())
 			broadcastBinary(true, m.GetId(), m.GetRound())
 		}
 	}

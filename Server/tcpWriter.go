@@ -3,14 +3,13 @@ package Server
 import (
 	"HRB/HRBAlgorithm"
 	"encoding/gob"
-	"fmt"
 	"net"
 	"time"
 )
 
 //ipPort: the targer ipAddress to write to
 func ExternalTcpWriter(ipPort string, ch chan TcpMessage) {
-	fmt.Println("Benchmark Channel for sending data to " + ipPort)
+	//fmt.Println("Benchmark Channel for sending data to " + ipPort)
 
 	conn, err:= net.Dial("tcp",ipPort)
 
@@ -48,7 +47,7 @@ func ExternalTcpWriter(ipPort string, ch chan TcpMessage) {
 				if source {
 					if data.Message.GetHeaderType() == HRBAlgorithm.MSG {
 						if ipPort == serverList[1] {
-							fmt.Println("Do not send to" + ipPort)
+							//fmt.Println("Do not send to" + ipPort)
 						} else {
 							encoder.Encode(&data)
 						}
@@ -56,7 +55,7 @@ func ExternalTcpWriter(ipPort string, ch chan TcpMessage) {
 						encoder.Encode(&data)
 					}
 				} else if data.Message.GetHeaderType() == HRBAlgorithm.ECHO {
-					fmt.Println("Set data to null")
+					//fmt.Println("Set data to null")
 					correct := data.Message
 					// Create a Faulty Message
 

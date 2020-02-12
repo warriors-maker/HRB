@@ -2,7 +2,6 @@ package Server
 
 import (
 	"HRB/HRBAlgorithm"
-	"fmt"
 	"math/rand"
 	"time"
 )
@@ -23,13 +22,13 @@ Only used in Local Mode for debugging purpose
 
 //For One round
 func ProtocalStart() {
-	fmt.Println("Local Setup")
+	//fmt.Println("Local Setup")
 
 	//HRBAlgorithm.AlgorithmSetUp(MyId, serverList, trustedCount, faultyCount)
 	if isSourceFault {
 		trustedCount = trustedCount - 1;
 		faultyCount = faultyCount + 1;
-		fmt.Println("FaultyCount ", faultyCount)
+		//fmt.Println("FaultyCount ", faultyCount)
 		if MyId == serverList[0] {
 			isFault = true
 			isSourceFault = true
@@ -68,21 +67,21 @@ func ProtocalStart() {
 	} else if algorithm == 5 {
 		digestSetup()
 		if source {
-			fmt.Println("Digest Broadcast")
+			//fmt.Println("Digest Broadcast")
 			HRBAlgorithm.BroadcastPrepare(dataSize, round)
 		}
 
 	} else if algorithm == 6 {
 		codedSetup()
 		if source {
-			fmt.Println("NCBA")
+			//fmt.Println("NCBA")
 			HRBAlgorithm.ECByzBroadCast(dataSize, round)
 		}
 
 	} else if algorithm == 7 {
 		codedCrashSetup()
 		if source {
-			fmt.Println("Crash Ccoded Broadcast")
+			//fmt.Println("Crash Ccoded Broadcast")
 			HRBAlgorithm.CrashECBroadCast(dataSize, round)
 		}
 	} else if algorithm == 8 {
@@ -91,7 +90,7 @@ func ProtocalStart() {
 			HRBAlgorithm.OptimalBroadcast(dataSize,round)
 		}
 	} else {
-		fmt.Println("Do not understand what you give")
+		//fmt.Println("Do not understand what you give")
 	}
 
 }
@@ -245,14 +244,14 @@ func setUpWrite() {
 		req := <- HRBAlgorithm.SendReqChan
 		//fmt.Printf("Sending Msg: %+v\n",req.M)
 		if req.SendTo == "all" ||  req.SendTo == ""{
-			fmt.Println("Protocal send to all")
+			//fmt.Println("Protocal send to all")
 			for _, id := range serverList {
-				fmt.Println("Protocal send to ", id)
+				//fmt.Println("Protocal send to ", id)
 				tcpMessage := TcpMessage{Message:req.M, ID:id}
 				protocalSendChan <- tcpMessage
 			}
 		} else {
-			fmt.Println("Protocal send to ", req.SendTo)
+			//fmt.Println("Protocal send to ", req.SendTo)
 			tcpMessage := TcpMessage{Message:req.M, ID:req.SendTo}
 			protocalSendChan <- tcpMessage
 		}
@@ -334,7 +333,7 @@ func simpleBroadcast(byte_length, round int) {
 			s := RandStringBytes(byte_length)
 			m := HRBAlgorithm.MSGStruct{Id: MyId, SenderId:MyId, Data: s, Header:0, Round:i}
 			for _, id := range serverList {
-				fmt.Println("Protocal send to ", id)
+				//fmt.Println("Protocal send to ", id)
 				tcpMessage := TcpMessage{Message:m, ID:id}
 				protocalSendChan <- tcpMessage
 			}

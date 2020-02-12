@@ -46,10 +46,10 @@ func SimpleFwdHandler(data Message) {
 	hashStr := ConvertBytesToString(Hash([]byte(data.GetData())))
 	//fmt.Printf("Fwd: %+v\n",data)
 	m := REQStruct{Header:REQ, Id:data.GetId(), HashData:hashStr, Round: data.GetRound(), SenderId:MyID}
-	fmt.Printf("ReceiveBack FWD %+v\n" , m)
+	//fmt.Printf("ReceiveBack FWD %+v\n" , m)
 	if hasSent(ReqSentSet[m], data.GetSenderId()) {
 		if _,seen := FwdReceiveSet[identifier]; !seen {
-			fmt.Println("Receive fwd back from the request")
+			//fmt.Println("Receive fwd back from the request")
 			FwdReceiveSet[identifier] = true
 			DataSet[data.GetData()] = hashStr
 			//check
@@ -115,9 +115,9 @@ func SimpleCheck(m Message) {
 
 		fmt.Println(simpleEchoRecCountSet[echo], len(simpleEchoRecCountSet[echo]))
 		if len(simpleEchoRecCountSet[echo]) >= faulty + 1 {
-			fmt.Println("Receive more than faulty + 1 echo message")
+			//fmt.Println("Receive more than faulty + 1 echo message")
 			if _, sent := EchoSentSet[identifier]; !sent {
-				fmt.Println("Sent Echo to all servers")
+				//fmt.Println("Sent Echo to all servers")
 				EchoSentSet[identifier] = true
 				//send Echo to all servers
 				echoSend := ECHOStruct{Header:ECHO, Round:m.GetRound(), HashData:m.GetHashData(), Id:m.GetId(), SenderId:MyID}
@@ -128,7 +128,7 @@ func SimpleCheck(m Message) {
 		}
 
 		if len(simpleEchoRecCountSet[echo]) >= total - faulty {
-			fmt.Println("Receive more than total - faulty echo message")
+			//fmt.Println("Receive more than total - faulty echo message")
 			if _, e := acceptData[value]; ! e {
 				acceptData[value] = true
 				stats := StatStruct{Id:m.GetId(), Round: m.GetRound(), Header:Stat}
@@ -137,7 +137,7 @@ func SimpleCheck(m Message) {
 			}
 		}
 
-		fmt.Printf("Count: %d\n",len(simpleEchoRecCountSet[echo]))
+		//fmt.Printf("Count: %d\n",len(simpleEchoRecCountSet[echo]))
 	}
 
 }

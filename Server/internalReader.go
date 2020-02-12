@@ -1,20 +1,18 @@
 package Server
 
 import (
-"encoding/gob"
-"fmt"
-"log"
-"net"
-"os"
-"strings"
+	"encoding/gob"
+	"log"
+	"net"
+	"os"
+	"strings"
 )
 
 func internalReader(ch chan TcpMessage) {
 	nets := strings.Split(internalReadAddr, ":")
-	host := nets[0]
 	port := nets[1]
 	ln, _ := net.Listen("tcp",":"+port)
-	fmt.Println("Listening internally at " + host + ":" + port)
+	//fmt.Println("Listening internally at " + host + ":" + port)
 
 	conn, err := ln.Accept()
 	//fmt.Println("Get internal connection from " + conn.RemoteAddr().String())
@@ -49,7 +47,7 @@ func internalHandleConnection(conn net.Conn, ch chan TcpMessage) {
 		ch <- *data
 
 	}
-	fmt.Println("Connection closed")
+	//fmt.Println("Connection closed")
 }
 
 

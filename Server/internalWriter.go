@@ -2,7 +2,6 @@ package Server
 
 import (
 	"encoding/gob"
-	"fmt"
 	"net"
 	"time"
 )
@@ -11,7 +10,7 @@ import (
 // send to the protocal
 
 func internalWriter(ipPort string, ch chan TcpMessage) {
-	fmt.Println("Benchmark Internal Channel for sending data to " + ipPort)
+	//fmt.Println("Benchmark Internal Channel for sending data to " + ipPort)
 	conn, err:= net.Dial("tcp",ipPort)
 
 	//keep dialing until the server comes up

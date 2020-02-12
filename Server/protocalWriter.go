@@ -2,7 +2,6 @@ package Server
 
 import (
 	"encoding/gob"
-	"fmt"
 	"net"
 	"strconv"
 	"strings"
@@ -15,7 +14,7 @@ func TcpWriter(ch chan TcpMessage) {
 	externalPortNum, _ := strconv.Atoi(nets[1])
 
 	benchmarkAddr := host + ":" + strconv.Itoa(externalPortNum + 500)
-	fmt.Println("Protcal Channel for sending data to Benchmark " + benchmarkAddr)
+	//fmt.Println("Protcal Channel for sending data to Benchmark " + benchmarkAddr)
 
 	conn, err:= net.Dial("tcp", benchmarkAddr)
 
@@ -28,7 +27,7 @@ func TcpWriter(ch chan TcpMessage) {
 	encoder := gob.NewEncoder(conn)
 	for {
 		data := <- ch
-		fmt.Printf("Protocal Send Data to Benchmark: %+v\n",data)
+		//fmt.Printf("Protocal Send Data to Benchmark: %+v\n",data)
 		encoder.Encode(&data)
 	}
 }

@@ -1,7 +1,6 @@
 package HRBAlgorithm
 
 import (
-	"fmt"
 	"strconv"
 	"time"
 )
@@ -27,7 +26,7 @@ func ECByzBroadCast(length, round int) {
 		} else {
 			shards = Encode(s, total - faulty, 2*(total) - (total - faulty))
 		}
-		fmt.Println("Shards are ", shards)
+		//fmt.Println("Shards are ", shards)
 
 
 		for i := 0; i < total; i++ {
@@ -48,7 +47,7 @@ func ByzRecMsg(m Message) {
 	stats.Start = time.Now()
 	statsRecord[identifier] = stats
 
-	fmt.Printf("Begin Stats: %+v\n",stats)
+	//fmt.Printf("Begin Stats: %+v\n",stats)
 
 	if exist {
 		ByzCodeCounter[identifier] = count + 2
@@ -61,7 +60,7 @@ func ByzRecMsg(m Message) {
 	index2 := index1 + total
 	code1, _ := ConvertStringToBytes(m.GetData())
 	code2, _ := ConvertStringToBytes(m.GetHashData())
-	fmt.Println("code1: ", code1, " code2: ", code2)
+	//fmt.Println("code1: ", code1, " code2: ", code2)
 	ByzCodeElement[identifier][index1] = code1
 	ByzCodeElement[identifier][index2] = code2
 
@@ -94,7 +93,7 @@ func ByzRecEcho(m Message) {
 
 		if ByzCodeCounter[identifier] == total + 1 {
 			var vals []string
-			fmt.Println("ByzCodes:",ByzCodeElement[identifier])
+			//fmt.Println("ByzCodes:",ByzCodeElement[identifier])
 			if faulty == 0 {
 				vals = permutation(ByzCodeElement[identifier], total, total)
 			} else {
@@ -102,7 +101,7 @@ func ByzRecEcho(m Message) {
 			}
 			detected := validateByzCode(vals)
 			if !detected {
-				fmt.Println("Vals", vals)
+				//fmt.Println("Vals", vals)
 				dataFromSrc[identifier] = vals[0]
 			}
 			broadcastBinary(detected, m.GetId(), m.GetRound())
@@ -119,21 +118,21 @@ func ByzRecBin(m Message) {
 		} else {
 			l = append(l, m)
 			binarySet[identifier] = l
-			fmt.Println(binarySet[identifier])
+			//fmt.Println(binarySet[identifier])
 			if len(l) == total - 1 {
 				detect := checkDetect(l)
 
 				if detect {
 					if _, e:= acceptData[identifier]; !e {
 						acceptData[identifier] = true
-						stat := statsRecord[identifier]
-						stat.End = time.Now()
-						fmt.Printf("Stats: %+v\n",stat)
-						diff := fmt.Sprintf("%f",stat.End.Sub(stat.Start).Seconds())
-						fmt.Println()
-						fmt.Println(stat.Start.String(), stat.End.String())
-						fmt.Println("Reliable Accept Failure"  + strconv.Itoa(m.GetRound()) + " " + diff)
-						fmt.Println()
+						//stat := statsRecord[identifier]
+						//stat.End = time.Now()
+						//fmt.Printf("Stats: %+v\n",stat)
+						//diff := fmt.Sprintf("%f",stat.End.Sub(stat.Start).Seconds())
+						//fmt.Println()
+						//fmt.Println(stat.Start.String(), stat.End.String())
+						//fmt.Println("Reliable Accept Failure"  + strconv.Itoa(m.GetRound()) + " " + diff)
+						//fmt.Println()
 
 						stats := StatStruct{Id:m.GetId(), Round: m.GetRound(), Header:Stat}
 						statInfo :=PrepareSend{M:stats, SendTo:MyID}
@@ -143,13 +142,13 @@ func ByzRecBin(m Message) {
 				} else {
 					if _, e:= acceptData[identifier]; !e {
 						acceptData[identifier] = true
-						stat := statsRecord[identifier]
-						stat.End = time.Now()
-						fmt.Printf("Stats: %+v\n",stat)
-						diff := fmt.Sprintf("%f",stat.End.Sub(stat.Start).Seconds())
-						fmt.Println()
-						fmt.Println("Reliable Accept "  + strconv.Itoa(m.GetRound()) + " " + diff, dataFromSrc[identifier])
-						fmt.Println()
+						//stat := statsRecord[identifier]
+						//stat.End = time.Now()
+						//fmt.Printf("Stats: %+v\n",stat)
+						//diff := fmt.Sprintf("%f",stat.End.Sub(stat.Start).Seconds())
+						//fmt.Println()
+						//fmt.Println("Reliable Accept "  + strconv.Itoa(m.GetRound()) + " " + diff, dataFromSrc[identifier])
+						//fmt.Println()
 
 						stats := StatStruct{Id:m.GetId(), Round: m.GetRound(), Header:Stat}
 						statInfo :=PrepareSend{M:stats, SendTo:MyID}
@@ -163,11 +162,11 @@ func ByzRecBin(m Message) {
 }
 
 func validateByzCode(vals []string) bool{
-	fmt.Println(vals)
+	//fmt.Println(vals)
 	data := vals[0]
 	for _, val := range vals {
 		if val != data {
-			fmt.Println("Wrong", val, data)
+			//fmt.Println("Wrong", val, data)
 			return true
 		}
 	}

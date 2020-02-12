@@ -2,7 +2,6 @@ package HRBAlgorithm
 
 import (
 	"bytes"
-	"fmt"
 	"github.com/klauspost/reedsolomon"
 )
 
@@ -23,7 +22,7 @@ func Encode(message string, dataShards, parityShards int) [][]byte{
 		return nil
 	}
 
-	fmt.Println(len(shards))
+	//fmt.Println(len(shards))
 	return shards
 }
 
@@ -44,17 +43,17 @@ func Decode(shard [][]byte, dataShards, parityShards int)  (string, error){
 
 	ok, err := enc.Verify(shards)
 	if ok {
-		fmt.Println("No reconstruction needed")
+		//fmt.Println("No reconstruction needed")
 	} else {
-		fmt.Println("Reconstructing data")
+		//fmt.Println("Reconstructing data")
 		err = enc.Reconstruct(shards)
 		if err != nil {
-			fmt.Println("Reconstruct failed -", err)
+			//fmt.Println("Reconstruct failed -", err)
 			return "", err;
 		}
 		ok, err = enc.Verify(shards)
 		if !ok {
-			fmt.Println("Verification failed after reconstruction, data likely corrupted.")
+			//fmt.Println("Verification failed after reconstruction, data likely corrupted.")
 			return "", err;
 		}
 	}
@@ -81,7 +80,7 @@ func decodePermutateHelper(shards, aux [][]byte,
 
 
 	if level == dataShards{
-		fmt.Println("Data",aux)
+		//fmt.Println("Data",aux)
 		val, err := Decode(aux, dataShards, parityShards)
 		if err == nil {
 			f(val)
@@ -103,7 +102,7 @@ func decodePermutateHelper(shards, aux [][]byte,
 }
 
 func permutation(shards [][]byte, dataShards, parityShards int) []string{
-	fmt.Println("Here are the shards"  ,shards)
+	//fmt.Println("Here are the shards"  ,shards)
 	vals := []string{}
 	DecodePermutation(shards, dataShards, parityShards, func (v string) {
 		vals = append(vals, v)
@@ -114,7 +113,7 @@ func permutation(shards [][]byte, dataShards, parityShards int) []string{
 
 func PermutateStr(input, aux []string, dataShards, parityShards, level, offset int) {
 	if level == dataShards {
-		fmt.Println(aux)
+		//fmt.Println(aux)
 		return
 	}
 	for i:= offset; i < dataShards + parityShards; i++ {
