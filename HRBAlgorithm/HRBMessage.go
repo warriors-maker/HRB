@@ -11,6 +11,11 @@ const (
 	FWD  TcpHeader = 4
 	BIN  TcpHeader = 5
 	Stat  TcpHeader = 6
+	MSG_OPT TcpHeader = 7
+	ECHO_OPT TcpHeader = 8
+	ACC_OPT TcpHeader = 9
+	REQ_OPT TcpHeader = 10
+	FWD_OPT TcpHeader = 11
 )
 
 type Message interface {

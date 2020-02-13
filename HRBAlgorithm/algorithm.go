@@ -49,6 +49,7 @@ var faulty int
 var trusted int
 var total int
 var MyID string
+var algorithm int
 
 var acceptData map[string] bool
 
@@ -72,7 +73,6 @@ var genKey string
 //var faultySet map[string] bool
 
 //var augmentRecSend map[string] map[string] [][]digestStruct //Used during validate step
-var notTrustedListMap map[string] []string //Inidcating numbet of trusted
 var binarySet map[string] []Message
 
 var digestTrustCount int
@@ -81,8 +81,10 @@ var statsRecord map[string] Stats
 
 
 
-func AlgorithmSetUp(myID string, servers []string, trustedCount, faultyCount, round int) {
+func AlgorithmSetUp(myID string, servers []string, trustedCount, faultyCount, round, alg int) {
 	round = round / 2
+	algorithm = alg
+	fmt.Println(algorithm)
 	statsRecord = make(map[string]Stats,round)
 	serverMap = make(map[string] int, round)
 	acceptData = make(map[string]bool, round)
@@ -282,17 +284,37 @@ func FilterCrashCode(message Message) {
 func FilterOptimal(message Message) {
 	switch v := message.(type) {
 	case MSGStruct:
-		optimalMsgHandler(message)
+		if v.GetHeaderType() == MSG_OPT {
+			optimalMsgHandler(message)
+		} else {
+			Msghandler(message)
+		}
 	case ECHOStruct:
-		optimalEchoHandler(message)
+		if v.GetHeaderType() == ECHO_OPT {
+			optimalEchoHandler(message)
+		} else {
+			EchoHandler(message)
+		}
 	case ACCStruct:
-		optimalAccHandler(message)
+		if v.GetHeaderType() == ACC_OPT {
+			optimalAccHandler(message)
+		} else {
+			AccHandler(message)
+		}
 	case Binary:
 		optimalHashTagHandler(message)
 	case FWDStruct:
-		optimalFwdHandler(message)
+		if v.GetHeaderType() == FWD_OPT {
+			optimalFwdHandler(message)
+		} else {
+			FwdHandler(message)
+		}
 	case REQStruct:
-		optimalReqHandler(message)
+		if v.GetHeaderType() == REQ_OPT {
+			optimalReqHandler(message)
+		} else {
+			ReqHandler(message)
+		}
 	default:
 		fmt.Printf("Sending : %+v\n", v)
 		fmt.Println("I donot understand what you send")

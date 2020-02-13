@@ -36,7 +36,7 @@ func ProtocalStart() {
 
 	//General setup
 
-	HRBAlgorithm.AlgorithmSetUp(MyId, serverList, trustedCount, faultyCount, round)
+	HRBAlgorithm.AlgorithmSetUp(MyId, serverList, trustedCount, faultyCount, round, algorithm)
 
 
 	if algorithm == 1 {
@@ -143,7 +143,7 @@ func codedCrashSetup() {
 }
 
 func optimalSetup() {
-	HRBAlgorithm.InitOptimal()
+	HRBAlgorithm.InitOptimal(round)
 	protocalReadChan= setUpRead()
 	go filterOptimal(protocalReadChan)
 	go setUpWrite()
@@ -230,19 +230,51 @@ func setUpWrite() {
 	protocalSendChan = make(chan TcpMessage,20000)
 	go deliver(MyId, protocalSendChan)
 	for {
-		req := <- HRBAlgorithm.SendReqChan
-		//fmt.Printf("Sending Msg: %+v\n",req.M)
-		if req.SendTo == "all" ||  req.SendTo == ""{
-			//fmt.Println("Protocal send to all")
-			for _, id := range serverList {
-				//fmt.Println("Protocal send to ", id)
-				tcpMessage := TcpMessage{Message:req.M, ID:id}
+		if algorithm == 8 {
+			select {
+			case chocolate := <-HRBAlgorithm.SendReqChan:
+				if chocolate.SendTo == "all" || chocolate.SendTo == "" {
+					//fmt.Println("Protocal send to all")
+					for _, id := range serverList {
+						//fmt.Println("Protocal send to ", id)
+						tcpMessage := TcpMessage{Message: chocolate.M, ID: id}
+						protocalSendChan <- tcpMessage
+					}
+				} else {
+					//fmt.Println("Protocal send to ", req.SendTo)
+					tcpMessage := TcpMessage{Message: chocolate.M, ID: chocolate.SendTo}
+					protocalSendChan <- tcpMessage
+				}
+			case optimal := <-HRBAlgorithm.OptimalSendReqChan:
+				if optimal.SendTo == "all" || optimal.SendTo == "" {
+					//fmt.Println("Protocal send to all")
+					for _, id := range serverList {
+						//fmt.Println("Protocal send to ", id)
+						tcpMessage := TcpMessage{Message: optimal.M, ID: id}
+						protocalSendChan <- tcpMessage
+					}
+				} else {
+					//fmt.Println("Protocal send to ", req.SendTo)
+					tcpMessage := TcpMessage{Message: optimal.M, ID: optimal.SendTo}
+					protocalSendChan <- tcpMessage
+				}
+			}
+
+		} else {
+			req := <- HRBAlgorithm.SendReqChan
+			//fmt.Printf("Sending Msg: %+v\n",req.M)
+			if req.SendTo == "all" ||  req.SendTo == ""{
+				//fmt.Println("Protocal send to all")
+				for _, id := range serverList {
+					//fmt.Println("Protocal send to ", id)
+					tcpMessage := TcpMessage{Message:req.M, ID:id}
+					protocalSendChan <- tcpMessage
+				}
+			} else {
+				//fmt.Println("Protocal send to ", req.SendTo)
+				tcpMessage := TcpMessage{Message:req.M, ID:req.SendTo}
 				protocalSendChan <- tcpMessage
 			}
-		} else {
-			//fmt.Println("Protocal send to ", req.SendTo)
-			tcpMessage := TcpMessage{Message:req.M, ID:req.SendTo}
-			protocalSendChan <- tcpMessage
 		}
 	}
 }

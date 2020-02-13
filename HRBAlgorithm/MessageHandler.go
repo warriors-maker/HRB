@@ -169,6 +169,7 @@ func AccHandler (data Message) (bool, int, bool){
 
 func check(m Message) []bool {
 	//fmt.Println("Inside check")
+	//fmt.Println(m.GetHashData())
 	flags := []bool{false, false, false, false}
 
 	if exist, _ := checkDataExist(m.GetHashData()); exist {
@@ -221,10 +222,16 @@ func check(m Message) []bool {
 		if len(AccRecCountSet[acc]) >= total - faulty {
 			if _, e :=acceptData[identifier]; !e {
 				acceptData[identifier] = true
-				stats := StatStruct{Id:m.GetId(), Round: m.GetRound(), Header:Stat}
-				//fmt.Println(m.GetRound())
-				statInfo :=PrepareSend{M:stats, SendTo:MyID}
-				SendReqChan <- statInfo
+				if algorithm == 8 {
+					hashTag := Binary{Header:BIN, Round:m.GetRound(), Id:m.GetId(), HashData:m.GetHashData(), SenderId:MyID}
+					//fmt.Printf("ReliableAccept %+v \n" , hashTag)
+					sendReq := PrepareSend{M: hashTag, SendTo: MyID}
+					SendReqChan <- sendReq
+				} else {
+					stats := StatStruct{Id:m.GetId(), Round: m.GetRound(), Header:Stat}
+					statInfo :=PrepareSend{M:stats, SendTo:MyID}
+					SendReqChan <- statInfo
+				}
 			}
 		}
 	}
