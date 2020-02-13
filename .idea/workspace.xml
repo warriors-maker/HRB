@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="92212f8a-9e41-4b3d-9b89-c1292143224f" name="Default Changelist" comment="" />
+    <list default="true" id="92212f8a-9e41-4b3d-9b89-c1292143224f" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/HRBAlgorithm/algorithm.go" beforeDir="false" afterPath="$PROJECT_DIR$/HRBAlgorithm/algorithm.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server/ServerMain.go" beforeDir="false" afterPath="$PROJECT_DIR$/Server/ServerMain.go" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -11,10 +14,34 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/HRBAlgorithm/algorithm.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-2960">
+              <caret line="92" column="23" lean-forward="true" selection-start-line="92" selection-start-column="23" selection-end-line="92" selection-end-column="23" />
+              <folding>
+                <element signature="e#22#55#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Server/ServerMain.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="328">
+              <caret line="38" column="27" lean-forward="true" selection-start-line="38" selection-start-column="27" selection-end-line="38" selection-end-column="27" />
+              <folding>
+                <element signature="e#16#59#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/HRBAlgorithm/SimpleMessageHandler.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="386">
-              <caret line="147" column="37" lean-forward="true" selection-start-line="147" selection-start-column="37" selection-end-line="147" selection-end-column="37" />
+            <state relative-caret-position="-1430">
+              <caret line="32" column="34" selection-start-line="32" selection-start-column="34" selection-end-line="32" selection-end-column="34" />
               <folding>
                 <element signature="e#22#51#0" expanded="true" />
               </folding>
@@ -25,22 +52,10 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/HRBAlgorithm/digest.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-60">
-              <caret line="120" column="45" selection-start-line="120" selection-start-column="45" selection-end-line="120" selection-end-column="45" />
+            <state relative-caret-position="405">
+              <caret line="114" column="27" lean-forward="true" selection-start-line="114" selection-start-column="27" selection-end-line="114" selection-end-column="27" />
               <folding>
                 <element signature="e#22#99#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/HRBAlgorithm/MessageHandler.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1495">
-              <caret line="7" column="10" selection-start-line="7" selection-start-column="10" selection-end-line="7" selection-end-column="10" />
-              <folding>
-                <element signature="e#22#43#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -130,22 +145,22 @@
         <option value="$PROJECT_DIR$/Server/tcpReader.go" />
         <option value="$PROJECT_DIR$/Server/tcpWriter.go" />
         <option value="$PROJECT_DIR$/Server/util.go" />
-        <option value="$PROJECT_DIR$/HRBAlgorithm/algorithm.go" />
         <option value="$PROJECT_DIR$/Server/protocalWriter.go" />
         <option value="$PROJECT_DIR$/Server/protocalReader.go" />
         <option value="$PROJECT_DIR$/HRBAlgorithm/SimpleMessageHandler.go" />
         <option value="$PROJECT_DIR$/HRBAlgorithm/MessageHandler.go" />
-        <option value="$PROJECT_DIR$/Server/ServerMain.go" />
         <option value="$PROJECT_DIR$/HRBAlgorithm/digest.go" />
         <option value="$PROJECT_DIR$/Server/benchmarkMain.go" />
         <option value="$PROJECT_DIR$/config.yaml" />
         <option value="$PROJECT_DIR$/Server/StatsWriter.go" />
+        <option value="$PROJECT_DIR$/Server/ServerMain.go" />
+        <option value="$PROJECT_DIR$/HRBAlgorithm/algorithm.go" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-21" />
-    <option name="y" value="29" />
+    <option name="x" value="-38" />
+    <option name="y" value="219" />
     <option name="width" value="1871" />
     <option name="height" value="942" />
   </component>
@@ -319,7 +334,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-21" y="29" width="1871" height="942" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.22143248" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -495,13 +509,6 @@
         <state relative-caret-position="-163" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/HRBAlgorithm/algorithm.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1746">
-          <caret line="175" column="14" selection-start-line="175" selection-start-column="14" selection-end-line="175" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Server/StatsWriter.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="157">
@@ -516,16 +523,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
           <caret line="6" column="34" selection-start-line="6" selection-start-column="34" selection-end-line="6" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Server/ServerMain.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="660">
-          <caret line="44" column="38" selection-start-line="44" selection-start-column="38" selection-end-line="44" selection-end-column="38" />
-          <folding>
-            <element signature="e#16#59#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -551,8 +548,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/HRBAlgorithm/digest.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-60">
-          <caret line="120" column="45" selection-start-line="120" selection-start-column="45" selection-end-line="120" selection-end-column="45" />
+        <state relative-caret-position="405">
+          <caret line="114" column="27" lean-forward="true" selection-start-line="114" selection-start-column="27" selection-end-line="114" selection-end-column="27" />
           <folding>
             <element signature="e#22#99#0" expanded="true" />
           </folding>
@@ -561,10 +558,30 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/HRBAlgorithm/SimpleMessageHandler.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="386">
-          <caret line="147" column="37" lean-forward="true" selection-start-line="147" selection-start-column="37" selection-end-line="147" selection-end-column="37" />
+        <state relative-caret-position="-1430">
+          <caret line="32" column="34" selection-start-line="32" selection-start-column="34" selection-end-line="32" selection-end-column="34" />
           <folding>
             <element signature="e#22#51#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Server/ServerMain.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="328">
+          <caret line="38" column="27" lean-forward="true" selection-start-line="38" selection-start-column="27" selection-end-line="38" selection-end-column="27" />
+          <folding>
+            <element signature="e#16#59#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HRBAlgorithm/algorithm.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2960">
+          <caret line="92" column="23" lean-forward="true" selection-start-line="92" selection-start-column="23" selection-end-line="92" selection-end-column="23" />
+          <folding>
+            <element signature="e#22#55#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -150,12 +150,6 @@ func optimalSetup() {
 }
 
 
-func NetworkModeStartup(id int) {
-	isLocalMode = false
-	setUpRead()
-	HRBAlgorithm.AlgorithmSetUp(MyId, serverList, trustedCount, faultyCount)
-}
-
 
 /*
 Reading from the network
