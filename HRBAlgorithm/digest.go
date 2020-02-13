@@ -4,7 +4,6 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
-	"fmt"
 	"strconv"
 	"time"
 )
@@ -56,8 +55,7 @@ func BroadcastPrepare(length, round int) {
 		//	time.Sleep(1*time.Second)
 		//}
 		s :=  RandStringBytes(length)
-		identifier := MyID + ":" + strconv.Itoa(r);
-		dataFromSrc[identifier] = s
+
 		for i := 0; i < total; i++ {
 			m := MSGStruct{Header:MSG, Id:MyID, SenderId:MyID, Data: s, Round:r}
 			sendReq := PrepareSend{M: m, SendTo: serverList[i]}
@@ -119,6 +117,8 @@ func receivePrepareFromSrc(m Message) {
 			sendReq := PrepareSend{M: m, SendTo: serverList[i]}
 			SendReqChan <- sendReq //send to other servers
 		}
+	} else {
+		dataFromSrc[identifier] = m.GetData()
 	}
 }
 
@@ -137,18 +137,16 @@ func recBinary(m Message) {
 				if detect {
 					if _, e:= acceptData[identifier]; !e {
 						acceptData[identifier] = true
-						fmt.Println(m.GetRound())
-						//stats := StatStruct{Id:m.GetId(), Round: m.GetRound(), Header:Stat}
-						//statInfo :=PrepareSend{M:stats, SendTo:MyID}
-						//SendReqChan <- statInfo
+						stats := StatStruct{Id:m.GetId(), Round: m.GetRound(), Header:Stat}
+						statInfo :=PrepareSend{M:stats, SendTo:MyID}
+						SendReqChan <- statInfo
 					}
 				} else {
 					if _, e:= acceptData[identifier]; !e {
 						acceptData[identifier] = true
-						fmt.Println(m.GetRound())
-						//stats := StatStruct{Id:m.GetId(), Round: m.GetRound(), Header:Stat}
-						//statInfo :=PrepareSend{M:stats, SendTo:MyID}
-						//SendReqChan <- statInfo
+						stats := StatStruct{Id:m.GetId(), Round: m.GetRound(), Header:Stat}
+						statInfo :=PrepareSend{M:stats, SendTo:MyID}
+						SendReqChan <- statInfo
 					}
 				}
 			}

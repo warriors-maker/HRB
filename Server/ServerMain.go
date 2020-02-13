@@ -47,46 +47,42 @@ func ProtocalStart() {
 	} else if algorithm == 2 {
 		hashComplexSetup()
 		if source {
-			HRBAlgorithm.SimpleBroadcast(dataSize, round)
+			go HRBAlgorithm.SimpleBroadcast(dataSize, round)
 		}
 	} else if algorithm == 3 {
 		hashECSimpleSetup()
-		if isSourceFault {
-
-		} else {
-			if source {
-				HRBAlgorithm.SimpleECBroadCast(dataSize, round)
-			}
+		if source {
+			go HRBAlgorithm.SimpleECBroadCast(dataSize, round)
 		}
 	} else if algorithm == 4 {
 		hashECComplexSetup()
 		if source {
-			HRBAlgorithm.ComplexECBroadCast(dataSize,round)
+			go HRBAlgorithm.ComplexECBroadCast(dataSize,round)
 		}
 	} else if algorithm == 5 {
 		digestSetup()
 		if source {
 			//fmt.Println("Digest Broadcast")
-			HRBAlgorithm.BroadcastPrepare(dataSize, round)
+			go HRBAlgorithm.BroadcastPrepare(dataSize, round)
 		}
 
 	} else if algorithm == 6 {
 		codedSetup()
 		if source {
 			//fmt.Println("NCBA")
-			HRBAlgorithm.ECByzBroadCast(dataSize, round)
+			go HRBAlgorithm.ECByzBroadCast(dataSize, round)
 		}
 
 	} else if algorithm == 7 {
 		codedCrashSetup()
 		if source {
 			//fmt.Println("Crash Ccoded Broadcast")
-			HRBAlgorithm.CrashECBroadCast(dataSize, round)
+			go HRBAlgorithm.CrashECBroadCast(dataSize, round)
 		}
 	} else if algorithm == 8 {
 		optimalSetup()
 		if source {
-			HRBAlgorithm.OptimalBroadcast(dataSize,round)
+			go HRBAlgorithm.OptimalBroadcast(dataSize,round)
 		}
 	} else {
 		//fmt.Println("Do not understand what you give")
@@ -166,7 +162,7 @@ Reading from the network
 */
 
 func setUpRead() chan TcpMessage{
-	protocalReadChan = make (chan TcpMessage)
+	protocalReadChan = make (chan TcpMessage,20000)
 	//Start listening data
 	go TcpReader(protocalReadChan, MyId)
 	return protocalReadChan
@@ -237,7 +233,7 @@ Writing to the Network
 
 
 func setUpWrite() {
-	protocalSendChan = make(chan TcpMessage)
+	protocalSendChan = make(chan TcpMessage,20000)
 	go deliver(MyId, protocalSendChan)
 	for {
 		req := <- HRBAlgorithm.SendReqChan

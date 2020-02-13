@@ -222,6 +222,7 @@ func check(m Message) []bool {
 			if _, e :=acceptData[identifier]; !e {
 				acceptData[identifier] = true
 				stats := StatStruct{Id:m.GetId(), Round: m.GetRound(), Header:Stat}
+				//fmt.Println(m.GetRound())
 				statInfo :=PrepareSend{M:stats, SendTo:MyID}
 				SendReqChan <- statInfo
 			}

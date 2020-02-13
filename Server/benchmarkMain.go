@@ -12,6 +12,8 @@ var internalWriteChan chan TcpMessage
 var externalReadChan chan TcpMessage
 var externalWriteChan map[string] messageChan
 var statsChan chan HRBAlgorithm.Message
+var throughPutBeginTime time.Time
+
 
 
 func BenchmarkStart() {
@@ -23,11 +25,12 @@ func BenchmarkStart() {
 }
 
 func initChannels() {
-	internalReadChan = make (chan TcpMessage)
-	internalWriteChan = make (chan TcpMessage)
-	externalWriteChan = make (map[string] messageChan)
-	externalReadChan = make(chan TcpMessage)
-	//statsChan = make (chan HRBAlgorithm.Message)
+	internalReadChan = make (chan TcpMessage, 20000)
+	internalWriteChan = make (chan TcpMessage,20000)
+	externalWriteChan = make (map[string] messageChan,20000)
+	externalReadChan = make(chan TcpMessage,20000)
+	statsChan = make (chan HRBAlgorithm.Message,20000)
+	//protocalSendChan = make(chan TcpMessage, 10000)
 }
 
 func statSetup() {
@@ -53,9 +56,7 @@ func internalRead() {
 		sendTo := data.ID
 		//Reliable Broadcast
 		if data.Message.GetHeaderType() == HRBAlgorithm.Stat {
-			//count += 1
-			//fmt.Println(count)
-			//statsChan <- data.Message
+			statsChan <- data.Message
 		} else {
 			if sendTo == "" || sendTo == "all" {
 				for _ , channel := range externalWriteChan {
@@ -72,9 +73,14 @@ func internalRead() {
 
 func networkRead(){
 	go ExternalTcpReader(externalReadChan, MyId)
+	flag := false
 	for {
 		data := <- externalReadChan
 		if data.Message.GetHeaderType() == HRBAlgorithm.MSG {
+			if ! flag {
+				flag = true
+				throughPutBeginTime = time.Now()
+			}
 			identifier := strconv.Itoa(data.Message.GetRound())
 			statsMapMutex.Lock()
 			statsMap[identifier] = time.Now()

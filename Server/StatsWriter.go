@@ -66,7 +66,7 @@ func (f *flag)getFlag() bool{
 }
 
 func statsCalculate(statsChan chan HRBAlgorithm.Message) {
-	//go latencyCalculator(statsChan)
+	go latencyCalculator(statsChan)
 	//go counterUpDate(statsChan)
 	//go throughputCalculator()
 }
@@ -75,30 +75,6 @@ func statsCalculate(statsChan chan HRBAlgorithm.Message) {
 /*
 Latency Part
  */
-
-func counterUpDate(statsChan chan HRBAlgorithm.Message) {
-	for {
-		data := <- statsChan
-		identifier := strconv.Itoa(data.GetRound())
-
-		//fmt.Println("Stats_Counter: " + identifier)
-
-		if _, e:= acceptMap[identifier];!e {
-			//end := time.Now()
-			//diff := fmt.Sprintf("%f", end.Sub(start).Seconds())
-			//fmt.Println(end.String(), start.String())
-
-			acceptMap[identifier] = identifier
-			//writeLatencyFile(identifier, diff)
-			counter.increment()
-		}
-
-		//If equal to the total Round flush to a file
-		if counter.counter == round {
-			writeAllSuccess()
-		}
-	}
-}
 
 func latencyCalculator(statsChan chan HRBAlgorithm.Message) {
 	for {
@@ -116,6 +92,7 @@ func latencyCalculator(statsChan chan HRBAlgorithm.Message) {
 			_, e:= acceptMap[identifier]
 
 			if !e {
+				//fmt.Println("Stats_Counter: " + identifier)
 				end := time.Now()
 				diff := fmt.Sprintf("%f", end.Sub(start).Seconds())
 				//fmt.Println(end.String(), start.String())
@@ -130,8 +107,12 @@ func latencyCalculator(statsChan chan HRBAlgorithm.Message) {
 		}
 
 		//If equal to the total Round flush to a file
-		if counter.counter == round {
-			writeAllSuccess()
+		if counter.getCount() == round {
+			lapse := fmt.Sprintf("%f", time.Now().Sub(throughPutBeginTime).Seconds())
+			timeLapse, _ := strconv.ParseFloat(lapse, 32)
+			throughPut := float64(round) / timeLapse
+			writeThroughPut(throughPut)
+			fmt.Println("Successful receive all message")
 		}
 	}
 }
@@ -143,43 +124,70 @@ func writeLatencyFile(round, latency string) {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println(round+ ":" + latency )
+	//fmt.Println(round+ ":" + latency )
 	fmt.Fprintf(file, round+ ":" + latency +"\n")
 
+	file.Close()
 }
 
-func writeAllSuccess() {
-	//fileName := strconv.Itoa(algorithm) +":Latency" + "|" + MyId +"|" + startTime.String()+".txt"
-	//file, err := os.OpenFile(filepath.Join("./Data", fileName), os.O_WRONLY|os.O_APPEND, 0666)
-	//if err != nil {
-	//	fmt.Println(err)
-	//	return
-	//}
-	fmt.Println("Successful receive all message")
-}
+//func writeAllSuccess(throughput string) {
+//	fileName := strconv.Itoa(algorithm) +":Latency" + "|" + MyId +"|" + startTime.String()+".txt"
+//	file, err := os.OpenFile(filepath.Join("./Data", fileName), os.O_WRONLY|os.O_APPEND, 0666)
+//	if err != nil {
+//		fmt.Println(err)
+//		return
+//	}
+//	fmt.Println("Successful receive all message")
+//}
 
-func writeThroughPut(throuput int) {
+func writeThroughPut(throuput float64) {
 	fileName := strconv.Itoa(algorithm) +":Throuput" + "|" + MyId +"|" + startTime.String()+".txt"
 	file, err := os.OpenFile(filepath.Join("./Data", fileName), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Fprintf(file, strconv.Itoa(throuput)+"\n")
+
+	fmt.Fprintf(file, fmt.Sprintf("%f",throuput)+"\n")
+	file.Close()
 }
 
 
 /*
 Throughput Part
  */
-func throughputCalculator() {
-	time.Sleep(65* time.Second)
-	//Write to File
-	count := counter.getCount()
-	writeThroughPut(count)
-}
+//func throughputCalculator() {
+//	//time.Sleep(65* time.Second)
+//	//Write to File
+//	count := counter.getCount()
+//	writeThroughPut(count)
+//}
 
 
 func latencyCalculator1Min() {
 	time.Sleep(1* time.Minute)
+}
+
+func counterUpDate(statsChan chan HRBAlgorithm.Message) {
+	for {
+		data := <- statsChan
+		identifier := strconv.Itoa(data.GetRound())
+
+		//fmt.Println("Stats_Counter: " + identifier)
+
+		if _, e:= acceptMap[identifier];!e {
+			//end := time.Now()
+			//diff := fmt.Sprintf("%f", end.Sub(start).Seconds())
+			//fmt.Println(end.String(), start.String())
+
+			//acceptMap[identifier] = identifier
+			//writeLatencyFile(identifier, diff)
+			counter.increment()
+		}
+
+		//If equal to the total Round flush to a file
+		if counter.counter == round {
+			//writeAllSuccess()
+		}
+	}
 }
