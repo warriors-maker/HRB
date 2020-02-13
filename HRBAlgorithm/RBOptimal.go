@@ -1,7 +1,6 @@
 package HRBAlgorithm
 
 import (
-	"fmt"
 	"strconv"
 	"time"
 )
@@ -324,11 +323,14 @@ func optimalCheck(m Message) {
 			accM := ACCStruct{Header: ACC_OPT, Id: m.GetId(), Round: m.GetRound(), HashData:x}
 			//fmt.Printf("ReliableAccept %+v \n" , accOptimalRecCountSet[accM])
 			if len(accOptimalRecCountSet[accM]) >= total - faulty {
-				exist, data := checkOptimalDataExist(x, roundIdentifier)
+				exist, _ := checkOptimalDataExist(x, roundIdentifier)
 				if exist {
 					if _, e := optimalReliableAccept[roundIdentifier]; !e {
 						optimalReliableAccept[roundIdentifier] = true
-						fmt.Println("Optimal Reliable Accept", data)
+						//fmt.Println("Optimal Reliable Accept")
+						stats := StatStruct{Id:m.GetId(), Round: m.GetRound(), Header:Stat}
+						statInfo :=PrepareSend{M:stats, SendTo:MyID}
+						SendReqChan <- statInfo
 					}
 				} else {
 					req := REQStruct{Header:REQ_OPT, Id:m.GetId(), Round: m.GetRound(), SenderId:MyID, HashData:x}
