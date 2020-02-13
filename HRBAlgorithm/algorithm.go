@@ -81,40 +81,41 @@ var statsRecord map[string] Stats
 
 
 
-func AlgorithmSetUp(myID string, servers []string, trustedCount, faultyCount int) {
-	statsRecord = make(map[string]Stats)
-	serverMap = make(map[string] int)
-	acceptData = make(map[string]bool)
-	FwdRecCountSet = make (map [string] int)
+func AlgorithmSetUp(myID string, servers []string, trustedCount, faultyCount, round int) {
+	round = round / 2
+	statsRecord = make(map[string]Stats,round)
+	serverMap = make(map[string] int, round)
+	acceptData = make(map[string]bool, round)
+	FwdRecCountSet = make (map [string] int, round)
 	for index, server := range servers {
 		serverMap[server] = index
 	}
 	serverList = servers
 
 	//fmt.Println("These are the servers", serverMap)
-	MessageReceiveSet = make(map[string] bool)
+	MessageReceiveSet = make(map[string] bool, round)
 	//MessageSentSet = make(map[string] bool)
 
-	EchoReceiveSet = make(map[string] bool)
-	EchoSentSet = make(map[string] bool)
+	EchoReceiveSet = make(map[string] bool, round)
+	EchoSentSet = make(map[string] bool, round)
 	//Used in Acc version
-	EchoRecCountSet = make (map[ECHOStruct] int)
+	EchoRecCountSet = make (map[ECHOStruct] int, round)
 	//used in Simple
-	simpleEchoRecCountSet = make (map[ECHOStruct] []string)
+	simpleEchoRecCountSet = make (map[ECHOStruct] []string, round)
 
-	AccReceiveSet = make(map[string] bool)
-	AccSentSet = make(map[string] bool)
-	AccRecCountSet = make(map[ACCStruct] []string)
+	AccReceiveSet = make(map[string] bool, round)
+	AccSentSet = make(map[string] bool, round)
+	AccRecCountSet = make(map[ACCStruct] []string, round)
 
-	ReqReceiveSet = make(map[string] bool)
-	ReqSentSet = make(map[REQStruct] []string)
+	ReqReceiveSet = make(map[string] bool, round)
+	ReqSentSet = make(map[REQStruct] []string, round)
 
-	FwdReceiveSet = make(map[string] bool)
+	FwdReceiveSet = make(map[string] bool, round)
 	//FwdSentSet = make(map[string] bool)
 
-	DataSet = make (map[string] string)
+	DataSet = make (map[string] string, round)
 
-	ecDataSet = make(map[string] [][]byte)
+	ecDataSet = make(map[string] [][]byte, round)
 
 	//sendChan = make(chan Message)
 
@@ -129,22 +130,22 @@ func AlgorithmSetUp(myID string, servers []string, trustedCount, faultyCount int
 	genKey = MyID
 	digestTrustCount = total
 
-	reqSentHash = make(map[string] string)
+	reqSentHash = make(map[string] string, round)
 	//digestSourceData = make(map[string] string)
 	//digestDataMap = make(map[string] []digestStruct)
 	//digestRecSend = make(map[string] [][] digestStruct)
 	//faultyCountMap = make(map[string] int)
 	//faultySet = make(map[string] bool)
 
-	notTrustedListMap = make(map[string] []string)
-	for _, server := range serverList {
-		notTrustedListMap[server] = []string{}
-	}
+	//notTrustedListMap = make(map[string] []string, round)
+	//for _, server := range serverList {
+	//	notTrustedListMap[server] = []string{}
+	//}
 
 
 	//augmentRecSend = make(map[string]map[string] [][] digestStruct)
 	trustedCount = total
-	binarySet = make(map[string] []Message)
+	binarySet = make(map[string] []Message, round)
 
 	//Register the concrete type for interface
 	gob.Register(ACCStruct{})

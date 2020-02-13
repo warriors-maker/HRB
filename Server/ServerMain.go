@@ -36,7 +36,7 @@ func ProtocalStart() {
 
 	//General setup
 
-	HRBAlgorithm.AlgorithmSetUp(MyId, serverList, trustedCount, faultyCount)
+	HRBAlgorithm.AlgorithmSetUp(MyId, serverList, trustedCount, faultyCount, round)
 
 
 	if algorithm == 1 {
