@@ -57,7 +57,17 @@ func internalRead() {
 		//Reliable Broadcast
 		if data.Message.GetHeaderType() == HRBAlgorithm.Stat {
 			statsChan <- data.Message
-		} else {
+		} else if data.Message.GetHeaderType() == HRBAlgorithm.MSG {
+			if algorithm == 9 {
+				if source && sendTo == MyId{
+					statsChan <- data.Message
+				}
+			} else if sendTo == MyId || sendTo == "" || sendTo == "all" {
+				statsChan <- data.Message
+			}
+		}
+
+		if data.Message.GetHeaderType() != HRBAlgorithm.Stat {
 			if sendTo == "" || sendTo == "all" {
 				for _ , channel := range externalWriteChan {
 					//fmt.Println("Send to all now with", id)

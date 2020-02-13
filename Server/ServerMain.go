@@ -2,6 +2,7 @@ package Server
 
 import (
 	"HRB/HRBAlgorithm"
+	"fmt"
 	"math/rand"
 )
 
@@ -84,8 +85,13 @@ func ProtocalStart() {
 		if source {
 			go HRBAlgorithm.OptimalBroadcast(dataSize,round)
 		}
+	} else if algorithm == 9{
+		crashSetup()
+		if source {
+			go HRBAlgorithm.CrashBroadCast(dataSize, round)
+		}
 	} else {
-		//fmt.Println("Do not understand what you give")
+		fmt.Println("Do not understand what you give")
 	}
 
 }
@@ -149,6 +155,12 @@ func optimalSetup() {
 	go setUpWrite()
 }
 
+func crashSetup() {
+	HRBAlgorithm.InitSimpleCrash()
+	protocalReadChan= setUpRead()
+	go filterOptimalAgainst(protocalReadChan)
+	go setUpWrite()
+}
 
 
 /*
@@ -216,6 +228,13 @@ func filterOptimal(ch chan TcpMessage) {
 	for {
 		message := <- ch
 		HRBAlgorithm.FilterOptimal(message.Message)
+	}
+}
+
+func filterOptimalAgainst(ch chan TcpMessage) {
+	for {
+		message := <- ch
+		HRBAlgorithm.FilterOptimalAgainst(message.Message)
 	}
 }
 

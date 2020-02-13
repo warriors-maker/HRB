@@ -81,51 +81,67 @@ func latencyCalculator(statsChan chan HRBAlgorithm.Message) {
 		data := <- statsChan
 		identifier := strconv.Itoa(data.GetRound())
 
-		//fmt.Println("Stats_Counter: " + identifier)
-
-		statsMapMutex.RLock()
-		start, recorded := statsMap[identifier]
-		statsMapMutex.RUnlock()
-
-		if recorded {
-
-			_, e:= acceptMap[identifier]
-
-			if !e {
-				//fmt.Println("Stats_Counter: " + identifier)
-				end := time.Now()
-				diff := fmt.Sprintf("%f", end.Sub(start).Seconds())
-				//fmt.Println(end.String(), start.String())
-
-				acceptMap[identifier] = diff
-				//writeLatencyFile(identifier, diff)
-
-				counter.increment()
+		if source {
+			if data.GetHeaderType() == HRBAlgorithm.MSG {
+				writeLatencyFile(identifier, true)
 			}
 		} else {
-			counter.increment();
+			if data.GetHeaderType() == HRBAlgorithm.Stat {
+				writeLatencyFile(identifier, false)
+			}
 		}
 
-		//If equal to the total Round flush to a file
-		if counter.getCount() == round {
-			lapse := fmt.Sprintf("%f", time.Now().Sub(throughPutBeginTime).Seconds())
-			timeLapse, _ := strconv.ParseFloat(lapse, 32)
-			throughPut := float64(round) / timeLapse
-			writeThroughPut(throughPut)
-			fmt.Println("Successful receive all message")
+		if data.GetHeaderType() == HRBAlgorithm.Stat {
+			statsMapMutex.RLock()
+			start, recorded := statsMap[identifier]
+			statsMapMutex.RUnlock()
+
+			if recorded {
+
+				_, e:= acceptMap[identifier]
+
+				if !e {
+					//fmt.Println("Stats_Counter: " + identifier)
+					end := time.Now()
+					diff := fmt.Sprintf("%f", end.Sub(start).Seconds())
+					//fmt.Println(end.String(), start.String())
+
+					acceptMap[identifier] = diff
+
+					counter.increment()
+				}
+			} else {
+				counter.increment();
+			}
+
+			//If equal to the total Round flush to a file
+			if counter.getCount() == round {
+				lapse := fmt.Sprintf("%f", time.Now().Sub(throughPutBeginTime).Seconds())
+				timeLapse, _ := strconv.ParseFloat(lapse, 32)
+				throughPut := float64(round) / timeLapse
+				writeThroughPut(throughPut)
+				fmt.Println("Successful receive all message")
+			}
 		}
 	}
 }
 
-func writeLatencyFile(round, latency string) {
+func writeLatencyFile(round string, isSource bool) {
 	fileName := strconv.Itoa(algorithm) +":Latency" + "|" + MyId +"|" + startTime.String()+".txt"
 	file, err := os.OpenFile(filepath.Join("./Data", fileName), os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0666)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+	time := time.Now().String()
 	//fmt.Println(round+ ":" + latency )
-	fmt.Fprintf(file, round+ ":" + latency +"\n")
+	if isSource {
+		fmt.Fprintf(file, "Start^" + round + "^" + time +"\n")
+	}else {
+		fmt.Fprintf(file, "End^" + round + "^" + time +"\n")
+	}
+
+
 
 	file.Close()
 }

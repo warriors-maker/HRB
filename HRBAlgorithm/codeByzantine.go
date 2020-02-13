@@ -150,6 +150,8 @@ func ByzRecBin(m Message) {
 						//fmt.Println("Reliable Accept "  + strconv.Itoa(m.GetRound()) + " " + diff, dataFromSrc[identifier])
 						//fmt.Println()
 
+						//fmt.Println("Reliable accept")
+
 						stats := StatStruct{Id:m.GetId(), Round: m.GetRound(), Header:Stat}
 						statInfo :=PrepareSend{M:stats, SendTo:MyID}
 						SendReqChan <- statInfo

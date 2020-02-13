@@ -321,6 +321,13 @@ func FilterOptimal(message Message) {
 	}
 }
 
+func FilterOptimalAgainst(message Message) {
+	switch v := message.(type) {
+	case MSGStruct:
+		simpleMessageHandler(v)
+	}
+}
+
 /*
 Helper Function
  */
