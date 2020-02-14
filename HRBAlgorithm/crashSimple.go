@@ -6,8 +6,9 @@ import (
 
 var simpleMsgRec map[string] bool
 
-func InitSimpleCrash() {
-	simpleMsgRec = make(map[string] bool)
+func InitSimpleCrash(round int) {
+
+	simpleMsgRec = make(map[string] bool, round / 2)
 }
 
 func CrashBroadCast(length , round int) {

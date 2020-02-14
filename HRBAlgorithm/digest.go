@@ -17,9 +17,9 @@ type digestStruct struct{
 	Key string
 }
 
-func InitDigest() {
-	dataMap = make(map[string] []digestStruct)
-	dataFromSrc = make(map[string] string)
+func InitDigest(round int) {
+	dataMap = make(map[string] []digestStruct, round / 2)
+	dataFromSrc = make(map[string] string, round / 2)
 }
 
 func encrypt(data,key string) string{

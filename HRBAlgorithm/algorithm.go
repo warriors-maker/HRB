@@ -84,7 +84,7 @@ var statsRecord map[string] Stats
 func AlgorithmSetUp(myID string, servers []string, trustedCount, faultyCount, round, alg int) {
 	round = round / 2
 	algorithm = alg
-	fmt.Println(algorithm)
+	//fmt.Println(algorithm)
 	statsRecord = make(map[string]Stats,round)
 	serverMap = make(map[string] int, round)
 	acceptData = make(map[string]bool, round)

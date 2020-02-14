@@ -128,21 +128,21 @@ func hashECComplexSetup() {
 }
 
 func digestSetup() {
-	HRBAlgorithm.InitDigest()
+	HRBAlgorithm.InitDigest(round)
 	protocalReadChan = setUpRead()
 	go filterDigest(protocalReadChan)
 	go setUpWrite()
 }
 
 func codedSetup() {
-	HRBAlgorithm.InitByzCode()
+	HRBAlgorithm.InitByzCode(round)
 	protocalReadChan= setUpRead()
 	go filterByzCode(protocalReadChan)
 	go setUpWrite()
 }
 
 func codedCrashSetup() {
-	HRBAlgorithm.InitCrash()
+	HRBAlgorithm.InitCrash(round)
 	protocalReadChan= setUpRead()
 	go filterCrashCoded(protocalReadChan)
 	go setUpWrite()
@@ -156,7 +156,7 @@ func optimalSetup() {
 }
 
 func crashSetup() {
-	HRBAlgorithm.InitSimpleCrash()
+	HRBAlgorithm.InitSimpleCrash(round)
 	protocalReadChan= setUpRead()
 	go filterOptimalAgainst(protocalReadChan)
 	go setUpWrite()

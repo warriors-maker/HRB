@@ -8,9 +8,9 @@ import (
 var codeCounter map[string] int
 var codeElements map[string] []string
 
-func InitCrash() {
-	codeCounter = make(map[string] int)
-	codeElements= make(map[string] []string)
+func InitCrash(round int) {
+	codeCounter = make(map[string] int, round / 2)
+	codeElements= make(map[string] []string, round / 2)
 }
 
 func CrashECBroadCast(length , round int) {

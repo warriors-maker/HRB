@@ -8,10 +8,10 @@ import (
 var ByzCodeCounter map[string] int
 var ByzCodeElement map[string] [][]byte
 
-func InitByzCode() {
-	ByzCodeCounter = make (map[string] int)
-	ByzCodeElement = make (map[string] [][]byte)
-	dataFromSrc = make(map[string] string)
+func InitByzCode(round int) {
+	ByzCodeCounter = make (map[string] int, round / 2)
+	ByzCodeElement = make (map[string] [][]byte, round / 2)
+	dataFromSrc = make(map[string] string, round / 2)
 }
 
 func ECByzBroadCast(length, round int) {
