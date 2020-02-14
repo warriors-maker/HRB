@@ -16,17 +16,11 @@ type StatsCounter struct {
 }
 
 func (counter *StatsCounter) increment(){
-	counter.m.Lock()
 	counter.counter += 1
-	counter.m.Unlock()
 }
 
 func (counter *StatsCounter) getCount() int{
-	var count int
-	counter.m.Lock()
-	count = counter.counter
-	counter.m.Unlock()
-	return count
+	return counter.counter
 }
 
 type flag struct {
@@ -103,11 +97,7 @@ func latencyCalculator(statsChan chan HRBAlgorithm.Message) {
 				//fmt.Println(round, timeLapse, startTime.String())
 				throughPut := float64(round) / timeLapse
 				writeThroughPut(throughPut)
-				if source {
-					writeLatencyFile()
-				} else {
-					writeLatencyFile()
-				}
+				writeLatencyFile()
 				fmt.Println("Successful receive all message")
 			}
 		}
