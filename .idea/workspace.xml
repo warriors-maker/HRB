@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="92212f8a-9e41-4b3d-9b89-c1292143224f" name="Default Changelist" comment="" />
+    <list default="true" id="92212f8a-9e41-4b3d-9b89-c1292143224f" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -14,7 +16,7 @@
         <entry file="file://$PROJECT_DIR$/Server/tcpWriter.go">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="273">
-              <caret line="37" column="17" lean-forward="true" selection-start-line="37" selection-start-column="17" selection-end-line="37" selection-end-column="17" />
+              <caret line="37" column="17" selection-start-line="37" selection-start-column="17" selection-end-line="37" selection-end-column="17" />
               <folding>
                 <element signature="e#16#77#0" expanded="true" />
               </folding>
@@ -22,7 +24,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Server/StatsWriter.go">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="2100">
@@ -35,6 +37,15 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/HRBAlgorithm/HRBMessage.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="225">
+              <caret line="15" column="25" selection-start-line="15" selection-start-column="25" selection-end-line="15" selection-end-column="25" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/config.yaml">
           <provider selected="true" editor-type-id="text-editor">
             <state>
@@ -128,7 +139,6 @@
         <option value="$PROJECT_DIR$/Server/tcpReader.go" />
         <option value="$PROJECT_DIR$/Server/util.go" />
         <option value="$PROJECT_DIR$/HRBAlgorithm/digest.go" />
-        <option value="$PROJECT_DIR$/HRBAlgorithm/HRBMessage.go" />
         <option value="$PROJECT_DIR$/Util/Optimal.go" />
         <option value="$PROJECT_DIR$/HRBAlgorithm/MessageHandler.go" />
         <option value="$PROJECT_DIR$/HRBAlgorithm/SimpleMessageHandler.go" />
@@ -144,12 +154,13 @@
         <option value="$PROJECT_DIR$/HRBAlgorithm/crashSimple.go" />
         <option value="$PROJECT_DIR$/Server/tcpWriter.go" />
         <option value="$PROJECT_DIR$/config.yaml" />
+        <option value="$PROJECT_DIR$/HRBAlgorithm/HRBMessage.go" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="1">
-    <option name="x" value="88" />
-    <option name="y" value="91" />
+  <component name="ProjectFrameBounds">
+    <option name="x" value="105" />
+    <option name="y" value="23" />
     <option name="width" value="1871" />
     <option name="height" value="942" />
   </component>
@@ -169,12 +180,7 @@
             <path>
               <item name="HRB" type="b2602c69:ProjectViewProjectNode" />
               <item name="HRB" type="462c0819:PsiDirectoryNode" />
-              <item name="Server" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="HRB" type="b2602c69:ProjectViewProjectNode" />
-              <item name="HRB" type="462c0819:PsiDirectoryNode" />
-              <item name="Util" type="462c0819:PsiDirectoryNode" />
+              <item name="HRBAlgorithm" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -322,8 +328,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="88" y="91" width="1871" height="942" extended-state="1" />
-    <editor active="true" />
+    <frame x="105" y="23" width="1871" height="942" extended-state="0" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.22143248" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -338,7 +343,7 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="8" />
       <window_info anchor="bottom" id="Version Control" order="9" weight="0.32979977" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="10" visible="true" weight="0.4282353" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="10" visible="true" weight="0.34117648" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -350,11 +355,6 @@
     <option name="version" value="1" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Data/4:Latency|127.0.0.1:8002|2020-02-13 15:51:50.652907 -0500 EST m=+0.004604991.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-74689" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Data/1:Latency|127.0.0.1:8001|2020-02-13 16:01:49.971074 -0500 EST m=+0.001606012.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-74689" />
@@ -583,17 +583,10 @@
     <entry file="file://$PROJECT_DIR$/Server/tcpWriter.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="273">
-          <caret line="37" column="17" lean-forward="true" selection-start-line="37" selection-start-column="17" selection-end-line="37" selection-end-column="17" />
+          <caret line="37" column="17" selection-start-line="37" selection-start-column="17" selection-end-line="37" selection-end-column="17" />
           <folding>
             <element signature="e#16#77#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config.yaml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="75" selection-start-column="75" selection-end-column="75" />
         </state>
       </provider>
     </entry>
@@ -604,6 +597,20 @@
           <folding>
             <element signature="e#16#103#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HRBAlgorithm/HRBMessage.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="15" column="25" selection-start-line="15" selection-start-column="25" selection-end-line="15" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config.yaml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="75" selection-start-column="75" selection-end-column="75" />
         </state>
       </provider>
     </entry>
