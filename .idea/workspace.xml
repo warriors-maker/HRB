@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="92212f8a-9e41-4b3d-9b89-c1292143224f" name="Default Changelist" comment="" />
+    <list default="true" id="92212f8a-9e41-4b3d-9b89-c1292143224f" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/config.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config.yaml" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -11,19 +13,28 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/config.yaml">
+        <entry file="file://$PROJECT_DIR$/Server/benchmarkMain.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="90">
-              <caret line="6" column="35" lean-forward="true" selection-start-line="6" selection-start-column="35" selection-end-line="6" selection-end-column="35" />
+            <state relative-caret-position="1305">
+              <caret line="90" column="14" selection-start-line="90" selection-start-column="14" selection-end-line="90" selection-end-column="14" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/config.yaml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="30">
+              <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Server/StatsWriter.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="184">
-              <caret line="100" column="65" selection-start-line="100" selection-start-column="65" selection-end-line="100" selection-end-column="65" />
+            <state relative-caret-position="1087">
+              <caret line="99" column="34" selection-start-line="99" selection-start-column="34" selection-end-line="99" selection-end-column="34" />
               <folding>
                 <element signature="e#16#103#0" expanded="true" />
               </folding>
@@ -31,11 +42,14 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/HRBAlgorithm/crashSimple.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="447">
-              <caret line="47" column="10" selection-start-line="47" selection-start-column="10" selection-end-line="47" selection-end-column="10" />
+            <state relative-caret-position="-330">
+              <caret line="2" column="7" lean-forward="true" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
+              <folding>
+                <element signature="e#22#40#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -136,10 +150,10 @@
         <option value="$PROJECT_DIR$/Server/protocalReader.go" />
         <option value="$PROJECT_DIR$/HRBAlgorithm/algorithm.go" />
         <option value="$PROJECT_DIR$/Server/ServerMain.go" />
-        <option value="$PROJECT_DIR$/Server/StatsWriter.go" />
         <option value="$PROJECT_DIR$/Server/benchmarkMain.go" />
         <option value="$PROJECT_DIR$/HRBAlgorithm/crashSimple.go" />
         <option value="$PROJECT_DIR$/HRBAlgorithm/CodedCrash.go" />
+        <option value="$PROJECT_DIR$/Server/StatsWriter.go" />
         <option value="$PROJECT_DIR$/config.yaml" />
       </list>
     </option>
@@ -171,7 +185,7 @@
             <path>
               <item name="HRB" type="b2602c69:ProjectViewProjectNode" />
               <item name="HRB" type="462c0819:PsiDirectoryNode" />
-              <item name="Server" type="462c0819:PsiDirectoryNode" />
+              <item name="HRBAlgorithm" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -347,82 +361,6 @@
     <option name="version" value="1" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Data/9:Throuput|127.0.0.1:8003|2020-02-14 00:56:08.101777 -0500 EST m=+0.004250458.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Data/9:Throuput|127.0.0.1:8004|2020-02-14 00:56:10.178677 -0500 EST m=+0.002094106.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Data/9:Throuput|127.0.0.1:8005|2020-02-14 00:56:13.137627 -0500 EST m=+0.001640555.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Data/9:Throuput|127.0.0.1:8001|2020-02-14 01:00:50.066285 -0500 EST m=+0.001594761.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Data/9:Latency|127.0.0.1:8002|2020-02-14 01:00:39.0531 -0500 EST m=+0.001806085.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Data/9:Latency|127.0.0.1:8004|2020-02-14 01:00:44.921862 -0500 EST m=+0.001618334.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Data/9:Latency|127.0.0.1:8001|2020-02-14 01:00:50.066285 -0500 EST m=+0.001594761.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Data/9:Throuput|127.0.0.1:8002|2020-02-14 01:04:08.486663 -0500 EST m=+0.002584951.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Data/9:Throuput|127.0.0.1:8003|2020-02-14 01:04:10.538055 -0500 EST m=+0.001633706.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Data/9:Throuput|127.0.0.1:8004|2020-02-14 01:04:12.874521 -0500 EST m=+0.002079685.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Data/9:Latency|127.0.0.1:8001|2020-02-14 01:04:17.122026 -0500 EST m=+0.001571548.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Data/9:Throuput|127.0.0.1:8005|2020-02-14 01:05:34.173063 -0500 EST m=+0.001688229.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Data/9:Throuput|127.0.0.1:8003|2020-02-14 01:05:26.469614 -0500 EST m=+0.003635303.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Data/7:Throuput|127.0.0.1:8004|2020-02-14 01:07:07.22014 -0500 EST m=+0.001597566.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Data/7:Throuput|127.0.0.1:8005|2020-02-14 01:08:19.666814 -0500 EST m=+0.001683330.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Data/7:Throuput|127.0.0.1:8004|2020-02-14 01:08:17.643872 -0500 EST m=+0.004508053.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Data/9:Throuput|127.0.0.1:8005|2020-02-14 01:09:54.318819 -0500 EST m=+0.001485424.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Data/9:Throuput|127.0.0.1:8002|2020-02-14 01:09:47.506593 -0500 EST m=+0.001642928.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Server/benchmarkMain.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1108">
-          <caret line="90" column="14" selection-start-line="90" selection-start-column="14" selection-end-line="90" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Data/7:Throuput|127.0.0.1:8005|2020-02-14 01:14:46.18883 -0500 EST m=+0.001963712.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Data/7:Latency|127.0.0.1:8005|2020-02-14 01:14:46.18883 -0500 EST m=+0.001963712.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Data/7:Throuput|127.0.0.1:8003|2020-02-14 01:16:44.450659 -0500 EST m=+0.002048765.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Data/7:Throuput|127.0.0.1:8004|2020-02-14 01:16:46.829868 -0500 EST m=+0.001749206.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Data/7:Throuput|127.0.0.1:8001|2020-02-14 01:16:48.78726 -0500 EST m=+0.001575631.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/Data/7:Throuput|127.0.0.1:8002|2020-02-14 01:19:49.060634 -0500 EST m=+0.001573535.txt">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -499,9 +437,101 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Data/8:Throuput|127.0.0.1:8004|2020-02-14 02:22:22.76632 -0500 EST m=+0.001851845.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Data/8:Latency|127.0.0.1:8001|2020-02-14 02:22:27.449787 -0500 EST m=+0.001586857.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-56718" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Data/8:Throuput|127.0.0.1:8001|2020-02-14 02:22:27.449787 -0500 EST m=+0.001586857.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Data/8:Throuput|127.0.0.1:8002|2020-02-14 02:22:13.478172 -0500 EST m=+0.001639401.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Data/7:Throuput|127.0.0.1:8005|2020-02-14 02:24:07.878914 -0500 EST m=+0.001613821.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Data/7:Throuput|127.0.0.1:8004|2020-02-14 02:24:05.931662 -0500 EST m=+0.005339315.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Data/7:Throuput|127.0.0.1:8003|2020-02-14 02:24:03.795447 -0500 EST m=+0.001671806.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Data/7:Throuput|127.0.0.1:8001|2020-02-14 02:24:11.23985 -0500 EST m=+0.001605867.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Data/9:Throuput|127.0.0.1:8004|2020-02-14 02:25:26.480825 -0500 EST m=+0.003849252.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Data/9:Throuput|127.0.0.1:8005|2020-02-14 02:25:28.446691 -0500 EST m=+0.001693898.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Data/8:Latency|127.0.0.1:8001|2020-02-14 02:36:05.032232 -0500 EST m=+0.001537479.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-74558" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Data/8:Latency|127.0.0.1:8004|2020-02-14 02:35:57.842655 -0500 EST m=+0.002123084.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-74558" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Data/8:Throuput|127.0.0.1:8002|2020-02-14 02:35:52.391347 -0500 EST m=+0.001723108.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Data/8:Throuput|127.0.0.1:8005|2020-02-14 02:36:01.140323 -0500 EST m=+0.003248720.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Data/8:Throuput|127.0.0.1:8004|2020-02-14 02:35:57.842655 -0500 EST m=+0.002123084.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Data/8:Throuput|127.0.0.1:8003|2020-02-14 02:35:54.455538 -0500 EST m=+0.001874719.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Data/9:Latency|127.0.0.1:8001|2020-02-14 02:37:36.354183 -0500 EST m=+0.001570313.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Data/9:Latency|127.0.0.1:8002|2020-02-14 02:37:24.414923 -0500 EST m=+0.002781878.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Data/9:Throuput|127.0.0.1:8003|2020-02-14 02:37:26.497828 -0500 EST m=+0.003040222.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Data/9:Throuput|127.0.0.1:8004|2020-02-14 02:37:28.632397 -0500 EST m=+0.002081136.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Data/9:Throuput|127.0.0.1:8005|2020-02-14 02:37:32.436669 -0500 EST m=+0.001579919.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Data/9:Throuput|127.0.0.1:8002|2020-02-14 02:37:24.414923 -0500 EST m=+0.002781878.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Data/9:Throuput|127.0.0.1:8001|2020-02-14 02:37:36.354183 -0500 EST m=+0.001570313.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Server/benchmarkMain.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1305">
+          <caret line="90" column="14" selection-start-line="90" selection-start-column="14" selection-end-line="90" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Server/StatsWriter.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1087">
+          <caret line="99" column="34" selection-start-line="99" selection-start-column="34" selection-end-line="99" selection-end-column="34" />
+          <folding>
+            <element signature="e#16#103#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/HRBAlgorithm/RBOptimal.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-5430">
+        <state relative-caret-position="15">
           <caret line="2" column="7" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
           <folding>
             <element signature="e#22#51#0" expanded="true" />
@@ -511,24 +541,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/config.yaml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="35" lean-forward="true" selection-start-line="6" selection-start-column="35" selection-end-line="6" selection-end-column="35" />
+        <state relative-caret-position="30">
+          <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/HRBAlgorithm/crashSimple.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="447">
-          <caret line="47" column="10" selection-start-line="47" selection-start-column="10" selection-end-line="47" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Server/StatsWriter.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="100" column="65" selection-start-line="100" selection-start-column="65" selection-end-line="100" selection-end-column="65" />
+        <state relative-caret-position="-330">
+          <caret line="2" column="7" lean-forward="true" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
           <folding>
-            <element signature="e#16#103#0" expanded="true" />
+            <element signature="e#22#40#0" expanded="true" />
           </folding>
         </state>
       </provider>
