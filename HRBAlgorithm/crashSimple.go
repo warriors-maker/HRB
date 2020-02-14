@@ -1,6 +1,8 @@
 package HRBAlgorithm
 
-import "time"
+import (
+	"time"
+)
 
 var simpleMsgRec map[string] bool
 
@@ -26,11 +28,14 @@ func CrashBroadCast(length , round int) {
 
 func simpleMessageHandler(message Message) {
 	identifier := identifierCreate(message.GetId(), message.GetRound())
-	if serverList[0] == message.GetSenderId(){
-		stats := StatStruct{Id:message.GetId(), Round: message.GetRound(), Header:Stat}
-		statInfo :=PrepareSend{M:stats, SendTo:MyID}
-		SendReqChan <- statInfo
-		return
+	if MyID == serverList[0]{
+		if _, e := simpleMsgRec[identifier]; !e {
+			simpleMsgRec[identifier] = true
+			stats := StatStruct{Id:message.GetId(), Round: message.GetRound(), Header:Stat}
+			statInfo :=PrepareSend{M:stats, SendTo:MyID}
+			SendReqChan <- statInfo
+			return
+		}
 	}
 	if _,e := simpleMsgRec[identifier]; !e {
 		simpleMsgRec[identifier] = true
@@ -40,6 +45,7 @@ func simpleMessageHandler(message Message) {
 			SendReqChan <- sendReq
 		}
 		//reliable accept
+		//fmt.Println("Hey")
 		stats := StatStruct{Id:message.GetId(), Round: message.GetRound(), Header:Stat}
 		statInfo :=PrepareSend{M:stats, SendTo:MyID}
 		SendReqChan <- statInfo

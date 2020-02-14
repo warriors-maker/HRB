@@ -40,6 +40,7 @@ var acceptMap map[string] string
 var counter StatsCounter
 var startTime time.Time
 var reachFlag flag
+var latencyMap map[string] time.Time
 
 
 func initStats() {
@@ -49,6 +50,7 @@ func initStats() {
 	counter = StatsCounter{counter:0, m: &sync.Mutex{}}
 	reachFlag = flag{flag:false, m: &sync.Mutex{}}
 	startTime = time.Now()
+	latencyMap = make(map[string] time.Time)
 }
 
 func (f *flag)setFlag() {
@@ -83,65 +85,51 @@ func latencyCalculator(statsChan chan HRBAlgorithm.Message) {
 
 		if source {
 			if data.GetHeaderType() == HRBAlgorithm.MSG {
-				writeLatencyFile(identifier, true)
+				latencyMap[identifier] = time.Now()
 			}
 		} else {
 			if data.GetHeaderType() == HRBAlgorithm.Stat {
-				writeLatencyFile(identifier, false)
+				latencyMap[identifier] = time.Now()
 			}
 		}
 
 		if data.GetHeaderType() == HRBAlgorithm.Stat {
-			statsMapMutex.RLock()
-			start, recorded := statsMap[identifier]
-			statsMapMutex.RUnlock()
-
-			if recorded {
-
-				_, e:= acceptMap[identifier]
-
-				if !e {
-					//fmt.Println("Stats_Counter: " + identifier)
-					end := time.Now()
-					diff := fmt.Sprintf("%f", end.Sub(start).Seconds())
-					//fmt.Println(end.String(), start.String())
-
-					acceptMap[identifier] = diff
-
-					counter.increment()
-				}
-			} else {
-				counter.increment();
-			}
+			counter.increment()
 
 			//If equal to the total Round flush to a file
 			if counter.getCount() == round {
 				lapse := fmt.Sprintf("%f", time.Now().Sub(throughPutBeginTime).Seconds())
 				timeLapse, _ := strconv.ParseFloat(lapse, 32)
+				//fmt.Println(round, timeLapse, startTime.String())
 				throughPut := float64(round) / timeLapse
 				writeThroughPut(throughPut)
+				if source {
+					writeLatencyFile()
+				} else {
+					writeLatencyFile()
+				}
 				fmt.Println("Successful receive all message")
 			}
 		}
 	}
 }
 
-func writeLatencyFile(round string, isSource bool) {
+func writeLatencyFile() {
 	fileName := strconv.Itoa(algorithm) +":Latency" + "|" + MyId +"|" + startTime.String()+".txt"
 	file, err := os.OpenFile(filepath.Join("./Data", fileName), os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0666)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	time := time.Now().String()
+
 	//fmt.Println(round+ ":" + latency )
-	if isSource {
-		fmt.Fprintf(file, "Start^" + round + "^" + time +"\n")
-	}else {
-		fmt.Fprintf(file, "End^" + round + "^" + time +"\n")
+	for round, time := range latencyMap {
+		if source {
+			fmt.Fprintf(file, "Start^" + round + "^" + time.String() +"\n")
+		} else {
+			fmt.Fprintf(file, "End^" + round + "^" + time.String() +"\n")
+		}
 	}
-
-
 
 	file.Close()
 }

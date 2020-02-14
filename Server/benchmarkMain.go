@@ -2,7 +2,6 @@ package Server
 
 import (
 	"HRB/HRBAlgorithm"
-	"strconv"
 	"time"
 )
 
@@ -86,15 +85,10 @@ func networkRead(){
 	flag := false
 	for {
 		data := <- externalReadChan
-		if data.Message.GetHeaderType() == HRBAlgorithm.MSG {
-			if ! flag {
-				flag = true
-				throughPutBeginTime = time.Now()
-			}
-			identifier := strconv.Itoa(data.Message.GetRound())
-			statsMapMutex.Lock()
-			statsMap[identifier] = time.Now()
-			statsMapMutex.Unlock()
+		if ! flag {
+			flag = true
+			throughPutBeginTime = time.Now()
+			//fmt.Println("Hey")
 		}
 		internalWriteChan <- data
 	}

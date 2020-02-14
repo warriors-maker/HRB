@@ -22,7 +22,7 @@ func CrashECBroadCast(length , round int) {
 	for r := 0; r < round; r ++ {
 		s := RandStringBytes(length)
 		if faulty == 0 {
-			shards = Encode(s, total - 1, 1)
+			shards = Encode(s, total/2, total - total/2)
 		} else {
 			shards = Encode(s, faulty + 1, total - (faulty + 1))
 		}
@@ -106,7 +106,7 @@ func crashRecEcho(m Message) {
 
 		if faulty == 0 {
 			if count + 1 == total - 1 {
-				data, _ = Decode(shards, total - 1, 1)
+				data, _ = Decode(shards, total/2, total - total/2)
 				for i := 0; i < total; i++ {
 					m := ACCStruct{Header:ACC, Id:id, SenderId:MyID, HashData: data, Round: round}
 					sendReq := PrepareSend{M: m, SendTo: serverList[i]}
@@ -114,9 +114,9 @@ func crashRecEcho(m Message) {
 				}
 			}
 
-		} else if count + 1 == faulty + 1 {
+		} else if count + 1 == 2 {
 			//decode elements back
-			data, _ = Decode(shards, faulty + 1, total - (faulty + 1 ))
+			data, _ = Decode(shards, faulty + 1, total - (faulty + 1))
 
 			for i := 0; i < total; i++ {
 				m := ACCStruct{Header:ACC, Id:id, SenderId:MyID, HashData: data, Round: round}
