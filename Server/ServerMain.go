@@ -96,7 +96,10 @@ func ProtocalStart() {
 			go HRBAlgorithm.NonFaultyBroadCast(dataSize, round)
 		}
 	} else if algorithm == 11 {
-
+		brachaSetup()
+		if source {
+			go HRBAlgorithm.BrachaBroadCast(dataSize, round)
+		}
 	} else {
 		fmt.Println("Do not understand what you give")
 	}
@@ -172,6 +175,13 @@ func crashSetup() {
 func nonByzSetup() {
 	protocalReadChan= setUpRead()
 	go filterNonByz(protocalReadChan)
+	go setUpWrite()
+}
+
+func brachaSetup() {
+	HRBAlgorithm.Initbracha(round)
+	protocalReadChan= setUpRead()
+	go filterBracha(protocalReadChan)
 	go setUpWrite()
 }
 
@@ -254,6 +264,13 @@ func filterNonByz(ch chan TcpMessage) {
 	for {
 		message := <- ch
 		HRBAlgorithm.FilterNonByz(message.Message)
+	}
+}
+
+func filterBracha (ch chan TcpMessage) {
+	for {
+		message := <- ch
+		HRBAlgorithm.FilterBracha(message.Message)
 	}
 }
 

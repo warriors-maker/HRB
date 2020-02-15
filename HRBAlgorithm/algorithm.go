@@ -281,6 +281,19 @@ func FilterCrashCode(message Message) {
 	}
 }
 
+func FilterBracha(message Message) {
+	switch v := message.(type) {
+	case MSGStruct:
+		brachaMessageHandler(v)
+	case ECHOStruct:
+		brachaEchoHandler(v)
+	case ACCStruct:
+		brachaAccHandler(v)
+	default:
+		fmt.Println("I donot understand what you send")
+	}
+}
+
 func FilterOptimal(message Message) {
 	switch v := message.(type) {
 	case MSGStruct:

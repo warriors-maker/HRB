@@ -71,6 +71,7 @@ func (d ECHOStruct) SetDataNull(){
 type ACCStruct struct {
 	Header TcpHeader
 	HashData string
+	Data string
 	Round int
 	Id string
 	SenderId string
@@ -233,7 +234,7 @@ func (m ECHOStruct) GetData() string {
 }
 
 func (m ACCStruct) GetData() string {
-	return ""
+	return m.Data
 }
 
 func (m REQStruct) GetData() string {
