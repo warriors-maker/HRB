@@ -73,7 +73,10 @@ func OptimalBroadcast(length, round int) {
 			shards = Encode(data, total - 3*faulty, total - (total - 3*faulty))
 		}
 		//Chocolate Broadcast
-		hashTagBroadcast(r, data)
+		hashData := ConvertBytesToString(Hash([]byte(data)))
+		//fmt.Println(data)
+		//fmt.Println(hashData)
+		hashTagBroadcast(r, hashData)
 
 		for i := 0; i < total; i++ {
 			// Chocolate Broadcast

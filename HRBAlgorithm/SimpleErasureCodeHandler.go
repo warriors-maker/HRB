@@ -15,6 +15,7 @@ func SimpleECBroadCast(byte_length, round int) {
 		hashStr := ConvertBytesToString(Hash([]byte(s)))
 		for i := 0; i < total; i++ {
 			code := ConvertBytesToString(shards[i])
+			//fmt.Println(code)
 			m := MSGStruct{Header:MSG, Id:MyID, SenderId:MyID, HashData: hashStr, Data: code, Round:r}
 			sendReq := PrepareSend{M: m, SendTo: serverList[i]}
 			SendReqChan <- sendReq

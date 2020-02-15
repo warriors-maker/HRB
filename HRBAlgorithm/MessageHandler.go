@@ -223,10 +223,15 @@ func check(m Message) []bool {
 			if _, e :=acceptData[identifier]; !e {
 				acceptData[identifier] = true
 				if algorithm == 8 {
-					hashTag := Binary{Header:BIN, Round:m.GetRound(), Id:m.GetId(), HashData:m.GetHashData(), SenderId:MyID}
-					//fmt.Printf("ReliableAccept %+v \n" , hashTag)
-					sendReq := PrepareSend{M: hashTag, SendTo: MyID}
-					SendReqChan <- sendReq
+					for data, hash := range DataSet {
+						if hash == m.GetHashData() {
+							hashTag := Binary{Header:BIN, Round:m.GetRound(), Id:m.GetId(), HashData:data, SenderId:MyID}
+							//fmt.Printf("ReliableAccept %+v \n" , hashTag)
+							sendReq := PrepareSend{M: hashTag, SendTo: MyID}
+							SendReqChan <- sendReq
+							break
+						}
+					}
 				} else {
 					stats := StatStruct{Id:m.GetId(), Round: m.GetRound(), Header:Stat}
 					statInfo :=PrepareSend{M:stats, SendTo:MyID}
