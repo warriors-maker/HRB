@@ -328,6 +328,13 @@ func FilterOptimalAgainst(message Message) {
 	}
 }
 
+func FilterNonByz(message Message) {
+	switch v := message.(type) {
+	case MSGStruct:
+		nonFaultyMessageHandler(v)
+	}
+}
+
 /*
 Helper Function
  */

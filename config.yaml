@@ -1,7 +1,7 @@
 trusted : [10.0.0.1:8001,10.0.0.2:8002,10.0.0.3:8003,10.0.0.4:8004,10.0.0.5:8005] #trusted ip + port
 faulty : [] #faulty ip + port
-algorithm : 8 #[1,2,3,4...,9]
+algorithm : 9 #[1,2,3,4...,9]
 source_byzantine : false #[true, false]
-data_size : 1024 #size is bytes
-rounds : 5000 # number of data reliable broadcast from the source
+data_size : 1200 #size is bytes
+rounds : 2000 # number of data reliable broadcast from the source
 faulty_behavior : wrong_message #Could be extended in the future for certain faulty behaviour

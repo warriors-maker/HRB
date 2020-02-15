@@ -90,6 +90,13 @@ func ProtocalStart() {
 		if source {
 			go HRBAlgorithm.CrashBroadCast(dataSize, round)
 		}
+	} else if algorithm == 10 {
+		nonByzSetup()
+		if source {
+			go HRBAlgorithm.NonFaultyBroadCast(dataSize, round)
+		}
+	} else if algorithm == 11 {
+
 	} else {
 		fmt.Println("Do not understand what you give")
 	}
@@ -162,6 +169,11 @@ func crashSetup() {
 	go setUpWrite()
 }
 
+func nonByzSetup() {
+	protocalReadChan= setUpRead()
+	go filterNonByz(protocalReadChan)
+	go setUpWrite()
+}
 
 /*
 Reading from the network
@@ -235,6 +247,13 @@ func filterOptimalAgainst(ch chan TcpMessage) {
 	for {
 		message := <- ch
 		HRBAlgorithm.FilterOptimalAgainst(message.Message)
+	}
+}
+
+func filterNonByz(ch chan TcpMessage) {
+	for {
+		message := <- ch
+		HRBAlgorithm.FilterNonByz(message.Message)
 	}
 }
 
