@@ -5,6 +5,11 @@ import (
 	"fmt"
 )
 
+/*
+These are all the variables i need to use for my default 11 algorithms,
+if you want to add more of your own
+ */
+
 //(SenderID + h, bool)
 var MessageReceiveSet map[string] bool
 //var MessageSentSet map[string] bool
@@ -52,7 +57,6 @@ var MyID string
 var algorithm int
 
 var acceptData map[string] bool
-
 var SendReqChan chan PrepareSend
 
 //key: IP_ID, Value: index in the serverList
@@ -74,9 +78,7 @@ var genKey string
 
 //var augmentRecSend map[string] map[string] [][]digestStruct //Used during validate step
 var binarySet map[string] []Message
-
 var digestTrustCount int
-
 var statsRecord map[string] Stats
 
 
@@ -84,7 +86,9 @@ var statsRecord map[string] Stats
 func AlgorithmSetUp(myID string, servers []string, trustedCount, faultyCount, round, alg int) {
 	round = round / 2
 	algorithm = alg
+
 	//fmt.Println(algorithm)
+
 	statsRecord = make(map[string]Stats,round)
 	serverMap = make(map[string] int, round)
 	acceptData = make(map[string]bool, round)
@@ -133,16 +137,6 @@ func AlgorithmSetUp(myID string, servers []string, trustedCount, faultyCount, ro
 	digestTrustCount = total
 
 	reqSentHash = make(map[string] string, round)
-	//digestSourceData = make(map[string] string)
-	//digestDataMap = make(map[string] []digestStruct)
-	//digestRecSend = make(map[string] [][] digestStruct)
-	//faultyCountMap = make(map[string] int)
-	//faultySet = make(map[string] bool)
-
-	//notTrustedListMap = make(map[string] []string, round)
-	//for _, server := range serverList {
-	//	notTrustedListMap[server] = []string{}
-	//}
 
 
 	//augmentRecSend = make(map[string]map[string] [][] digestStruct)
@@ -157,6 +151,10 @@ func AlgorithmSetUp(myID string, servers []string, trustedCount, faultyCount, ro
 	gob.Register(ECHOStruct{})
 	gob.Register(Binary{})
 	gob.Register(StatStruct{})
+
+	/*
+	Init your other variables here.
+	 */
 }
 
 

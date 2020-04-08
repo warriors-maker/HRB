@@ -33,14 +33,16 @@ func main() {
 	// where index represents what port local machine is using
 
 	if len(argsWithoutProg) == 0 {
-		Server.InitSharedVariables(-1)
+		Server.InitSharedVariables(-1) //cluster mode
 	} else {
-		index,_ := strconv.Atoi(argsWithoutProg[0])
+		index,_ := strconv.Atoi(argsWithoutProg[0]) //locolhost mode
 		Server.InitSharedVariables(index)
 	}
 
+	//start the benchmark
 	Server.BenchmarkStart()
 	Server.ProtocalStart()
+
 	wg.Wait()
 }
 

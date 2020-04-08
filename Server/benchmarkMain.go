@@ -24,10 +24,15 @@ func BenchmarkStart() {
 }
 
 func initChannels() {
+	//Channels between benchmark and Algorithm protocal
 	internalReadChan = make (chan TcpMessage, 20000)
 	internalWriteChan = make (chan TcpMessage,20000)
+
+	//Channels between benchmark and external nodes in the network
 	externalWriteChan = make (map[string] messageChan,20000)
 	externalReadChan = make(chan TcpMessage,20000)
+
+	//A Channel for calculating benchmark statistics
 	statsChan = make (chan HRBAlgorithm.Message,20000)
 	//protocalSendChan = make(chan TcpMessage, 10000)
 }
@@ -53,7 +58,7 @@ func internalRead() {
 	for {
 		data := <- internalReadChan
 		sendTo := data.ID
-		//Reliable Broadcast
+
 		if data.Message.GetHeaderType() == HRBAlgorithm.Stat {
 			statsChan <- data.Message
 		} else if data.Message.GetHeaderType() == HRBAlgorithm.MSG {
@@ -66,6 +71,7 @@ func internalRead() {
 			}
 		}
 
+		// if this is not a Stat Message
 		if data.Message.GetHeaderType() != HRBAlgorithm.Stat {
 			if sendTo == "" || sendTo == "all" {
 				for _ , channel := range externalWriteChan {
@@ -88,7 +94,6 @@ func networkRead(){
 		if ! flag {
 			flag = true
 			throughPutBeginTime = time.Now()
-			//fmt.Println("Hey")
 		}
 		internalWriteChan <- data
 	}
