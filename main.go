@@ -2,27 +2,29 @@ package main
 
 import (
 	"HRB/Server"
-	"math/rand"
+	"fmt"
 	"os"
 	"strconv"
 	"sync"
 )
 
-var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
-
-func RandStringRunes(n int) string {
-	b := make([]rune, n)
-	for i := range b {
-		b[i] = letterRunes[rand.Intn(len(letterRunes))]
-	}
-	return string(b)
-}
 
 /*
 Run Program:
-go run main.go [local/network] [algorithm] [Id[0,1...]] [f / ""]
-go run main.go local 1
+local Mode: go run main.go index
+cluster Mode: go run main.go
  */
+
+/*
+Local mode:
+
+benchmark reading from other nodes port: 	inputPort
+benchmark reading from protocol port:		inputPort+500
+protocol reading from benchmark port:		inputPort+1000
+
+
+ */
+
 func main() {
 	var wg sync.WaitGroup
 	wg.Add(1)
@@ -35,6 +37,7 @@ func main() {
 	if len(argsWithoutProg) == 0 {
 		Server.InitSharedVariables(-1) //cluster mode
 	} else {
+		fmt.Println(argsWithoutProg[0])
 		index,_ := strconv.Atoi(argsWithoutProg[0]) //locolhost mode
 		Server.InitSharedVariables(index)
 	}

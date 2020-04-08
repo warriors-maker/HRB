@@ -1,5 +1,4 @@
-package HRBAlgorithm
-
+package HRBMessage
 
 type TcpHeader int
 
@@ -11,11 +10,6 @@ const (
 	FWD  TcpHeader = 4
 	BIN  TcpHeader = 5
 	Stat  TcpHeader = 6
-	MSG_OPT TcpHeader = 7
-	ECHO_OPT TcpHeader = 8
-	ACC_OPT TcpHeader = 9
-	REQ_OPT TcpHeader = 10
-	FWD_OPT TcpHeader = 11
 )
 
 type Message interface {
@@ -94,9 +88,9 @@ func (d REQStruct) SetDataNull(){
 }
 
 type PrepareSend struct {
-	M Message
+	M      Message
 	SendTo string
-	Stat Stats
+	Stat   Stats
 }
 
 type Binary struct {

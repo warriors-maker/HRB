@@ -2,6 +2,7 @@ package Server
 
 import (
 	"encoding/gob"
+	"fmt"
 	"log"
 	"net"
 	"os"
@@ -9,13 +10,17 @@ import (
 	"strings"
 )
 
+/*
+Protocol reading from benchmark
+ */
+
 func TcpReader(ch chan TcpMessage, listeningIp string) {
 	portNum, _ := strconv.Atoi(strings.Split(listeningIp, ":")[1])
 	port := strconv.Itoa(portNum + 1000)
 	ln, _ := net.Listen("tcp",":"+port)
 
 	conn, err := ln.Accept()
-	//fmt.Println("Protocal Listening internally from ",port)
+	fmt.Println("Protocal Listening internally at ",port)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -39,7 +44,7 @@ func handleConnection(conn net.Conn, ch chan TcpMessage) {
 			}
 		}
 
-		//fmt.Printf("Protocal Receiving from Benchmark %+v\n",data.Message)
+		fmt.Printf("Protocal Receiving from Benchmark %+v\n",data.Message)
 
 		ch <- *data
 

@@ -2,17 +2,22 @@ package Server
 
 import (
 	"encoding/gob"
+	"fmt"
 	"log"
 	"net"
 	"os"
 	"strings"
 )
 
+/*
+read from the protocal layer
+ */
 func internalReader(ch chan TcpMessage) {
 	nets := strings.Split(internalReadAddr, ":")
 	port := nets[1]
 	ln, _ := net.Listen("tcp",":"+port)
-	//fmt.Println("Listening internally at " + host + ":" + port)
+
+	fmt.Println("Benchmark Listening internally at " + port)
 
 	conn, err := ln.Accept()
 	//fmt.Println("Get internal connection from " + conn.RemoteAddr().String())

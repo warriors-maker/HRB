@@ -2,18 +2,22 @@ package Server
 
 import (
 	"encoding/gob"
+	"fmt"
 	"log"
 	"net"
 	"os"
 	"strings"
 )
 
+/*
+Read from other nodes
+ */
 func ExternalTcpReader(ch chan TcpMessage, listeningIp string) {
 	nets := strings.Split(listeningIp, ":")
 	//host := nets[0]
 	port := nets[1]
 	ln, _ := net.Listen("tcp",":"+port)
-	//fmt.Println("Benchmark Listening externally at addr: " + host + ":" + port)
+	fmt.Println("Benchmark Listening externally at addr: " + ":" + port)
 
 	for {
 		conn, err := ln.Accept()
@@ -47,6 +51,5 @@ func ExternalHandleConnection(conn net.Conn, ch chan TcpMessage) {
 		ch <- *data
 
 	}
-	//fmt.Println("Connection closed")
 }
 

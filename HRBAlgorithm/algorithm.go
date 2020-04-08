@@ -1,50 +1,11 @@
 package HRBAlgorithm
 
 import (
+	"HRB/HRBMessage"
 	"encoding/gob"
 	"fmt"
 )
 
-/*
-These are all the variables i need to use for my default 11 algorithms,
-if you want to add more of your own
- */
-
-//(SenderID + h, bool)
-var MessageReceiveSet map[string] bool
-//var MessageSentSet map[string] bool
-
-//(SenderId + h, bool)
-var EchoReceiveSet map[string] bool
-//(sendToID + h, bool)
-var EchoSentSet map[string] bool
-//Used in Not Simple Version
-var EchoRecCountSet map[ECHOStruct] int
-//Used in SimpleVersion because of the place where they get accept
-var simpleEchoRecCountSet map[ECHOStruct] []string
-
-//(SenderId + h, bool)
-var AccReceiveSet map[string] bool
-var AccSentSet map[string] bool
-//(HashStr, list of ids that send Acc)
-var AccRecCountSet map[ACCStruct] []string
-
-var ReqReceiveSet map[string] bool
-//(HashStr, list of ids that you send request to)
-var ReqSentSet map[REQStruct] []string
-
-
-var FwdReceiveSet map[string] bool
-//(SendToId, bool)
-//var FwdSentSet map[string] bool
-
-//Key: value , Value: Hash(value)
-var DataSet map[string] string
-
-/*
-Used in the Erasure Coding
- */
-var ecDataSet map[string] [][]byte
 
 
 // Send Phase to the TCPWriter
@@ -56,43 +17,57 @@ var total int
 var MyID string
 var algorithm int
 
-var acceptData map[string] bool
-var SendReqChan chan PrepareSend
+
+var SendReqChan chan HRBMessage.PrepareSend
 
 //key: IP_ID, Value: index in the serverList
 var serverMap map[string] int
 var serverList []string
-var reqSentHash map[string] string
-var FwdRecCountSet map[string] int
+
+//(SenderID + h, bool)
+var MessageReceiveSet map[string] bool
+//var MessageSentSet map[string] bool
+
+//(SenderId + h, bool)
+var EchoReceiveSet map[string] bool
+//(sendToID + h, bool)
+var EchoSentSet map[string] bool
+//Used in Not Simple Version
+var EchoRecCountSet map[HRBMessage.ECHOStruct] int
+
+
+//(SenderId + h, bool)
+var AccReceiveSet map[string] bool
+var AccSentSet map[string] bool
+//(HashStr, list of ids that send Acc)
+var AccRecCountSet map[HRBMessage.ACCStruct] []string
+
+var ReqReceiveSet map[string] bool
+//(HashStr, list of ids that you send request to)
+var ReqSentSet map[HRBMessage.REQStruct] []string
+
+
+var FwdReceiveSet map[string] bool
+//(SendToId, bool)
+//var FwdSentSet map[string] bool
+
+//Key: value , Value: Hash(value)
+var DataSet map[string] string
+var acceptData map[string] bool
+
 
 /*
-Digest
- */
-var genKey string
-//var digestSourceData map[string] string //store the message sent from source
-//var digestDataMap map[string] []digestStruct //All the Hash Data from peers
-
-//var digestRecSend map[string] [][]digestStruct //what you have sent in one round
-//var faultyCountMap map[string] int
-//var faultySet map[string] bool
-
-//var augmentRecSend map[string] map[string] [][]digestStruct //Used during validate step
-var binarySet map[string] []Message
-var digestTrustCount int
-var statsRecord map[string] Stats
-
+Exposed this functions for public used in Server package
+*/
 
 
 func AlgorithmSetUp(myID string, servers []string, trustedCount, faultyCount, round, alg int) {
 	round = round / 2
 	algorithm = alg
 
-	//fmt.Println(algorithm)
 
-	statsRecord = make(map[string]Stats,round)
 	serverMap = make(map[string] int, round)
 	acceptData = make(map[string]bool, round)
-	FwdRecCountSet = make (map [string] int, round)
 	for index, server := range servers {
 		serverMap[server] = index
 	}
@@ -105,27 +80,24 @@ func AlgorithmSetUp(myID string, servers []string, trustedCount, faultyCount, ro
 	EchoReceiveSet = make(map[string] bool, round)
 	EchoSentSet = make(map[string] bool, round)
 	//Used in Acc version
-	EchoRecCountSet = make (map[ECHOStruct] int, round)
-	//used in Simple
-	simpleEchoRecCountSet = make (map[ECHOStruct] []string, round)
+	EchoRecCountSet = make (map[HRBMessage.ECHOStruct] int, round)
 
 	AccReceiveSet = make(map[string] bool, round)
 	AccSentSet = make(map[string] bool, round)
-	AccRecCountSet = make(map[ACCStruct] []string, round)
+	AccRecCountSet = make(map[HRBMessage.ACCStruct] []string, round)
 
 	ReqReceiveSet = make(map[string] bool, round)
-	ReqSentSet = make(map[REQStruct] []string, round)
+	ReqSentSet = make(map[HRBMessage.REQStruct] []string, round)
 
 	FwdReceiveSet = make(map[string] bool, round)
 	//FwdSentSet = make(map[string] bool)
 
 	DataSet = make (map[string] string, round)
 
-	ecDataSet = make(map[string] [][]byte, round)
 
 	//sendChan = make(chan Message)
 
-	SendReqChan = make (chan PrepareSend)
+	SendReqChan = make (chan HRBMessage.PrepareSend)
 
 	//change later based on config
 	trusted = trustedCount
@@ -133,237 +105,38 @@ func AlgorithmSetUp(myID string, servers []string, trustedCount, faultyCount, ro
 	total = trusted + faulty
 	//fmt.Println("Hey come on:" , trusted, faulty, total)
 	MyID = myID
-	genKey = MyID
-	digestTrustCount = total
-
-	reqSentHash = make(map[string] string, round)
-
 
 	//augmentRecSend = make(map[string]map[string] [][] digestStruct)
 	trustedCount = total
-	binarySet = make(map[string] []Message, round)
+
 
 	//Register the concrete type for interface
-	gob.Register(ACCStruct{})
-	gob.Register(FWDStruct{})
-	gob.Register(REQStruct{})
-	gob.Register(MSGStruct{})
-	gob.Register(ECHOStruct{})
-	gob.Register(Binary{})
-	gob.Register(StatStruct{})
-
-	/*
-	Init your other variables here.
-	 */
+	gob.Register(HRBMessage.ACCStruct{})
+	gob.Register(HRBMessage.FWDStruct{})
+	gob.Register(HRBMessage.REQStruct{})
+	gob.Register(HRBMessage.MSGStruct{})
+	gob.Register(HRBMessage.ECHOStruct{})
+	gob.Register(HRBMessage.StatStruct{})
 }
 
 
-func SimpleFilterRecData(message Message) {
+func FilterRecData (message HRBMessage.Message) {
 	switch v := message.(type) {
-	case MSGStruct:
-		SimpleMsgHandler(message)
-	case ECHOStruct:
-		SimpleEchoHandler(message)
-	case REQStruct:
-		SimpleReqHandler(message)
-	case FWDStruct:
-		SimpleFwdHandler(message)
-	default:
-		fmt.Printf("Sending : %+v\n", v)
-		fmt.Println("I do ot understand what you send")
-	}
-}
-
-func FilterRecData (message Message) {
-	switch v := message.(type) {
-	case MSGStruct:
-		//fmt.Println("Msg")
+	case HRBMessage.MSGStruct:
 		Msghandler(message)
-	case ECHOStruct:
-		//fmt.Println("Echo")
+	case HRBMessage.ECHOStruct:
 		EchoHandler(message)
-	case ACCStruct:
+	case HRBMessage.ACCStruct:
 		//fmt.Println("Acc")
 		AccHandler(message)
-	case REQStruct:
+	case HRBMessage.REQStruct:
 		//fmt.Println("Req")
 		ReqHandler(message)
-	case FWDStruct:
+	case HRBMessage.FWDStruct:
 		//fmt.Print("FWD")
 		FwdHandler(message)
 	default:
 		fmt.Printf("Sending : %+v\n", v)
 		fmt.Println("I do ot understand what you send")
 	}
-}
-
-func FilterSimpleErasureCodeRecData(message Message) {
-	switch v := message.(type) {
-	case MSGStruct:
-		//fmt.Println("Msg")
-		SimpleECMessageHandler(message)
-	case ECHOStruct:
-		//fmt.Println("Echo")
-		SimpleECEchoHandler(message)
-	default:
-		fmt.Printf("Sending : %+v\n", v)
-		//fmt.Println("I do ot understand what you send")
-	}
-}
-
-
-func FilterComplexErasureRecData(message Message) {
-	switch v := message.(type) {
-	case MSGStruct:
-		//fmt.Println("Msg")
-		ComplexECMessageHandler(message)
-	case ECHOStruct:
-		//fmt.Println("Echo")
-		ComplexECEchoHandler(message)
-	case ACCStruct:
-		//fmt.Println("Acc")
-		complexECAccHandler(message)
-	case REQStruct:
-		//fmt.Println("Req")
-		ComplexECReqHandler(message)
-	case FWDStruct:
-		//fmt.Print("FWD")
-		complexECFwdHandler(message)
-	default:
-		fmt.Printf("Sending : %+v\n", v)
-		fmt.Println("I do ot understand what you send")
-	}
-}
-
-func FilterDigest(message Message) {
-	switch v := message.(type) {
-	case MSGStruct:
-		receivePrepareFromSrc(message)
-	case ECHOStruct:
-		receiveDigestFromOthers(message)
-	case Binary:
-		recBinary(message)
-	default:
-		fmt.Printf("Sending : %+v\n", v)
-		fmt.Println("I donot understand what you send")
-	}
-}
-
-func FilterByzCode(message Message) {
-	switch v := message.(type) {
-	case MSGStruct:
-		ByzRecMsg(message)
-	case ECHOStruct:
-		ByzRecEcho(message)
-	case Binary:
-		ByzRecBin(message)
-	//case RecSend:
-	//	receiveRecSend(message)
-	default:
-		fmt.Printf("Sending : %+v\n", v)
-		fmt.Println("I donot understand what you send")
-	}
-}
-
-func FilterCrashCode(message Message) {
-	switch v := message.(type) {
-	case MSGStruct:
-		crashRecMsg(message)
-	case ECHOStruct:
-		crashRecEcho(message)
-	case ACCStruct:
-		crashRecAcc(message)
-	default:
-		fmt.Printf("Sending : %+v\n", v)
-		fmt.Println("I donot understand what you send")
-	}
-}
-
-func FilterBracha(message Message) {
-	switch v := message.(type) {
-	case MSGStruct:
-		brachaMessageHandler(v)
-	case ECHOStruct:
-		brachaEchoHandler(v)
-	case ACCStruct:
-		brachaAccHandler(v)
-	default:
-		fmt.Println("I donot understand what you send")
-	}
-}
-
-func FilterOptimal(message Message) {
-	switch v := message.(type) {
-	case MSGStruct:
-		if v.GetHeaderType() == MSG_OPT {
-			optimalMsgHandler(message)
-		} else {
-			Msghandler(message)
-		}
-	case ECHOStruct:
-		if v.GetHeaderType() == ECHO_OPT {
-			optimalEchoHandler(message)
-		} else {
-			EchoHandler(message)
-		}
-	case ACCStruct:
-		if v.GetHeaderType() == ACC_OPT {
-			optimalAccHandler(message)
-		} else {
-			AccHandler(message)
-		}
-	case Binary:
-		optimalHashTagHandler(message)
-	case FWDStruct:
-		if v.GetHeaderType() == FWD_OPT {
-			optimalFwdHandler(message)
-		} else {
-			FwdHandler(message)
-		}
-	case REQStruct:
-		if v.GetHeaderType() == REQ_OPT {
-			optimalReqHandler(message)
-		} else {
-			ReqHandler(message)
-		}
-	default:
-		fmt.Printf("Sending : %+v\n", v)
-		fmt.Println("I donot understand what you send")
-	}
-}
-
-func FilterOptimalAgainst(message Message) {
-	switch v := message.(type) {
-	case MSGStruct:
-		simpleMessageHandler(v)
-	}
-}
-
-func FilterNonByz(message Message) {
-	switch v := message.(type) {
-	case MSGStruct:
-		nonFaultyMessageHandler(v)
-	}
-}
-
-/*
-Helper Function
- */
-
-func hasSent(l []string, val string) bool{
-	for _, v := range l {
-		if v == val {
-			return true
-		}
-	}
-	return false
-}
-
-func checkDataExist(expectedHash string) (bool, string) {
-	for k,v := range DataSet {
-		if v == expectedHash {
-			return true, k
-		}
-	}
-	return false,""
 }

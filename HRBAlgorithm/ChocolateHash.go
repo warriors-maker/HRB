@@ -1,12 +1,31 @@
 package HRBAlgorithm
 
 import (
+	"HRB/HRBMessage"
+	"fmt"
 	"strconv"
+	"time"
 )
 
+func SimpleBroadcast(byteLength, round int) {
+	time.Sleep(3 *time.Second)
+	for i := 0; i < round; i++ {
+		//if i % 200 == 0 {
+		//	time.Sleep(1*time.Second)
+		//}
+		s := RandStringBytes(byteLength)
+		m := HRBMessage.MSGStruct{Id: MyID, SenderId:MyID, Data: s, Header:HRBMessage.MSG, Round:i}
+		for _, server := range serverList {
+			//fmt.Println("Protocal send to ", server)
+			sendReq := HRBMessage.PrepareSend{M: m, SendTo: server}
+			SendReqChan <- sendReq
+		}
+	}
+}
 
-func Msghandler (d Message) (bool, int, string){
-	data,_ := d.(MSGStruct)
+
+func Msghandler(d HRBMessage.Message) (bool, int, string){
+	data,_ := d.(HRBMessage.MSGStruct)
 
 
 	identifier := data.GetId() + strconv.Itoa(data.GetRound())
@@ -17,35 +36,14 @@ func Msghandler (d Message) (bool, int, string){
 		//include the data with key the original data and val its hashvalue
 		hashstr := ConvertBytesToString(Hash([]byte(data.GetData())))
 
-		DataSet[data.GetData()] = hashstr
-
-		//var hash []byte
-		//var hashstr string
-
-		/*
-			have seen echo + 1
-		*/
-
-		//data type check
-		//oknum,num := Util.ParseInt(data.GetData())
-		//if oknum {
-		//	hash = Hash([]byte(strconv.Itoa(num)))
-		//	hashstr = ConvertBytesToString(hash)
-		//}
-		//
-		//okstr ,str := Util.ParseString(data.GetData())
-		//if okstr {
-		//	hash = Hash([]byte(str))
-		//	hashstr = ConvertBytesToString(hash)
-		//}
 
 		//Main logic
-		m := ECHOStruct{Header:ECHO, Id:data.GetId(), HashData:hashstr, Round: data.GetRound(), SenderId:MyID}
+		m := HRBMessage.ECHOStruct{Header: HRBMessage.ECHO, Id:data.GetId(), HashData:hashstr, Round: data.GetRound(), SenderId:MyID}
 		//fmt.Printf("%+v\n",m)
 
 		if _, sent := EchoSentSet[identifier]; !sent {
 			EchoSentSet[identifier] = true
-			sendReq := PrepareSend{M: m, SendTo:"all"}
+			sendReq := HRBMessage.PrepareSend{M: m, SendTo:"all"}
 			SendReqChan <- sendReq
 		}
 		//Check
@@ -55,15 +53,15 @@ func Msghandler (d Message) (bool, int, string){
 	return false, 0,""
 }
 
-func ReqHandler (data Message) (bool, bool){
+func ReqHandler (data HRBMessage.Message) (bool, bool){
 	identifier := data.GetId()+ strconv.Itoa(data.GetRound()) + data.GetSenderId()
 	//fmt.Printf("Req: %+v\n",data)
 	if _, ok := ReqReceiveSet[identifier]; !ok {
 		ReqReceiveSet[identifier] = true
 		if exist, d := checkDataExist(data.GetHashData()); exist {
 			//send val to the requested id
-			fwdSendMsg := FWDStruct{Header:FWD, Id: data.GetId(), Round:data.GetRound(), SenderId:MyID, Data: d}
-			req := PrepareSend{M: fwdSendMsg, SendTo: data.GetSenderId()}
+			fwdSendMsg := HRBMessage.FWDStruct{Header: HRBMessage.FWD, Id: data.GetId(), Round:data.GetRound(), SenderId:MyID, Data: d}
+			req := HRBMessage.PrepareSend{M: fwdSendMsg, SendTo: data.GetSenderId()}
 			SendReqChan <- req
 			//return true, true
 		}
@@ -73,7 +71,7 @@ func ReqHandler (data Message) (bool, bool){
 }
 
 //Need to check this function later
-func FwdHandler (data Message) (bool, bool){
+func FwdHandler (data HRBMessage.Message) (bool, bool){
 	identifier := data.GetId() + strconv.Itoa(data.GetRound()) + data.GetSenderId();
 	/*
 		have seen echo + 1
@@ -81,7 +79,7 @@ func FwdHandler (data Message) (bool, bool){
 	//data type check
 	hashStr := ConvertBytesToString(Hash([]byte(data.GetData())))
 	//fmt.Printf("Fwd: %+v\n",data)
-	m := REQStruct{Header:REQ, Id:data.GetId(), HashData:hashStr, Round: data.GetRound(), SenderId:MyID}
+	m := HRBMessage.REQStruct{Header: HRBMessage.REQ, Id:data.GetId(), HashData:hashStr, Round: data.GetRound(), SenderId:MyID}
 	if hasSent(ReqSentSet[m], data.GetSenderId()) {
 		if _,seen := FwdReceiveSet[identifier]; !seen {
 			FwdReceiveSet[identifier] = true
@@ -96,12 +94,12 @@ func FwdHandler (data Message) (bool, bool){
 
 }
 
-func EchoHandler (data Message) (bool, int){
+func EchoHandler (data HRBMessage.Message) (bool, int){
 	identifier := data.GetId()+ strconv.Itoa(data.GetRound()) + data.GetSenderId()
 	if _,seen := EchoReceiveSet[identifier]; !seen {
 		EchoReceiveSet[identifier] = true
-
-		m := ECHOStruct{Header:ECHO, Id:data.GetId(), HashData:data.GetHashData(), Round: data.GetRound()}
+		DataSet[data.GetData()] = data.GetHashData()
+		m := HRBMessage.ECHOStruct{Header: HRBMessage.ECHO, Id:data.GetId(), HashData:data.GetHashData(), Round: data.GetRound()}
 		//fmt.Printf("%+v\n",m)
 		if count, ok := EchoRecCountSet[m]; ok {
 			EchoRecCountSet[m] = count + 1
@@ -118,7 +116,7 @@ func EchoHandler (data Message) (bool, int){
 }
 
 
-func AccHandler (data Message) (bool, int, bool){
+func AccHandler (data HRBMessage.Message) (bool, int, bool){
 	identifier := data.GetId()+ strconv.Itoa(data.GetRound()) + data.GetSenderId()
 	//fmt.Println("DataID "+data.GetId())
 	//fmt.Println("AccHandler identifier " + identifier)
@@ -126,7 +124,7 @@ func AccHandler (data Message) (bool, int, bool){
 	if _, seen := AccReceiveSet[identifier]; !seen {
 		AccReceiveSet[identifier] = true
 
-		accM := ACCStruct{Header: ACC, Id:data.GetId(), HashData:data.GetHashData(), Round: data.GetRound()}
+		accM := HRBMessage.ACCStruct{Header: HRBMessage.ACC, Id:data.GetId(), HashData:data.GetHashData(), Round: data.GetRound()}
 		if l, ok := AccRecCountSet[accM]; !ok {
 			l = []string{data.GetSenderId()}
 			AccRecCountSet[accM] = l
@@ -135,7 +133,7 @@ func AccHandler (data Message) (bool, int, bool){
 			AccRecCountSet[accM] = l
 		}
 
-		reqMes := REQStruct{Header:REQ, Id:data.GetId(), HashData:data.GetHashData(), Round: data.GetRound(), SenderId:MyID}
+		reqMes := HRBMessage.REQStruct{Header: HRBMessage.REQ, Id:data.GetId(), HashData:data.GetHashData(), Round: data.GetRound(), SenderId:MyID}
 		//mt.Printf("Acc in AccHandler %+v, %+v \n", accM, AccRecCountSet[accM])
 		if len(AccRecCountSet[accM]) == faulty + 1 {
 			//Same set
@@ -143,7 +141,7 @@ func AccHandler (data Message) (bool, int, bool){
 				ReqSentSet[reqMes] = AccRecCountSet[accM]
 				//Send Req to these f + 1
 				for _,id := range ReqSentSet[reqMes] {
-					reqMessage := PrepareSend{M: reqMes, SendTo: id}
+					reqMessage := HRBMessage.PrepareSend{M: reqMes, SendTo: id}
 					SendReqChan <- reqMessage
 				}
 			}
@@ -156,7 +154,7 @@ func AccHandler (data Message) (bool, int, bool){
 				l = append(l, data.GetSenderId())
 				ReqSentSet[reqMes] = l
 				//send request
-				reqMessage := PrepareSend{M: reqMes, SendTo: data.GetSenderId()}
+				reqMessage := HRBMessage.PrepareSend{M: reqMes, SendTo: data.GetSenderId()}
 				SendReqChan <- reqMessage
 				return true, len(AccRecCountSet[accM]), true
 			}
@@ -167,14 +165,13 @@ func AccHandler (data Message) (bool, int, bool){
 	return false, 0, false
 }
 
-func check(m Message) []bool {
-	//fmt.Println("Inside check")
+func check(m HRBMessage.Message) []bool {
 	//fmt.Println(m.GetHashData())
 	flags := []bool{false, false, false, false}
 
 	if exist, _ := checkDataExist(m.GetHashData()); exist {
-		echo := ECHOStruct{Header:ECHO, Round:m.GetRound(), HashData:m.GetHashData(), Id:m.GetId()}
-		acc := ACCStruct{Header:ACC, Round:m.GetRound(), HashData:m.GetHashData(), Id:m.GetId()}
+		echo := HRBMessage.ECHOStruct{Header: HRBMessage.ECHO, Round:m.GetRound(), HashData:m.GetHashData(), Id:m.GetId()}
+		acc := HRBMessage.ACCStruct{Header: HRBMessage.ACC, Round:m.GetRound(), HashData:m.GetHashData(), Id:m.GetId()}
 
 
 		identifier := m.GetId() + strconv.Itoa(m.GetRound())
@@ -183,9 +180,9 @@ func check(m Message) []bool {
 			if _, sent := EchoSentSet[identifier]; !sent {
 				//fmt.Println("Receive more than faulty + 1 echo message")
 				//fmt.Println("Sent Echo to other servers")
-				echoSend := ECHOStruct{Header:ECHO, Round:m.GetRound(), HashData:m.GetHashData(), Id:m.GetId(), SenderId:MyID}
+				echoSend := HRBMessage.ECHOStruct{Header: HRBMessage.ECHO, Round:m.GetRound(), HashData:m.GetHashData(), Id:m.GetId(), SenderId:MyID}
 				EchoSentSet[identifier] = true
-				sendReq := PrepareSend{M: echoSend, SendTo:"all"}
+				sendReq := HRBMessage.PrepareSend{M: echoSend, SendTo:"all"}
 				SendReqChan <- sendReq
 			}
 		}
@@ -195,11 +192,11 @@ func check(m Message) []bool {
 				//fmt.Println("Receive more than total - faulty echo message")
 				AccSentSet[identifier] = true
 
-				accSend := ACCStruct{Header:ACC, Round:m.GetRound(), HashData:m.GetHashData(), Id:m.GetId(), SenderId:MyID}
+				accSend := HRBMessage.ACCStruct{Header: HRBMessage.ACC, Round:m.GetRound(), HashData:m.GetHashData(), Id:m.GetId(), SenderId:MyID}
 				//send ACC to all servers
 				//fmt.Println("Acc sender ID "+ MyID + "," + acc.SenderId)
 				//fmt.Printf("Sent Acc to other servers %+v \n" , acc)
-				sendReq := PrepareSend{M: accSend, SendTo:"all"}
+				sendReq := HRBMessage.PrepareSend{M: accSend, SendTo:"all"}
 				SendReqChan <- sendReq
 				flags[1] = true
 			}
@@ -211,13 +208,15 @@ func check(m Message) []bool {
 			if _,sent := AccSentSet[identifier]; !sent {
 				//fmt.Println("Receive more than f + 1 Acc message")
 				AccSentSet[identifier] = true
-				accSend := ACCStruct{Header:ACC, Round:m.GetRound(), HashData:m.GetHashData(), Id:m.GetId(), SenderId:MyID}
+				accSend := HRBMessage.ACCStruct{Header: HRBMessage.ACC, Round:m.GetRound(), HashData:m.GetHashData(), Id:m.GetId(), SenderId:MyID}
 				//send ACC to all servers
-				sendReq := PrepareSend{M: accSend, SendTo:"all"}
+				sendReq := HRBMessage.PrepareSend{M: accSend, SendTo:"all"}
 				SendReqChan <- sendReq
 				flags[2] = true
 			}
 		}
+
+		fmt.Println(AccRecCountSet[acc], total, faulty)
 
 		if len(AccRecCountSet[acc]) >= total - faulty {
 			if _, e :=acceptData[identifier]; !e {
@@ -225,16 +224,16 @@ func check(m Message) []bool {
 				if algorithm == 8 {
 					for data, hash := range DataSet {
 						if hash == m.GetHashData() {
-							hashTag := Binary{Header:BIN, Round:m.GetRound(), Id:m.GetId(), HashData:data, SenderId:MyID}
-							//fmt.Printf("ReliableAccept %+v \n" , hashTag)
-							sendReq := PrepareSend{M: hashTag, SendTo: MyID}
+							hashTag := HRBMessage.Binary{Header: HRBMessage.BIN, Round:m.GetRound(), Id:m.GetId(), HashData:data, SenderId:MyID}
+							fmt.Printf("ReliableAccept %+v \n" , hashTag)
+							sendReq := HRBMessage.PrepareSend{M: hashTag, SendTo: MyID}
 							SendReqChan <- sendReq
 							break
 						}
 					}
 				} else {
-					stats := StatStruct{Id:m.GetId(), Round: m.GetRound(), Header:Stat}
-					statInfo :=PrepareSend{M:stats, SendTo:MyID}
+					stats := HRBMessage.StatStruct{Id: m.GetId(), Round: m.GetRound(), Header: HRBMessage.Stat}
+					statInfo := HRBMessage.PrepareSend{M: stats, SendTo:MyID}
 					SendReqChan <- statInfo
 				}
 			}
@@ -243,3 +242,24 @@ func check(m Message) []bool {
 	return flags
 }
 
+/*
+Helper Function
+*/
+
+func hasSent(l []string, val string) bool{
+	for _, v := range l {
+		if v == val {
+			return true
+		}
+	}
+	return false
+}
+
+func checkDataExist(expectedHash string) (bool, string) {
+	for k,v := range DataSet {
+		if v == expectedHash {
+			return true, k
+		}
+	}
+	return false,""
+}

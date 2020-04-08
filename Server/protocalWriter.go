@@ -8,6 +8,10 @@ import (
 	"time"
 )
 
+/*
+Protocal to Benchmark
+ */
+
 func TcpWriter(ch chan TcpMessage) {
 	nets := strings.Split(MyId, ":")
 	host := nets[0]

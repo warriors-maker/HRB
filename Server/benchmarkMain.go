@@ -1,7 +1,7 @@
 package Server
 
 import (
-	"HRB/HRBAlgorithm"
+	"HRB/HRBMessage"
 	"time"
 )
 
@@ -10,7 +10,7 @@ var internalReadChan chan TcpMessage
 var internalWriteChan chan TcpMessage
 var externalReadChan chan TcpMessage
 var externalWriteChan map[string] messageChan
-var statsChan chan HRBAlgorithm.Message
+var statsChan chan HRBMessage.Message
 var throughPutBeginTime time.Time
 
 
@@ -33,7 +33,7 @@ func initChannels() {
 	externalReadChan = make(chan TcpMessage,20000)
 
 	//A Channel for calculating benchmark statistics
-	statsChan = make (chan HRBAlgorithm.Message,20000)
+	statsChan = make (chan HRBMessage.Message,20000)
 	//protocalSendChan = make(chan TcpMessage, 10000)
 }
 
@@ -59,9 +59,9 @@ func internalRead() {
 		data := <- internalReadChan
 		sendTo := data.ID
 
-		if data.Message.GetHeaderType() == HRBAlgorithm.Stat {
+		if data.Message.GetHeaderType() == HRBMessage.Stat {
 			statsChan <- data.Message
-		} else if data.Message.GetHeaderType() == HRBAlgorithm.MSG {
+		} else if data.Message.GetHeaderType() == HRBMessage.MSG {
 			if algorithm == 9 {
 				if source && sendTo == MyId{
 					statsChan <- data.Message
@@ -72,7 +72,7 @@ func internalRead() {
 		}
 
 		// if this is not a Stat Message
-		if data.Message.GetHeaderType() != HRBAlgorithm.Stat {
+		if data.Message.GetHeaderType() != HRBMessage.Stat {
 			if sendTo == "" || sendTo == "all" {
 				for _ , channel := range externalWriteChan {
 					//fmt.Println("Send to all now with", id)

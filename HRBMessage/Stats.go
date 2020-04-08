@@ -1,4 +1,4 @@
-package HRBAlgorithm
+package HRBMessage
 
 import "time"
 

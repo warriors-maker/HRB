@@ -1,7 +1,7 @@
 package Server
 
 import (
-	"HRB/HRBAlgorithm"
+	"HRB/HRBMessage"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -61,7 +61,7 @@ func (f *flag)getFlag() bool{
 	return reach
 }
 
-func statsCalculate(statsChan chan HRBAlgorithm.Message) {
+func statsCalculate(statsChan chan HRBMessage.Message) {
 	go latencyCalculator(statsChan)
 	//go counterUpDate(statsChan)
 	//go throughputCalculator()
@@ -72,22 +72,22 @@ func statsCalculate(statsChan chan HRBAlgorithm.Message) {
 Latency Part
  */
 
-func latencyCalculator(statsChan chan HRBAlgorithm.Message) {
+func latencyCalculator(statsChan chan HRBMessage.Message) {
 	for {
 		data := <- statsChan
 		identifier := strconv.Itoa(data.GetRound())
 
 		if source {
-			if data.GetHeaderType() == HRBAlgorithm.MSG {
+			if data.GetHeaderType() == HRBMessage.MSG {
 				latencyMap[identifier] = time.Now()
 			}
 		} else {
-			if data.GetHeaderType() == HRBAlgorithm.Stat {
+			if data.GetHeaderType() == HRBMessage.Stat {
 				latencyMap[identifier] = time.Now()
 			}
 		}
 
-		if data.GetHeaderType() == HRBAlgorithm.Stat {
+		if data.GetHeaderType() == HRBMessage.Stat {
 			counter.increment()
 
 			//If equal to the total Round flush to a file
@@ -162,7 +162,7 @@ func latencyCalculator1Min() {
 	time.Sleep(1* time.Minute)
 }
 
-func counterUpDate(statsChan chan HRBAlgorithm.Message) {
+func counterUpDate(statsChan chan HRBMessage.Message) {
 	for {
 		data := <- statsChan
 		identifier := strconv.Itoa(data.GetRound())

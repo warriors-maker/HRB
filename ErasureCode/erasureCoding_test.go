@@ -1,4 +1,4 @@
-package HRBAlgorithm
+package ErasureCode
 
 import (
 	"fmt"

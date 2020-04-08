@@ -9,6 +9,9 @@ import (
 // ipPort: the targer ipAddress to write to
 // send to the protocal
 
+/*
+Send to Protocal
+ */
 func internalWriter(ipPort string, ch chan TcpMessage) {
 	//fmt.Println("Benchmark Internal Channel for sending data to " + ipPort)
 	conn, err:= net.Dial("tcp",ipPort)

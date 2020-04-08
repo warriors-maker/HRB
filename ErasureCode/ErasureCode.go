@@ -1,4 +1,4 @@
-package HRBAlgorithm
+package ErasureCode
 
 import (
 	"bytes"
@@ -29,7 +29,6 @@ func Encode(message string, dataShards, parityShards int) [][]byte{
 
 
 func Decode(shard [][]byte, dataShards, parityShards int)  (string, error){
-
 	shards := make([][]byte, len(shard))
 	for i := range shard {
 		shards[i] = make([]byte, len(shard[i]))
@@ -69,6 +68,21 @@ func Decode(shard [][]byte, dataShards, parityShards int)  (string, error){
 	return value, nil
 }
 
+/*
+To permutate all possible coding results and return all possible results back
+Note this may include faulty data
+Used in Vanilla EC and Chocolate EC
+ */
+
+func permutation(shards [][]byte, dataShards, parityShards int) []string{
+	//fmt.Println("Here are the shards"  ,shards)
+	vals := []string{}
+	DecodePermutation(shards, dataShards, parityShards, func (v string) {
+		vals = append(vals, v)
+	})
+	return vals
+}
+
 func DecodePermutation(shards [][]byte, dataShards, parityShards int, f func(string)) {
 	aux := make([][]byte, dataShards + parityShards)
 	decodePermutateHelper(shards, aux, dataShards, parityShards, 0, 0, f)
@@ -97,19 +111,7 @@ func decodePermutateHelper(shards, aux [][]byte,
 			aux[i] = nil
 		}
 	}
-
-
 }
-
-func permutation(shards [][]byte, dataShards, parityShards int) []string{
-	//fmt.Println("Here are the shards"  ,shards)
-	vals := []string{}
-	DecodePermutation(shards, dataShards, parityShards, func (v string) {
-		vals = append(vals, v)
-	})
-	return vals
-}
-
 
 func PermutateStr(input, aux []string, dataShards, parityShards, level, offset int) {
 	if level == dataShards {
@@ -122,6 +124,10 @@ func PermutateStr(input, aux []string, dataShards, parityShards, level, offset i
 		aux[i] = ""
 	}
 }
+
+/*
+
+ */
 
 
 

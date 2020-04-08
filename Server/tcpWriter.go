@@ -1,11 +1,15 @@
 package Server
 
 import (
-	"HRB/HRBAlgorithm"
+	"HRB/HRBMessage"
 	"encoding/gob"
 	"net"
 	"time"
 )
+
+/*
+Write to external nodes
+ */
 
 //ipPort: the targer ipAddress to write to
 func ExternalTcpWriter(ipPort string, ch chan TcpMessage) {
@@ -38,9 +42,9 @@ func ExternalTcpWriter(ipPort string, ch chan TcpMessage) {
 				}
 			} else if algorithm ==5 || algorithm == 6 {
 				if source {
-					if data.Message.GetHeaderType() == HRBAlgorithm.MSG {
+					if data.Message.GetHeaderType() == HRBMessage.MSG {
 						if ipPort == serverList[1] {
-							wrongMessage := HRBAlgorithm.MSGStruct{Header:HRBAlgorithm.MSG, Id:data.Message.GetId(), SenderId:data.Message.GetSenderId(), Data:"Asdaw!2heyhe", Round:data.Message.GetRound()}
+							wrongMessage := HRBMessage.MSGStruct{Header: HRBMessage.MSG, Id:data.Message.GetId(), SenderId:data.Message.GetSenderId(), Data:"Asdaw!2heyhe", Round:data.Message.GetRound()}
 							wrongTcpMessage := TcpMessage{Message:wrongMessage}
 							encoder.Encode(&wrongTcpMessage)
 						} else {
@@ -53,7 +57,7 @@ func ExternalTcpWriter(ipPort string, ch chan TcpMessage) {
 			} else {
 				//Source Equivocate
 				if source {
-					if data.Message.GetHeaderType() == HRBAlgorithm.MSG {
+					if data.Message.GetHeaderType() == HRBMessage.MSG {
 						if ipPort == serverList[1] {
 							//fmt.Println("Do not send to" + ipPort)
 						} else {
@@ -62,13 +66,13 @@ func ExternalTcpWriter(ipPort string, ch chan TcpMessage) {
 					} else {
 						encoder.Encode(&data)
 					}
-				} else if data.Message.GetHeaderType() == HRBAlgorithm.ECHO {
+				} else if data.Message.GetHeaderType() == HRBMessage.ECHO {
 					//fmt.Println("Set data to null")
 					correct := data.Message
 					// Create a Faulty Message
 
-					faulty := HRBAlgorithm.ECHOStruct{Id:correct.GetId(), Data: data.Message.GetData()+ "1asdadadwa", SenderId:correct.GetSenderId(),
-						HashData:")a1s2f*(", Round:correct.GetRound(), Header:HRBAlgorithm.ECHO}
+					faulty := HRBMessage.ECHOStruct{Id: correct.GetId(), Data: data.Message.GetData()+ "1asdadadwa", SenderId:correct.GetSenderId(),
+						HashData:")a1s2f*(", Round:correct.GetRound(), Header: HRBMessage.ECHO}
 					data = TcpMessage{Message:faulty}
 
 					encoder.Encode(&data)

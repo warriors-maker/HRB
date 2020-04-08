@@ -1,8 +1,10 @@
 package Server
 
-import "HRB/HRBAlgorithm"
+import (
+	"HRB/HRBMessage"
+)
 
 type TcpMessage struct {
-	Message HRBAlgorithm.Message
+	Message HRBMessage.Message
 	ID      string //which address I am sending to
 }
