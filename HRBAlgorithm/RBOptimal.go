@@ -61,7 +61,6 @@ func OptimalBroadcast(length, round int) {
 			Using Chocolate Broadcast
 		*/
 
-
 		/*
 			Broadcast codes to other Server
 		*/
@@ -72,6 +71,8 @@ func OptimalBroadcast(length, round int) {
 		} else {
 			shards = Encode(data, total - 3*faulty, total - (total - 3*faulty))
 		}
+
+		//fmt.Printf("%+v\n",shards)
 		//Chocolate Broadcast
 		hashData := ConvertBytesToString(Hash([]byte(data)))
 		//fmt.Println(data)
