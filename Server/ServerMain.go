@@ -48,6 +48,8 @@ func ProtocalStart() {
 		fmt.Println("Do not understand what you give")
 	}
 
+	go setUpWrite()
+
 }
 
 
@@ -58,7 +60,6 @@ Seven different algorithms to choose
 func hashComplexSetup() {
 	protocalReadChan = setUpRead()
 	go filter(protocalReadChan)
-	go setUpWrite()
 }
 
 
@@ -78,7 +79,6 @@ func filter (ch chan TcpMessage) {
 		message := <-ch
 		HRBAlgorithm.FilterRecData(message.Message)
 	}
-	//Call the filter method
 }
 
 /*
