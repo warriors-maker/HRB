@@ -35,12 +35,12 @@ func ProtocalStart() {
 		}
 	}
 
-
+	protocalReadChan = setUpRead()
 	if algorithm == 1 {
 		//Initialize the variable for your algorithm
 		HRBAlgorithm.AlgorithmSetUp(MyId, serverList, trustedCount, faultyCount, round, algorithm)
 		//set up the read write channel
-		hashComplexSetup()
+		go filter(protocalReadChan)
 		if source {
 			go HRBAlgorithm.SimpleBroadcast(dataSize, round)
 		}
@@ -52,16 +52,12 @@ func ProtocalStart() {
 
 }
 
-
-/*
-Seven different algorithms to choose
- */
-
-func hashComplexSetup() {
-	protocalReadChan = setUpRead()
-	go filter(protocalReadChan)
+func filter(ch chan TcpMessage) {
+	for {
+		message := <-ch
+		HRBAlgorithm.FilterRecData(message.Message)
+	}
 }
-
 
 /*
 Reading from the network
@@ -74,12 +70,6 @@ func setUpRead() chan TcpMessage{
 	return protocalReadChan
 }
 
-func filter (ch chan TcpMessage) {
-	for {
-		message := <-ch
-		HRBAlgorithm.FilterRecData(message.Message)
-	}
-}
 
 /*
 Writing to the Network
