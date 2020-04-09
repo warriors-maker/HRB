@@ -4,24 +4,8 @@ import (
 	"HRB/HRBMessage"
 	"fmt"
 	"strconv"
-	"time"
 )
 
-func SimpleBroadcast(byteLength, round int) {
-	time.Sleep(3 *time.Second)
-	for i := 0; i < round; i++ {
-		//if i % 200 == 0 {
-		//	time.Sleep(1*time.Second)
-		//}
-		s := RandStringBytes(byteLength)
-		m := HRBMessage.MSGStruct{Id: MyID, SenderId:MyID, Data: s, Header:HRBMessage.MSG, Round:i}
-		for _, server := range serverList {
-			//fmt.Println("Protocal send to ", server)
-			sendReq := HRBMessage.PrepareSend{M: m, SendTo: server}
-			SendReqChan <- sendReq
-		}
-	}
-}
 
 
 func Msghandler(d HRBMessage.Message) (bool, int, string){
