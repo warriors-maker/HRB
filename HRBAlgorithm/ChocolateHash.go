@@ -8,15 +8,13 @@ import (
 
 
 
-func Msghandler(d HRBMessage.Message) (bool, int, string){
-	data,_ := d.(HRBMessage.MSGStruct)
-
+func Msghandler(data HRBMessage.MSGStruct) (bool, int, string){
 
 	identifier := data.GetId() + strconv.Itoa(data.GetRound())
 	if _, seen := MessageReceiveSet[identifier]; !seen {
 		MessageReceiveSet[identifier] = true
 
-
+		fmt.Printf("Msgr %+v \n", data)
 		//include the data with key the original data and val its hashvalue
 		hashstr := ConvertBytesToString(Hash([]byte(data.GetData())))
 
@@ -31,13 +29,13 @@ func Msghandler(d HRBMessage.Message) (bool, int, string){
 			SendReqChan <- sendReq
 		}
 		//Check
-		check(m)
+		check(CheckMessage{id : data.GetId(), hashData:hashstr, round:data.GetRound()})
 		return true, EchoRecCountSet[m],hashstr
 	}
 	return false, 0,""
 }
 
-func ReqHandler (data HRBMessage.Message) (bool, bool){
+func ReqHandler (data HRBMessage.REQStruct) (bool, bool){
 	identifier := data.GetId()+ strconv.Itoa(data.GetRound()) + data.GetSenderId()
 	//fmt.Printf("Req: %+v\n",data)
 	if _, ok := ReqReceiveSet[identifier]; !ok {
@@ -55,7 +53,7 @@ func ReqHandler (data HRBMessage.Message) (bool, bool){
 }
 
 //Need to check this function later
-func FwdHandler (data HRBMessage.Message) (bool, bool){
+func FwdHandler (data HRBMessage.FWDStruct) (bool, bool){
 	identifier := data.GetId() + strconv.Itoa(data.GetRound()) + data.GetSenderId();
 	/*
 		have seen echo + 1
@@ -69,7 +67,7 @@ func FwdHandler (data HRBMessage.Message) (bool, bool){
 			FwdReceiveSet[identifier] = true
 			DataSet[data.GetData()] = hashStr
 			//check
-			check(m)
+			check(CheckMessage{round:data.GetRound(), hashData:hashStr, id:data.GetId()})
 			//return true, true
 		}
 		//return true, false
@@ -78,8 +76,9 @@ func FwdHandler (data HRBMessage.Message) (bool, bool){
 
 }
 
-func EchoHandler (data HRBMessage.Message) (bool, int){
+func EchoHandler (data HRBMessage.ECHOStruct) (bool, int){
 	identifier := data.GetId()+ strconv.Itoa(data.GetRound()) + data.GetSenderId()
+	fmt.Printf("Echo %+v \n", data)
 	if _,seen := EchoReceiveSet[identifier]; !seen {
 		EchoReceiveSet[identifier] = true
 		DataSet[data.GetData()] = data.GetHashData()
@@ -92,7 +91,7 @@ func EchoHandler (data HRBMessage.Message) (bool, int){
 		}
 
 		//Check
-		check(m)
+		check(CheckMessage{hashData: data.GetHashData(), id: data.GetId(), round: data.GetRound()})
 		//flags := check(data)
 		return true, EchoRecCountSet[m]
 	}
@@ -100,11 +99,11 @@ func EchoHandler (data HRBMessage.Message) (bool, int){
 }
 
 
-func AccHandler (data HRBMessage.Message) (bool, int, bool){
+func AccHandler (data HRBMessage.ACCStruct) (bool, int, bool){
 	identifier := data.GetId()+ strconv.Itoa(data.GetRound()) + data.GetSenderId()
 	//fmt.Println("DataID "+data.GetId())
 	//fmt.Println("AccHandler identifier " + identifier)
-
+	fmt.Printf("ACC %+v \n", data)
 	if _, seen := AccReceiveSet[identifier]; !seen {
 		AccReceiveSet[identifier] = true
 
@@ -143,14 +142,14 @@ func AccHandler (data HRBMessage.Message) (bool, int, bool){
 				return true, len(AccRecCountSet[accM]), true
 			}
 		}
-		check(data)
+
+		check(CheckMessage{id: data.GetId(), round:data.GetRound(), hashData:data.GetHashData()})
 
 	}
 	return false, 0, false
 }
 
-func check(m HRBMessage.Message) []bool {
-	//fmt.Println(m.GetHashData())
+func check(m CheckMessage) []bool {
 	flags := []bool{false, false, false, false}
 
 	if exist, _ := checkDataExist(m.GetHashData()); exist {
@@ -187,7 +186,7 @@ func check(m HRBMessage.Message) []bool {
 		}
 
 		//fmt.Println("Acc Info",len(AccRecCountSet[acc]), AccRecCountSet[acc], faulty + 1)
-
+		fmt.Printf("AccCount %+v \n", AccRecCountSet)
 		if len(AccRecCountSet[acc]) >= faulty + 1 {
 			if _,sent := AccSentSet[identifier]; !sent {
 				//fmt.Println("Receive more than f + 1 Acc message")
@@ -200,7 +199,7 @@ func check(m HRBMessage.Message) []bool {
 			}
 		}
 
-		fmt.Println(AccRecCountSet[acc], total, faulty)
+		//fmt.Println(AccRecCountSet[acc], total, faulty)
 
 		if len(AccRecCountSet[acc]) >= total - faulty {
 			if _, e :=acceptData[identifier]; !e {
@@ -247,3 +246,23 @@ func checkDataExist(expectedHash string) (bool, string) {
 	}
 	return false,""
 }
+
+type CheckMessage struct{
+	round int;
+	id string;
+	hashData string
+}
+
+func (c CheckMessage) GetHashData() string{
+	return c.hashData
+}
+
+func (c CheckMessage) GetRound() int {
+	return c.round
+}
+
+func (c CheckMessage) GetId() string{
+	return c.id
+}
+
+

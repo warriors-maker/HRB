@@ -61,7 +61,7 @@ func (f *flag)getFlag() bool{
 	return reach
 }
 
-func statsCalculate(statsChan chan HRBMessage.Message) {
+func statsCalculate(statsChan chan interface{}) {
 	go latencyCalculator(statsChan)
 	//go counterUpDate(statsChan)
 	//go throughputCalculator()
@@ -72,22 +72,25 @@ func statsCalculate(statsChan chan HRBMessage.Message) {
 Latency Part
  */
 
-func latencyCalculator(statsChan chan HRBMessage.Message) {
+func latencyCalculator(statsChan chan interface{}) {
 	for {
 		data := <- statsChan
-		identifier := strconv.Itoa(data.GetRound())
 
-		if source {
-			if data.GetHeaderType() == HRBMessage.MSG {
+
+		switch d := data.(type) {
+		case HRBMessage.MSGStruct:
+			identifier := strconv.Itoa(d.GetRound())
+			if source {
 				latencyMap[identifier] = time.Now()
 			}
-		} else {
-			if data.GetHeaderType() == HRBMessage.Stat {
-				latencyMap[identifier] = time.Now()
-			}
-		}
 
-		if data.GetHeaderType() == HRBMessage.Stat {
+			break
+		case HRBMessage.StatStruct:
+			identifier := strconv.Itoa(d.GetRound())
+			//latency
+			latencyMap[identifier] = time.Now()
+
+			//througput
 			counter.increment()
 
 			//If equal to the total Round flush to a file
@@ -100,6 +103,7 @@ func latencyCalculator(statsChan chan HRBMessage.Message) {
 				writeLatencyFile()
 				fmt.Println("Successful receive all message")
 			}
+			break
 		}
 	}
 }
@@ -158,30 +162,30 @@ Throughput Part
 //}
 
 
-func latencyCalculator1Min() {
-	time.Sleep(1* time.Minute)
-}
-
-func counterUpDate(statsChan chan HRBMessage.Message) {
-	for {
-		data := <- statsChan
-		identifier := strconv.Itoa(data.GetRound())
-
-		//fmt.Println("Stats_Counter: " + identifier)
-
-		if _, e:= acceptMap[identifier];!e {
-			//end := time.Now()
-			//diff := fmt.Sprintf("%f", end.Sub(start).Seconds())
-			//fmt.Println(end.String(), start.String())
-
-			//acceptMap[identifier] = identifier
-			//writeLatencyFile(identifier, diff)
-			counter.increment()
-		}
-
-		//If equal to the total Round flush to a file
-		if counter.counter == round {
-			//writeAllSuccess()
-		}
-	}
-}
+//func latencyCalculator1Min() {
+//	time.Sleep(1* time.Minute)
+//}
+//
+//func counterUpDate(statsChan chan HRBMessage.Message) {
+//	for {
+//		data := <- statsChan
+//		identifier := strconv.Itoa(data.GetRound())
+//
+//		//fmt.Println("Stats_Counter: " + identifier)
+//
+//		if _, e:= acceptMap[identifier];!e {
+//			//end := time.Now()
+//			//diff := fmt.Sprintf("%f", end.Sub(start).Seconds())
+//			//fmt.Println(end.String(), start.String())
+//
+//			//acceptMap[identifier] = identifier
+//			//writeLatencyFile(identifier, diff)
+//			counter.increment()
+//		}
+//
+//		//If equal to the total Round flush to a file
+//		if counter.counter == round {
+//			//writeAllSuccess()
+//		}
+//	}
+//}

@@ -3,6 +3,7 @@ package Server
 import (
 	"HRB/HRBMessage"
 	"encoding/gob"
+	"fmt"
 	"net"
 	"time"
 )
@@ -29,62 +30,42 @@ func ExternalTcpWriter(ipPort string, ch chan TcpMessage) {
 		data := <-ch
 		counter = counter + 1
 		if isFault {
-			//if crashFailure, just do not send the data
-			if algorithm == 7 || algorithm == 9{
-				if source {
-					if ipPort == serverList[1] {
-
-					} else {
-						encoder.Encode(&data)
-					}
+			switch v := data.Message.(type) {
+			case HRBMessage.MSGStruct:
+				if ipPort == serverList[1] {
+					//fmt.Println("Do not send to" + ipPort)
 				} else {
-
-				}
-			} else if algorithm ==5 || algorithm == 6 {
-				if source {
-					if data.Message.GetHeaderType() == HRBMessage.MSG {
-						if ipPort == serverList[1] {
-							wrongMessage := HRBMessage.MSGStruct{Header: HRBMessage.MSG, Id:data.Message.GetId(), SenderId:data.Message.GetSenderId(), Data:"Asdaw!2heyhe", Round:data.Message.GetRound()}
-							wrongTcpMessage := TcpMessage{Message:wrongMessage}
-							encoder.Encode(&wrongTcpMessage)
-						} else {
-							encoder.Encode(&data)
-						}
-					} else {
-						encoder.Encode(&data)
-					}
-				}
-			} else {
-				//Source Equivocate
-				if source {
-					if data.Message.GetHeaderType() == HRBMessage.MSG {
-						if ipPort == serverList[1] {
-							//fmt.Println("Do not send to" + ipPort)
-						} else {
-							encoder.Encode(&data)
-						}
-					} else {
-						encoder.Encode(&data)
-					}
-				} else if data.Message.GetHeaderType() == HRBMessage.ECHO {
-					//fmt.Println("Set data to null")
-					correct := data.Message
-					// Create a Faulty Message
-
-					faulty := HRBMessage.ECHOStruct{Id: correct.GetId(), Data: data.Message.GetData()+ "1asdadadwa", SenderId:correct.GetSenderId(),
-						HashData:")a1s2f*(", Round:correct.GetRound(), Header: HRBMessage.ECHO}
-					data = TcpMessage{Message:faulty}
-
 					encoder.Encode(&data)
-				} else {
-					if algorithm == 5 || algorithm == 6 {
-						encoder.Encode(&data)
-					} else if counter % 2 == 0 {
-						encoder.Encode(&data)
-					}
 				}
+				break
+			case HRBMessage.ECHOStruct:
+				correct := v
+				// Create a Faulty Message
+
+				faulty := HRBMessage.ECHOStruct{Id: correct.GetId(), Data: correct.GetData()+ "1asdadadwa", SenderId:correct.GetSenderId(),
+					HashData:")a1s2f*(", Round:correct.GetRound(), Header: HRBMessage.ECHO}
+				data = TcpMessage{Message:faulty}
+
+				encoder.Encode(&data)
+				break
+			case HRBMessage.ACCStruct:
+				encoder.Encode(&data)
+				//fmt.Println("Acc")
+				break
+			case HRBMessage.REQStruct:
+				encoder.Encode(&data)
+				//fmt.Println("Req")
+				break
+			case HRBMessage.FWDStruct:
+				encoder.Encode(&data)
+				//fmt.Print("FWD")
+				break
+			default:
+				fmt.Printf("Sending : %+v\n", v)
+				fmt.Println("I do ot understand what you send")
 			}
-		} else {
+
+			} else {
 			//fmt.Printf("Benchmark Send Data Externally to %+v\n",data)
 			encoder.Encode(&data)
 		}

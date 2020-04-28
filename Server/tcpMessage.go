@@ -1,10 +1,6 @@
 package Server
 
-import (
-	"HRB/HRBMessage"
-)
-
 type TcpMessage struct {
-	Message HRBMessage.Message
+	Message interface{}
 	ID      string //which address I am sending to
 }

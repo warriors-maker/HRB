@@ -121,21 +121,26 @@ func AlgorithmSetUp(myID string, servers []string, trustedCount, faultyCount, ro
 }
 
 
-func FilterRecData (message HRBMessage.Message) {
+func FilterRecData (message interface{}) {
 	switch v := message.(type) {
 	case HRBMessage.MSGStruct:
-		Msghandler(message)
+		Msghandler(v)
+		break
 	case HRBMessage.ECHOStruct:
-		EchoHandler(message)
+		EchoHandler(v)
+		break
 	case HRBMessage.ACCStruct:
 		//fmt.Println("Acc")
-		AccHandler(message)
+		AccHandler(v)
+		break
 	case HRBMessage.REQStruct:
 		//fmt.Println("Req")
-		ReqHandler(message)
+		ReqHandler(v)
+		break
 	case HRBMessage.FWDStruct:
 		//fmt.Print("FWD")
-		FwdHandler(message)
+		FwdHandler(v)
+		break
 	default:
 		fmt.Printf("Sending : %+v\n", v)
 		fmt.Println("I do ot understand what you send")

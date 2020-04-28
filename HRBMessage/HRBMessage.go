@@ -12,16 +12,6 @@ const (
 	Stat  TcpHeader = 6
 )
 
-type Message interface {
-	GetHeaderType() TcpHeader
-	GetHashData() string
-	GetData() string
-	GetId() string
-	GetRound() int
-	GetSenderId() string
-	SetSenderIdNull()
-	SetSenderId(string)
-}
 
 type FWDStruct struct {
 	Header TcpHeader
@@ -88,7 +78,7 @@ func (d REQStruct) SetDataNull(){
 }
 
 type PrepareSend struct {
-	M      Message
+	M      interface{}
 	SendTo string
 	Stat   Stats
 }

@@ -2,6 +2,7 @@ package Server
 
 import (
 	"HRB/HRBMessage"
+	"fmt"
 	"time"
 )
 
@@ -10,7 +11,7 @@ var internalReadChan chan TcpMessage
 var internalWriteChan chan TcpMessage
 var externalReadChan chan TcpMessage
 var externalWriteChan map[string] messageChan
-var statsChan chan HRBMessage.Message
+var statsChan chan interface{}
 var throughPutBeginTime time.Time
 
 
@@ -33,7 +34,7 @@ func initChannels() {
 	externalReadChan = make(chan TcpMessage,20000)
 
 	//A Channel for calculating benchmark statistics
-	statsChan = make (chan HRBMessage.Message,20000)
+	statsChan = make (chan interface{},20000)
 	//protocalSendChan = make(chan TcpMessage, 10000)
 }
 
@@ -59,20 +60,20 @@ func internalRead() {
 		data := <- internalReadChan
 		sendTo := data.ID
 
-		if data.Message.GetHeaderType() == HRBMessage.Stat {
-			statsChan <- data.Message
-		} else if data.Message.GetHeaderType() == HRBMessage.MSG {
-			if algorithm == 9 {
-				if source && sendTo == MyId{
-					statsChan <- data.Message
+		switch v := data.Message.(type) {
+		case HRBMessage.MSGStruct:
+			statsChan <- v
+			if sendTo == "" || sendTo == "all" {
+				fmt.Printf("Sending : %+v\n", v)
+				for _ , channel := range externalWriteChan {
+					channel <- data
 				}
-			} else if sendTo == MyId || sendTo == "" || sendTo == "all" {
-				statsChan <- data.Message
+			}  else {
+				fmt.Printf("Sending : %+v\n", v)
+				externalWriteChan[sendTo] <- data
 			}
-		}
-
-		// if this is not a Stat Message
-		if data.Message.GetHeaderType() != HRBMessage.Stat {
+			break
+		case HRBMessage.ECHOStruct:
 			if sendTo == "" || sendTo == "all" {
 				for _ , channel := range externalWriteChan {
 					//fmt.Println("Send to all now with", id)
@@ -82,8 +83,57 @@ func internalRead() {
 				//fmt.Println("Send to specific now with", sendTo)
 				externalWriteChan[sendTo] <- data
 			}
+			break
+		case HRBMessage.ACCStruct:
+			if sendTo == "" || sendTo == "all" {
+				for _ , channel := range externalWriteChan {
+					//fmt.Println("Send to all now with", id)
+					channel <- data
+				}
+			}  else {
+				//fmt.Println("Send to specific now with", sendTo)
+				externalWriteChan[sendTo] <- data
+			}
+			//fmt.Println("Acc")
+			break
+		case HRBMessage.REQStruct:
+			if sendTo == "" || sendTo == "all" {
+				for _ , channel := range externalWriteChan {
+					//fmt.Println("Send to all now with", id)
+					channel <- data
+				}
+			}  else {
+				//fmt.Println("Send to specific now with", sendTo)
+				externalWriteChan[sendTo] <- data
+			}
+			//fmt.Println("Req")
+			break
+		case HRBMessage.FWDStruct:
+			if sendTo == "" || sendTo == "all" {
+				for _ , channel := range externalWriteChan {
+					//fmt.Println("Send to all now with", id)
+					channel <- data
+				}
+			}  else {
+				//fmt.Println("Send to specific now with", sendTo)
+				externalWriteChan[sendTo] <- data
+			}
+			//fmt.Print("FWD")
+			break
+		case HRBMessage.StatStruct:
+			statsChan <- v
+			break;
+		default:
+			fmt.Printf("Sending : %+v\n", v)
+			fmt.Println("I do ot understand what you send")
 		}
 	}
+}
+
+func submitData(val interface{}) {
+
+
+
 }
 
 func networkRead(){
